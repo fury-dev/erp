@@ -2,10 +2,12 @@ import apolloServer = require("@apollo/server");
 import standAloneServer = require("@apollo/server/standalone");
 import graphqlSchema = require("./src/schema/graphql");
 import mongoConnect = require("./src/utils/MongoConnect");
-import auth = require("./src/auth");
+import authHelper = require("./src/auth");
 import graphql = require("graphql");
 import dotenv = require("dotenv");
 import orderQuery = require("./src/controller/query/order");
+import userQuery = require("./src/controller/query/user");
+
 import productQuery = require("./src/controller/query/product");
 import expenseQuery = require("./src/controller/query/expense");
 import expenseMutation = require("./src/controller/mutation/expense");
@@ -19,6 +21,7 @@ const resolvers = {
     ...orderQuery,
     ...expenseQuery,
     ...productQuery,
+    ...userQuery,
   },
   Mutation: {
     ...productMutation,
@@ -45,16 +48,17 @@ standAloneServer.startStandaloneServer(server, {
     if (!auth) {
       return { user: false };
     }
-    const user = auth.isAuthenicatedUser(auth);
+    const user = await authHelper.isAuthenicatedUser(auth);
+    console.log("CONNECTING");
 
-    if (!user) {
-      throw new graphql.GraphQLError("User is not authenticated", {
-        extensions: {
-          code: "UNAUTHENTICATED",
-          http: { status: 401 },
-        },
-      });
-    }
+    // if (!user) {
+    //   throw new graphql.GraphQLError("User is not authenticated", {
+    //     extensions: {
+    //       code: "UNAUTHENTICATED",
+    //       http: { status: 401 },
+    //     },
+    //   });
+    // }
     return { user };
   },
 });

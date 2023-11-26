@@ -45,13 +45,16 @@ type Order{
 }
 
 type Query{
-    orders:[Order]
-    orderSelection(id:[ID!]):[Order]
-    expenses:[Expense]
-    expenseSelection(id:[ID!]):[Expense]
-    products:[Product]
-    productSelection(id:[ID!]):[Product]
+    orders(id:[ID]):[Order]
+    # orderSelection(id:[ID!]):[Order]
+    expenses(id:[ID]):[Expense]
+    # expenseSelection(id:[ID!]):[Expense]
+    products(id:[ID]):[Product]
+    userValidation(token:String):User
+    # productSelection(id:[ID!]):[Product]
+
 }
+
 type Mutation{
     addProduct(product:ProductValue!):Product
     updateProduct(product:ProductValue!):Product
@@ -103,7 +106,7 @@ input UserRegisterValue{
 
 input PriceValue{
     currency:String
-    amount:String
+    amount:Int
 }
 `;
 

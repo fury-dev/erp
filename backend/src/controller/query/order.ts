@@ -1,8 +1,26 @@
 import orderModel = require("../../schema/mongo/order");
+import utils = require("../../schema/mongo/utils");
 
-const orders = (_: any, _x: any, context: any) => {
+const orders = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  return orderModel.controller.find({});
+  const response = await orderModel.controller.aggregate([
+    ...((args.id || []).length > 0
+      ? [
+          {
+            $match: {
+              _id: { $in: args.id },
+            },
+          },
+        ]
+      : []),
+    {
+      $project: {
+        message: { $slice: ["$yourArray", -1] },
+        id: "$_id",
+      },
+    },
+  ]);
+  return utils.unpackMessage(response);
 };
 
 const orderSelection = (
@@ -37,4 +55,4 @@ const orderSelection = (
   }
 };
 
-export { orders, orderSelection };
+export { orders };

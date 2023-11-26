@@ -1,8 +1,26 @@
 import productModel = require("../../schema/mongo/product");
+import utils = require("../../schema/mongo/utils");
 
-const products = (_: any, _x: any, context: any) => {
+const products = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  return productModel.controller.find({});
+  const response = await productModel.controller.aggregate([
+    ...((args.id || []).length > 0
+      ? [
+          {
+            $match: {
+              _id: { $in: args.id },
+            },
+          },
+        ]
+      : []),
+    {
+      $project: {
+        message: { $slice: ["$yourArray", -1] },
+        id: "$_id",
+      },
+    },
+  ]);
+  return utils.unpackMessage(response);
 };
 const productSelection = (
   _: any,
@@ -23,4 +41,4 @@ const productSelection = (
     return {};
   }
 };
-export { products, productSelection };
+export { products };

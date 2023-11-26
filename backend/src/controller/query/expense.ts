@@ -1,8 +1,26 @@
 import expenseModel = require("../../schema/mongo/expense");
+import utils = require("../../schema/mongo/utils");
 
-const expenses = (_: any, _x: any, context: any) => {
+const expenses = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  return expenseModel.controller.find({});
+  const response = await expenseModel.controller.aggregate([
+    ...((args.id || []).length > 0
+      ? [
+          {
+            $match: {
+              _id: { $in: args.id },
+            },
+          },
+        ]
+      : []),
+    {
+      $project: {
+        message: { $slice: ["$yourArray", -1] },
+        id: "$_id",
+      },
+    },
+  ]);
+  return utils.unpackMessage(response);
 };
 const expenseSelection = (
   _: any,
@@ -14,15 +32,11 @@ const expenseSelection = (
   if (!context.user) return null;
 
   try {
-    return expenseModel.controller.find({
-      _id: {
-        $in: args.id,
-      },
-    });
+    return expenseModel.controller.aggregate();
   } catch (err) {
     console.error(err);
-    return {};
+    return err;
   }
 };
 
-export { expenses, expenseSelection };
+export { expenses };

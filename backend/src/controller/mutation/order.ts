@@ -1,9 +1,8 @@
 import orderModel = require("../../schema/mongo/order");
-import lodash = require("lodash");
-import generateTimestamp = require("../../utils/generateTimestamp");
+import utils = require("../../schema/mongo/utils");
 const addOrder = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  const order = new orderModel.controller({ ...args.order });
+  const order = new orderModel.controller(utils.updateMongo(args.order));
 
   return await order.save().catch((err: any) => {
     if (err?.code === 11000) {
@@ -16,24 +15,31 @@ const addOrder = async (_: any, args: any, context: any) => {
 
 const updateOrder = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  const order = new orderModel.controller({
-    ...lodash.omit(args.order, "updatetAt"),
-    updatedAt: generateTimestamp.generateTimestamp(),
-  });
-
-  return await order.save().catch((err: any) => {
-    if (err?.code === 11000) {
-      return new Error(err);
-    } else {
-      return order;
-    }
-  });
+  // const order = new orderModel.controller({
+  //   ...lodash.omit(args.order, "updatetAt"),
+  //   updatedAt: generateTimestamp.generateTimestamp(),
+  // });
+  const { order } = args;
+  try {
+    orderModel.controller.findByIdAndUpdate(order.id, utils.updateMongo(order));
+    return order;
+  } catch (err: any) {
+    return new Error(err);
+  }
 };
 
 const deleteOrder = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
-    orderModel.controller.findByIdAndDelete(args.id);
+    const record = await orderModel.controller.findById(args.id);
+
+    orderModel.controller.findByIdAndUpdate(
+      args.id,
+      utils.updateMongo(
+        record?.versions[record.versions.length - 1] || {},
+        true
+      )
+    );
     return "success";
   } catch (err) {
     console.error(err);
