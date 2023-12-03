@@ -35,7 +35,7 @@ const registerUser = async (_: any, { user = null }: any) => {
   }
 };
 const loginUser = async (_: any, { user = null }: any) => {
-  console.log("Login In");
+  console.log("Login In", user);
   try {
     const record = await userModel.controller.findOne({ email: user?.email });
     if (!record) {
@@ -64,10 +64,10 @@ const loginUser = async (_: any, { user = null }: any) => {
         auth: {
           token,
           duration: process.env.TOKEN_LIFESPAN,
-          user: {
-            email: user.email,
-            username: record.username,
-          },
+        },
+        user: {
+          email: user.email,
+          username: record.username,
         },
       })
     );

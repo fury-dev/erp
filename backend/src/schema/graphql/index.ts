@@ -94,8 +94,8 @@ input OrderValue{
 }
 
 input UserLoginValue{
-    email:String
-    password:String
+    email:String!
+    password:String!
 }
 
 input UserRegisterValue{
