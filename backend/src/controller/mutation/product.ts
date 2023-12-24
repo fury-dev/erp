@@ -2,33 +2,52 @@ import productModel = require("../../schema/mongo/product");
 import lodash = require("lodash");
 import generateTimestamp = require("../../utils/generateTimestamp");
 import utils = require("../../schema/mongo/utils");
+import productQuery = require("../query/product");
 
 const addProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  const product = new productModel.controller(utils.updateMongo(args.product));
+  try {
+    const product = new productModel.controller(
+      utils.updateMongo(args.product)
+    );
+    return await product
+      .save()
+      .then((res) => {
+        const data = res.toJSON();
+        console.log("Product  Saved");
 
-  return await product.save().catch((err: any) => {
-    if (err?.code === 11000) {
-      return new Error(err);
-    } else {
-      return product;
-    }
-  });
+        return {
+          ...lodash.omit(data.versions[0], "_id"),
+          updatedAt: data.updatedAt,
+          objectId: res.id,
+        };
+      })
+      .catch((err: any) => {
+        console.log(err);
+        if (err?.code === 11000) {
+          return new Error(err);
+        }
+      });
+  } catch (err) {
+    console.log(err);
+  }
 };
 const updateProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  // const product = new productModel.controller({
-  //   ...lodash.omit(args.product, "updatetAt"),
-  //   updatedAt: generateTimestamp.generateTimestamp(),
-  // });
   const { product } = args;
+  console.log("updating product", product);
 
   try {
-    productModel.controller.findByIdAndUpdate(
+    const data = await productModel.controller.findByIdAndUpdate(
       product.id,
-      utils.updateMongo(product)
+      utils.updateMongo(product, false, true)
     );
-    return product;
+
+    return {
+      ...lodash.omit(data?.versions[data?.versions.length - 1], "_id"),
+      updatedAt: data?.updatedAt,
+      objectId: data?.id,
+    };
   } catch (err: any) {
     return new Error(err);
   }
@@ -37,16 +56,16 @@ const updateProduct = async (_: any, args: any, context: any) => {
 const deleteProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
-    const record = await productModel.controller.findById(args.id);
+    console.log("Deleting Products", args);
+    const records = await productQuery.products(null, args, context);
 
-    productModel.controller.findByIdAndUpdate(
-      args.id,
-      utils.updateMongo(
-        record?.versions[record.versions.length - 1] || {},
-        true
-      )
-    );
-    return "success";
+    return await records?.map(async (record) => {
+      console.log(utils.updateMongo(record, true, true));
+      return await productModel.controller.findByIdAndUpdate(
+        args.id,
+        utils.updateMongo(record, true, true)
+      );
+    });
   } catch (err) {
     console.error(err);
     return err;

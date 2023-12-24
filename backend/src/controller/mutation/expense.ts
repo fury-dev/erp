@@ -20,7 +20,7 @@ const updateExpense = async (_: any, args: any, context: any) => {
   try {
     await expenseModel.controller.findByIdAndUpdate(
       expense.id,
-      utils.updateMongo(expense, true)
+      utils.updateMongo(expense, false, true)
     );
   } catch (err) {
     return new Error("Db Err");

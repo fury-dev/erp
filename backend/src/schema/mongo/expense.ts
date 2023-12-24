@@ -13,6 +13,10 @@ const schema = new mongoose.Schema({
         type: String,
         required: [true, "Expense type is required"],
       },
+      versionId: {
+        type: Number,
+        unique: true,
+      },
       pnl: common.Price,
       createdAt: { type: Date, default: Date.now },
       updatedAt: { type: Date, default: Date.now },

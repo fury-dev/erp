@@ -1,5 +1,5 @@
 import moment = require("moment");
 
-const generateTimestamp = () => moment().utc().format("YYYY:MM:DDTHH:mm:ss");
+const generateTimestamp = () => new Date();
 
 export { generateTimestamp };

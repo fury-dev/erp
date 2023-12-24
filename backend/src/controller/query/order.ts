@@ -15,6 +15,8 @@ const orders = async (_: any, args: any, context: any) => {
       : []),
     {
       $project: {
+        updatedAt: 1,
+
         message: { $slice: ["$yourArray", -1] },
         id: "$_id",
       },

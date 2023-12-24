@@ -1,5 +1,8 @@
 import productModel = require("../../schema/mongo/product");
 import utils = require("../../schema/mongo/utils");
+import mongodb = require("mongodb");
+
+const ObjectId = mongodb.ObjectId;
 
 const products = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
@@ -8,19 +11,52 @@ const products = async (_: any, args: any, context: any) => {
       ? [
           {
             $match: {
-              _id: { $in: args.id },
+              $and: [
+                {
+                  _id: {
+                    $in: args.id.map(
+                      (
+                        value:
+                          | string
+                          | number
+                          | mongodb.BSON.ObjectId
+                          | mongodb.BSON.ObjectIdLike
+                          | Uint8Array
+                          | undefined
+                      ) => new ObjectId(value)
+                    ),
+                  },
+                },
+                {
+                  deleted: {
+                    $eq: false,
+                  },
+                },
+              ],
             },
           },
         ]
-      : []),
+      : [
+          {
+            $match: {
+              deleted: {
+                $eq: false,
+              },
+            },
+          },
+        ]),
     {
       $project: {
-        message: { $slice: ["$yourArray", -1] },
+        updatedAt: 1,
+        message: { $slice: ["$versions", -1] },
         id: "$_id",
       },
     },
   ]);
-  return utils.unpackMessage(response);
+  const preprocess = utils.unpackMessage(response);
+  console.log("List Products", preprocess.length);
+
+  return preprocess;
 };
 const productSelection = (
   _: any,

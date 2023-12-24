@@ -11,6 +11,10 @@ const schema = new mongoose.Schema({
         type: ObjectId,
         required: [true, "Product required"],
       },
+      versionId: {
+        type: Number,
+        unique: true,
+      },
       customerName: {
         type: String,
         required: [true, "Customer name required"],

@@ -2,14 +2,18 @@ const GraphqlSchema = `#graphql
 
 type Price{
     currency:String
-    amount:String
+    amount:Int
 }
 
 type  Product{
     id:ID!
+    name: String
+    image:String
+    versionId:Int
     distributorPrice:Price!
     sellerPrice:Price!
-    size:String
+    size:[String]
+    inStock: Boolean
     createdAt:String!
     updatedAt:String!
 }
@@ -23,6 +27,7 @@ type Expense{
     id:ID!
     expenseType:String!
     amount:Price
+    versionId:Int
     cashInBank:Price
     cashInHand:Price
     pnl:Price
@@ -33,6 +38,7 @@ type Expense{
 type Order{
     id:ID!
     customerName:String!
+    versionId:Int
     orderDate:String!
     orderType:String!
     amount:Price
@@ -53,35 +59,45 @@ type Query{
     userValidation(token:String):User
     # productSelection(id:[ID!]):[Product]
 
-}
+} 
 
 type Mutation{
     addProduct(product:ProductValue!):Product
     updateProduct(product:ProductValue!):Product
-    deleteProduct(id:ID!):[Product]
+    deleteProduct(id:[ID!]):[Product]
     addOrder(order:OrderValue!):Order
     updateOrder(order:OrderValue!):Order
-    deleteOrder(id:ID!):[Order]
+    deleteOrder(id:[ID!]):[Order]
     addExpense(expense:ExpenseValue!):Expense
     updateExpense(expense:ExpenseValue!):Expense
-    deleteExpense(id:ID!):[Expense]
+    deleteExpense(id:[ID!]):[Expense]
     registerUser(user:UserRegisterValue!):String
     loginUser(user:UserLoginValue!):String
 
 }
 
-input ProductValue{
+input ExpenseValue{
+    id:ID  
     expenseType:String
     amount:PriceValue
     cashInBank:PriceValue
     cashInHand:PriceValue
+    versionId:Int
+
 }
-input ExpenseValue{
-    distributerPrice:PriceValue
+input ProductValue {
+    id:ID
+    image:String
+    distributorPrice:PriceValue
     sellerPrice:PriceValue
-    size:String
+    size:[String]
+    inStock: Boolean!
+    name:String!
+    versionId:Int
+
 }
 input OrderValue{
+    id:ID
     customerName:String
     orderDate:String
     orderType:String
@@ -90,6 +106,8 @@ input OrderValue{
     status:String
     paymentStatus:Boolean
     deliveryDate:String
+    versionId:Int
+
 
 }
 

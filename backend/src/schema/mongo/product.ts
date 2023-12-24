@@ -3,15 +3,19 @@ import common = require("./common");
 
 const Schema = new mongoose.Schema({
   deleted: Boolean,
-
   versions: [
     {
+      name: String,
+      versionId: {
+        type: Number,
+        default: 1,
+      },
       distributorPrice: common.Price,
       sellerPrice: common.Price,
-      size: String,
+      size: [String],
+      inStock: Boolean,
       uri: String,
       createdAt: { type: Date, default: Date.now },
-      updatedAt: { type: Date, default: Date.now },
       deleted: Boolean,
     },
   ],

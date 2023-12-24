@@ -40,7 +40,6 @@ const server = new apolloServer.ApolloServer({
 
 //Initialize mongo
 mongoConnect.initializeMongo();
-
 standAloneServer.startStandaloneServer(server, {
   listen: { port: 4000 },
   context: async ({ req }: any) => {
