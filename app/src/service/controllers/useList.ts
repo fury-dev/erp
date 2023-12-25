@@ -1,16 +1,22 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { ITEMS } from '../../types/items';
-import { DocumentNode, gql, useQuery } from '@apollo/client';
-
+import { gql, useQuery } from '@apollo/client';
+const POLLING_INTERVAL = 10000;
+export type TQueryParams = {
+  id?: string[];
+  deleted?: boolean;
+  search?: string | null;
+};
 export const useList = (item: ITEMS) => {
   let query = null;
   if (item === 'product') {
     query = gql`
-      query Product($id: [ID]) {
-        products(id: $id) {
+      query Product($id: [ID], $deleted: Boolean, $search: String) {
+        products(id: $id, deleted: $deleted, search: $search) {
           id
           name
           versionId
+          productId
           image
           distributorPrice {
             amount
@@ -29,11 +35,12 @@ export const useList = (item: ITEMS) => {
     `;
   } else if (item === 'order') {
     query = gql`
-      query Order($id: [ID]) {
-        orders(id: $id) {
+      query Order($id: [ID], $deleted: Boolean, $search: String,search:$search) {
+        orders(id: $id, deleted: $deleted) {
           id
           versionId
           customerName
+          orderId
           orderDate
           orderType
           amount
@@ -49,11 +56,12 @@ export const useList = (item: ITEMS) => {
     `;
   } else {
     query = gql`
-      query Expense($id: [ID]) {
-        expense(id: $id) {
+      query Expense($id: [ID], $deleted: Boolean, $search: String) {
+        expense(id: $id, deleted: $deleted, search: $search) {
           id
           expenseType
           versionId
+          expenseId
           amount {
             amount
             currency
@@ -74,7 +82,21 @@ export const useList = (item: ITEMS) => {
     `;
   }
 
-  const { loading, error, data, refetch, updateQuery: updateGraphQuery, fetchMore, startPolling, stopPolling } = useQuery(query);
+  const {
+    loading,
+    error,
+    data,
+    refetch,
+    updateQuery: updateGraphQuery,
+    fetchMore,
+    startPolling,
+    stopPolling
+  } = useQuery(query, {
+    variables: {
+      id: [],
+      deleted: false
+    }
+  });
 
   useEffect(() => {
     if (error) console.error('API error', error);
@@ -84,9 +106,15 @@ export const useList = (item: ITEMS) => {
     console.log(data, error, 'response');
   }, [data]);
 
-  const updateQuery = () => {
-    refetch();
-  };
+  const updateQuery = useCallback(async ({ deleted = false, id = [], search = null }: TQueryParams) => {
+    stopPolling();
+    await refetch({
+      id,
+      deleted,
+      search
+    });
+    startPolling(POLLING_INTERVAL);
+  }, []);
   return {
     loading,
     refetch,

@@ -1,9 +1,7 @@
-import { useState } from 'react';
 import { ITEMS } from '../../types/items';
 import { gql, useMutation } from '@apollo/client';
 
 export const useDelete = (item: ITEMS) => {
-  const [input, setInput] = useState<any>();
   let query = null;
   if (item === 'product') {
     query = gql`
@@ -43,7 +41,7 @@ export const useDelete = (item: ITEMS) => {
   }
   const [deleteData] = useMutation(query, {
     variables: {
-      id: input
+      id: null
     }
   });
 

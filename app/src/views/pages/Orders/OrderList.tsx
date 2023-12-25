@@ -1,60 +1,76 @@
 import * as React from 'react';
 import { ListView } from '../../../components/List/ListView';
 import { compact } from 'lodash';
-import { ProductSetup } from './ProductSetup';
+import { OrderSetup } from './OrderSetup';
 import { HeaderButtons } from '../../../components/List/HeaderButtons';
-import { useProduct } from './hooks/useProduct';
+import { useOrder } from './hooks/useOrder';
 import moment from 'moment';
 import { FaEdit } from 'react-icons/fa';
-import { Product } from '../../../types/items/product';
+import { Order } from '../../../types/items/order';
 import { useCallback } from 'react';
 import { useDialogContext } from '../../../context/DialogContext';
-const ProductList = () => {
+const OrderList = () => {
   const {
     list: { apiAction, loading, updateQuery },
-    products,
+    orders,
     selected,
     deleteRequest
-  } = useProduct();
+  } = useOrder();
 
   const { setComponent } = useDialogContext();
 
   return (
     <div style={{ height: '100%', width: '100' }}>
-      <ListView<Product>
+      <ListView<Order>
         updateApiFilter={updateQuery}
         columns={compact([
           {
-            field: 'name',
-            headerName: 'Name',
+            field: 'orderId',
+            headerName: 'Order ID',
             width: 100
           },
           {
-            field: 'distributorPrice',
-            headerName: 'Distributor Price',
+            field: 'customerName',
+            headerName: 'Customer Name',
+            width: 100
+          },
+          {
+            field: 'orderDate',
+            headerName: 'Order Date',
             width: 170,
-            getValue: (params: any) => ` ${params?.distributorPrice.amount} ${params.distributorPrice.currency} `
+            getValue: (params) => moment(parseInt(params.orderDate)).format('DD-MM-YYYY:HH:MM')
           },
           {
-            field: 'sellerPrice',
-            headerName: 'Seller Price',
+            field: 'productId',
+            headerName: 'Product Id',
             width: 130,
-            numeric: true,
-            getValue: (params: any) => ` ${params?.sellerPrice.amount} ${params.sellerPrice.currency} `
+            numeric: true
           },
           {
-            field: 'size',
-            headerName: 'Size',
+            field: 'amount',
+            headerName: 'Amount',
             width: 70,
-            getValue: (params) => `${(params.size || [])?.length > 0 ? params.size?.join(',') : ''}`
+            getValue: (params) => ` ${params.amount.amount} ${params.amount.currency} `
           },
           {
-            field: 'inStock',
-            headerName: 'In Stock',
+            field: 'status',
+            headerName: 'Status',
             width: 150,
-            getValue: (params) => `${params.inStock ? 'Yes' : 'No'}`
+            getValue: (params) => `${params.status}`
           },
 
+          {
+            field: 'paymentStatus',
+            headerName: 'Payment Status',
+            width: 150,
+            getValue: (params) => `${params.paymentStatus}`
+          },
+          {
+            field: 'deliveryDate',
+            headerName: 'Delivery Date',
+            width: 150,
+            getValue: (params) => moment(parseInt(params.deliveryDate)).format('DD-MM-YYYY:HH:MM')
+          },
           {
             field: 'createdAt',
             headerName: 'Created',
@@ -68,7 +84,7 @@ const ProductList = () => {
             getValue: (params) => moment(parseInt(params.updatedAt)).format('DD-MM-YYYY:HH:MM')
           }
         ])}
-        rows={products || []}
+        rows={orders || []}
         loading={loading}
         headerButtons={
           <HeaderButtons
@@ -78,7 +94,7 @@ const ProductList = () => {
                 rest: {
                   onClick: () =>
                     setComponent(
-                      <ProductSetup
+                      <OrderSetup
                         open={true}
                         onClose={() => {
                           setComponent(false);
@@ -112,8 +128,8 @@ const ProductList = () => {
                 onClick: useCallback(
                   (e: any) => {
                     setComponent(
-                      <ProductSetup
-                        product={products.find((value) => value.id === e.currentTarget.id) as Product}
+                      <OrderSetup
+                        order={orders.find((value) => value.id === e.currentTarget.id) as Order}
                         open={true}
                         onClose={() => {
                           setComponent(false);
@@ -130,9 +146,9 @@ const ProductList = () => {
           ]
         }}
         apiAction={apiAction}
-        title={'Product'}
+        title={'Order'}
       />
     </div>
   );
 };
-export default ProductList;
+export default OrderList;

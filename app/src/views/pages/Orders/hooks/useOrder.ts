@@ -1,25 +1,25 @@
 import { useApiService } from '../../../../service';
 import { useCallback, useEffect, useState } from 'react';
-import { Product } from '../../../../types/items/product';
+import { Order } from '../../../../types/items/order';
 import { useDispatch, useSelector } from 'react-redux';
-import { setProducts } from '../../../../store/reducers';
+import { setOrders } from '../../../../store/reducers';
 import { RootState } from '../../../../store';
 import { useMultiSelect } from '../../../../context/MuliSelectContext';
 import lodash from 'lodash';
-export const useProduct = () => {
+export const useOrder = () => {
   const {
     add,
     update,
     remove: { deleteRequest },
     list: { refetch, data, loading, fetchMore, startPolling, updateQuery }
-  } = useApiService('product');
+  } = useApiService('order');
   const dispatch = useDispatch();
-  const products = useSelector((state: RootState) => state.product.items);
-  const [items, setItems] = useState(products.value);
+  const orders = useSelector((state: RootState) => state.order.items);
+  const [items, setItems] = useState(orders.value);
   const { selected } = useMultiSelect();
 
   const submitData = useCallback(
-    (data: Product) => {
+    (data: Order) => {
       if (data?.id) {
         console.log('update', data);
         update.submitData(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'));
@@ -31,14 +31,14 @@ export const useProduct = () => {
   );
 
   useEffect(() => {
-    if (data?.products) {
+    if (data?.orders) {
       dispatch(
-        setProducts({
-          value: data.products,
+        setOrders({
+          value: data.orders,
           page: 1
         })
       );
-      setItems(data.products);
+      setItems(data.orders);
     }
   }, [data]);
   const apiAction = useCallback(
@@ -51,7 +51,7 @@ export const useProduct = () => {
   return {
     submitData,
     list: { apiAction, data, loading, fetchMore, updateQuery },
-    products: items,
+    orders: items,
     selected,
     deleteRequest
   };
