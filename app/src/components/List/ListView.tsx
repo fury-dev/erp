@@ -21,16 +21,22 @@ import {
   Typography,
   alpha,
   Box,
-  Button
+  Button,
+  TextField,
+  OutlinedInput,
+  InputAdornment
 } from '@mui/material';
+import { MenuItem, Select } from '@mui/material';
+
 import { visuallyHidden } from '@mui/utils';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import CircularProgress from '@mui/material/CircularProgress';
 import { Loader } from '..';
 import { useMultiSelect } from '../../context/MuliSelectContext';
 import { TItems } from '../../types';
 import { IButtons } from './ButtonGroup';
+import { FaSearch } from 'react-icons/fa';
+import { TQueryParams } from '../../service/controllers';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -42,19 +48,19 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-interface HeadCell {
+interface HeadCell<T extends Product | Order | Expense> {
   disablePadding?: boolean;
   label?: string;
   numeric?: boolean;
-  getValue?: (params: any) => string;
+  getValue?: (params: T) => string;
   buttons?: IButtons[];
 }
-type TableColumm = Omit<GridColDef, 'type'> & HeadCell;
+type TableColumn<T extends Product | Order | Expense> = Omit<GridColDef, 'type'> & HeadCell<T>;
 type SortOrder = 'asc' | 'desc';
 type TableOrder = keyof (Product | Order | Expense);
-interface IListView {
-  rows: (Product | Order | Expense)[];
-  columns: TableColumm[];
+interface IListView<T extends Product | Order | Expense> {
+  rows: T[];
+  columns: TableColumn<T>[];
   initialState?: GridInitialStateCommunity;
   loading?: boolean;
   checkboxSelection?: boolean;
@@ -62,20 +68,21 @@ interface IListView {
   apiAction: Function;
   pageSizeOptions?: number[];
   title: string;
-  actionCell?: TableColumm;
+  actionCell?: TableColumn<T>;
+  updateApiFilter: (params: TQueryParams) => Promise<void>;
 }
-interface EnhancedTableProps {
+interface LayoutTableProps<T extends Product | Order | Expense> {
   numSelected: number;
   onRequestSort: (event: React.MouseEvent<unknown>, property: TableOrder) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: SortOrder;
   orderBy: TableOrder;
   rowCount: number;
-  headCells: TableColumm[];
+  headCells: TableColumn<T>[];
   hasHeader?: boolean;
 }
 
-function EnhancedTableHead(props: EnhancedTableProps) {
+function LayoutTableHead<T extends Product | Order | Expense>(props: LayoutTableProps<T>) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells, hasHeader } = props;
   const createSortHandler = (property: TableOrder) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
@@ -125,51 +132,113 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-interface EnhancedTableToolbarProps {
+interface LayoutTableToolbarProps extends IFilter {
   numSelected: number;
   title?: string;
 }
 
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected, title } = props;
+interface IFilter {
+  updateApiFilter: (params: TQueryParams) => Promise<void>;
+  loading: boolean;
+}
+
+export const Filter = ({ updateApiFilter, loading }: IFilter) => {
+  type TDeleted = 'active' | 'obsolete';
+  const [search, setSearch] = useState<string | null>(null);
+  const [deleted, setDeleted] = useState<TDeleted>('active');
 
   return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
-        })
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-          {title}
-        </Typography>
-      )}
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
+    <Box display="flex" justifyContent="flex-end" px="5px" width="100%%">
+      <Box display="flex" justifyContent="space-between" px="5px" width="50%">
+        <TextField
+          inputProps={{
+            startAdornment: (
+              <InputAdornment position="end">
+                <FaSearch />
+              </InputAdornment>
+            )
+          }}
+          label="Search"
+          value={search}
+          sx={{
+            width: '70%'
+          }}
+          onChange={(e) => setSearch(e.currentTarget.value)}
+          variant="outlined"
+        />
+        <Select
+          id="outlined-adornment-currency-product"
+          value={deleted}
+          onChange={(e) => setDeleted(e.target.value as TDeleted)}
+          name="distributorPrice.currency"
+          onBlur={(e) => setDeleted(e.target.value as TDeleted)}
+          sx={{
+            height: '56px'
+          }}
+        >
+          <MenuItem value={'active'}>Active</MenuItem>
+          <MenuItem value={'obsolete'}>Obsolete</MenuItem>
+        </Select>
+        <Button
+          disableElevation
+          disabled={loading}
+          onClick={() => updateApiFilter({ search, deleted: deleted === 'obsolete' })}
+          size="large"
+          variant="contained"
+          color="secondary"
+        >
+          <FaSearch />
+        </Button>
+      </Box>
+    </Box>
+  );
+};
+
+function LayoutTableToolbar(props: LayoutTableToolbarProps) {
+  const { numSelected, title, loading, updateApiFilter } = props;
+  const [show, setShow] = useState<boolean>(false);
+
+  return (
+    <>
+      {' '}
+      <Toolbar
+        sx={{
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 },
+          ...(numSelected > 0 && {
+            bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
+          })
+        }}
+      >
+        {numSelected > 0 ? (
+          <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
+            {numSelected} selected
+          </Typography>
+        ) : (
+          <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
+            {title}
+          </Typography>
+        )}
+        {numSelected > 0 ? (
+          <Tooltip title="Delete">
+            <IconButton>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Tooltip title="Filter list">
+            <IconButton onClick={() => setShow((prev) => !prev)}>
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Toolbar>
+      {show && <Filter updateApiFilter={updateApiFilter} loading={loading} />}
+    </>
   );
 }
 
-export const ListView = ({
+export const ListView = <T extends Product | Order | Expense>({
   columns,
   initialState = {
     pagination: {
@@ -186,8 +255,9 @@ export const ListView = ({
   pageSizeOptions = [10, 50],
   rows,
   title,
-  actionCell
-}: IListView) => {
+  actionCell,
+  updateApiFilter
+}: IListView<T>) => {
   const executeApiAction = useCallback(async () => {
     await apiAction();
   }, [apiAction]);
@@ -280,10 +350,10 @@ export const ListView = ({
 
       <Box sx={{ width: '100%' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
-          {/* <EnhancedTableToolbar numSelected={selected.length} title={title} /> */}
+          <LayoutTableToolbar numSelected={selected.length} title={title} loading={loading} updateApiFilter={updateApiFilter} />
           <TableContainer>
             <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
-              <EnhancedTableHead
+              <LayoutTableHead
                 numSelected={selected.length}
                 //@ts-ignore
                 order={order}
@@ -297,7 +367,7 @@ export const ListView = ({
               <TableBody>
                 {visibleRows.map((row, index) => {
                   const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+                  const labelId = `layout-table-checkbox-${index}`;
 
                   return (
                     <TableRow tabIndex={-1} key={row.id} selected={isItemSelected}>
@@ -319,6 +389,7 @@ export const ListView = ({
                           align={value.align ? 'left' : value.align}
                           width={value.width}
                         >
+                          {/* @ts-ignore */}
                           {value?.getValue ? value.getValue(row) : row[value.field as keyof typeof row]}
                         </TableCell>
                       ))}
