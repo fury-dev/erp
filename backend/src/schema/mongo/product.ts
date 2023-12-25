@@ -3,6 +3,10 @@ import common = require("./common");
 
 const Schema = new mongoose.Schema({
   deleted: Boolean,
+  productId: {
+    type: Number,
+    unique: true,
+  },
   versions: [
     {
       name: String,

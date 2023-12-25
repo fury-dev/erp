@@ -3,7 +3,17 @@ import utils = require("../../schema/mongo/utils");
 const addOrder = async (_: any, args: any, context: any) => {
   console.log(context, args);
   if (!context.user) return null;
-  const order = new orderModel.controller(utils.updateMongo(args.order));
+  const lastOrder = (
+    await orderModel.controller.findOne({ sort: { _id: 1 } })
+  )?.toJSON();
+  let id = 124594;
+  if (lastOrder?.orderId) {
+    id = lastOrder.orderId + 1;
+  }
+  const order = new orderModel.controller({
+    orderId: id,
+    ...utils.updateMongo(args.order),
+  });
 
   return await order.save().catch((err: any) => {
     if (err?.code === 11000) {
@@ -41,6 +51,7 @@ const deleteOrder = async (_: any, args: any, context: any) => {
       args._id,
       utils.updateMongo(
         record?.versions[record.versions.length - 1] || {},
+        true,
         true
       )
     );

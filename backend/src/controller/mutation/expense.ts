@@ -3,8 +3,17 @@ import utils = require("../../schema/mongo/utils");
 
 const addExpense = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  const expense = new expenseModel.controller(utils.updateMongo(args.expense));
-
+  const lastExpense = (
+    await expenseModel.controller.findOne({ sort: { _id: 1 } })
+  )?.toJSON();
+  let expenseId = 124594;
+  if (lastExpense?.expenseId) {
+    expenseId = lastExpense.expenseId + 1;
+  }
+  const expense = new expenseModel.controller({
+    expenseId,
+    ...utils.updateMongo(args.product),
+  });
   return await expense.save().catch((err: any) => {
     if (err?.code === 11000) {
       return new Error(err);

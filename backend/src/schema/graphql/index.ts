@@ -7,6 +7,7 @@ type Price{
 
 type  Product{
     id:ID!
+    productId:Int
     name: String
     image:String
     versionId:Int
@@ -27,6 +28,7 @@ type Expense{
     id:ID!
     expenseType:String!
     amount:Price
+    expenseId:Int
     versionId:Int
     cashInBank:Price
     cashInHand:Price
@@ -39,6 +41,7 @@ type Order{
     id:ID!
     customerName:String!
     versionId:Int
+    orderId:Int
     orderDate:String!
     orderType:String!
     amount:Price
@@ -51,11 +54,11 @@ type Order{
 }
 
 type Query{
-    orders(id:[ID]):[Order]
+    orders(id:[ID],deleted:Boolean,search:String):[Order]
     # orderSelection(id:[ID!]):[Order]
-    expenses(id:[ID]):[Expense]
+    expenses(id:[ID],deleted:Boolean,search:String):[Expense]
     # expenseSelection(id:[ID!]):[Expense]
-    products(id:[ID]):[Product]
+    products(id:[ID],deleted:Boolean,search:String):[Product]
     userValidation(token:String):User
     # productSelection(id:[ID!]):[Product]
 

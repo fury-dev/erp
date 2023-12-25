@@ -7,9 +7,17 @@ import productQuery = require("../query/product");
 const addProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
-    const product = new productModel.controller(
-      utils.updateMongo(args.product)
-    );
+    const lastProduct = (
+      await productModel.controller.findOne({ sort: { _id: 1 } })
+    )?.toJSON();
+    let productId = 124594;
+    if (lastProduct?.productId) {
+      productId = lastProduct.productId + 1;
+    }
+    const product = new productModel.controller({
+      productId,
+      ...utils.updateMongo(args.product),
+    });
     return await product
       .save()
       .then((res) => {

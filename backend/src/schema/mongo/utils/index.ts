@@ -26,7 +26,6 @@ const updateMongo = (
       }
     : {
         deleted,
-
         versions: [{ ...item, deleted }],
         createdAt: generateTimestamp.generateTimestamp(),
         updatedAt: generateTimestamp.generateTimestamp(),

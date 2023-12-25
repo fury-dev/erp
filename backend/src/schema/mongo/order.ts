@@ -4,7 +4,10 @@ const ObjectId = mongoose.Schema.ObjectId;
 
 const schema = new mongoose.Schema({
   deleted: Boolean,
-
+  orderId: {
+    type: Number,
+    unique: true,
+  },
   versions: [
     {
       productId: {
@@ -20,6 +23,7 @@ const schema = new mongoose.Schema({
         required: [true, "Customer name required"],
       },
       deleted: Boolean,
+
       orderDate: String,
       orderType: String,
       status: String,

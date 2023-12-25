@@ -3,7 +3,10 @@ import common = require("./common");
 
 const schema = new mongoose.Schema({
   deleted: Boolean,
-
+  expenseId: {
+    type: Number,
+    unique: true,
+  },
   versions: [
     {
       cashInBank: common.Price,

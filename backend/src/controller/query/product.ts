@@ -6,42 +6,55 @@ const ObjectId = mongodb.ObjectId;
 
 const products = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
+  const match: any[] = [
+    {
+      deleted: {
+        $eq: args.deleted,
+      },
+    },
+  ];
+  if ((args?.id || []).length > 0) {
+    match.push({
+      _id: {
+        $in: args.id.map(
+          (
+            value:
+              | string
+              | number
+              | mongodb.BSON.ObjectId
+              | mongodb.BSON.ObjectIdLike
+              | Uint8Array
+              | undefined
+          ) => new ObjectId(value)
+        ),
+      },
+    });
+  }
+  if ((args?.search || "").length > 0) {
+    match.push({
+      versions: {
+        $elemMatch: {
+          name: {
+            $regex: new RegExp(args.search, "i"),
+          },
+        },
+      },
+    });
+  }
+
   const response = await productModel.controller.aggregate([
-    ...((args.id || []).length > 0
+    ...(match.length > 1
       ? [
           {
             $match: {
-              $and: [
-                {
-                  _id: {
-                    $in: args.id.map(
-                      (
-                        value:
-                          | string
-                          | number
-                          | mongodb.BSON.ObjectId
-                          | mongodb.BSON.ObjectIdLike
-                          | Uint8Array
-                          | undefined
-                      ) => new ObjectId(value)
-                    ),
-                  },
-                },
-                {
-                  deleted: {
-                    $eq: false,
-                  },
-                },
-              ],
+              $and: match,
             },
           },
         ]
       : [
           {
             $match: {
-              deleted: {
-                $eq: false,
-              },
+              ...match[0],
             },
           },
         ]),
