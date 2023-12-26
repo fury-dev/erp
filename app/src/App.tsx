@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, StyledEngineProvider } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 // routing
 import Routes from './routes';
@@ -17,6 +18,7 @@ import { client } from './api/api';
 import { AuthContextProvider } from './context/AuthContext';
 import { MultiSelectContextProvider } from './context/MuliSelectContext';
 import { DialogContextProvider } from './context/DialogContext';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 function App() {
   //@ts-ignore
@@ -25,18 +27,20 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <AuthContextProvider>
-        <MultiSelectContextProvider>
-          <DialogContextProvider>
-            <StyledEngineProvider injectFirst>
-              <ThemeProvider theme={themes(customization)}>
-                <CssBaseline />
-                <NavigationScroll>
-                  <Routes />
-                </NavigationScroll>
-              </ThemeProvider>
-            </StyledEngineProvider>
-          </DialogContextProvider>
-        </MultiSelectContextProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <MultiSelectContextProvider>
+            <DialogContextProvider>
+              <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={themes(customization)}>
+                  <CssBaseline />
+                  <NavigationScroll>
+                    <Routes />
+                  </NavigationScroll>
+                </ThemeProvider>
+              </StyledEngineProvider>
+            </DialogContextProvider>
+          </MultiSelectContextProvider>
+        </LocalizationProvider>
       </AuthContextProvider>
     </ApolloProvider>
   );

@@ -108,6 +108,9 @@ function LayoutTableHead<T extends Product | Order | Expense>(props: LayoutTable
             align={headCell?.align ? 'left' : headCell.align}
             padding={headCell?.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.field ? order : false}
+            sx={{
+              whiteSpace: 'nowrap'
+            }}
           >
             {headCell?.buttons ? (
               headCell.headerName

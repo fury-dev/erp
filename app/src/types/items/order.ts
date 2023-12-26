@@ -7,11 +7,11 @@ export type Order = {
   orderId: Number;
   customerName: string;
   orderDate: string;
-  orderType: string;
+  orderType: 'COD' | 'PREPAID';
   amount: Price;
   productId: string;
   product?: Product;
-  status: string;
+  status: 'PENDING' | 'SHIPPED' | 'OUT_FOR_DELIVERY' | 'DELIVERED';
   paymentStatus: boolean;
   deliveryDate: string;
   createdAt: string;

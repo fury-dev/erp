@@ -35,8 +35,8 @@ export const useList = (item: ITEMS) => {
     `;
   } else if (item === 'order') {
     query = gql`
-      query Order($id: [ID], $deleted: Boolean, $search: String,search:$search) {
-        orders(id: $id, deleted: $deleted) {
+      query Order($id: [ID], $deleted: Boolean, $search: String) {
+        orders(id: $id, deleted: $deleted, search: $search) {
           id
           versionId
           customerName
