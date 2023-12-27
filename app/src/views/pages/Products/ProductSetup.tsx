@@ -10,6 +10,8 @@ import { LegacyRef, useRef, useState } from 'react';
 import AnimateButton from '../../../ui-component/extended/AnimateButton';
 import { useProduct } from './hooks/useProduct';
 import { Product } from '../../../types/items/product';
+import { FormInputMoney } from '../../../components/Form';
+import { Price } from '../../../types';
 
 const validation = Yup.object().shape({
   name: Yup.string().required()
@@ -22,17 +24,17 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
   const handleSaveSize = (
     _event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
     setFieldValue: (arg0: string, arg1: any[]) => void,
-    values: { size: string | any[] }
+    values: Product
   ) => {
-    if (!values.size.includes(size) && size) {
-      setFieldValue('size', [...values.size, size]);
+    if (!values.size?.includes(size) && size) {
+      setFieldValue('size', [...(values?.size || []), size]);
       setSize('');
     }
   };
 
   return (
     <DialogBox title="Product" open={open} onClose={onClose} width="600px">
-      <Formik
+      <Formik<Product>
         initialValues={{
           name: 'testName',
           image: 'testUrl',
@@ -50,7 +52,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
           versionId: 1,
           ...(product || {})
         }}
-        validation={validation}
+        // validate={validation}
         onSubmit={async (values, {}) => {
           try {
             if (values) await submitData(values as Product);
@@ -118,127 +120,26 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                 </Box>
               </Grid>
               <Grid item xs={6} marginTop={'15px'}>
-                <InputLabel htmlFor="outlined-adornment-name-login">Distributor </InputLabel>
-                <Grid container xs={6} spacing={2}>
-                  <Grid item xs={8}>
-                    <FormControl
-                      error={Boolean(touched.distributorPrice && errors.distributorPrice)}
-                      //@ts-ignore
-                      sx={{ ...theme.typography.customInput }}
-                    >
-                      <InputLabel htmlFor="outlined-adornment-name-login">Price</InputLabel>
-
-                      <OutlinedInput
-                        id="outlined-adornment-distributor-price-product"
-                        type="number"
-                        value={values.distributorPrice.amount}
-                        name="distributorPrice.amount"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        label="Amount"
-                        inputProps={{}}
-                        style={{
-                          width: '90px'
-                        }}
-                      />
-                      {touched.distributorPrice && errors.distributorPrice && (
-                        <FormHelperText error id="standard-weight-helper-text-name-login">
-                          {errors.distributorPrice?.amount}
-                        </FormHelperText>
-                      )}
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <FormControl
-                      error={Boolean(touched.distributorPrice && errors.distributorPrice)}
-                      //@ts-ignore
-                      sx={{ ...theme.typography.customInput }}
-                    >
-                      <Select
-                        id="outlined-adornment-currency-product"
-                        value={values.distributorPrice.currency}
-                        onBlur={handleBlur}
-                        name="distributorPrice.currency"
-                        onChange={handleChange}
-                        sx={{
-                          height: '56px'
-                        }}
-                      >
-                        {currencySupport.map((value) => (
-                          <MenuItem value={value}>{value}</MenuItem>
-                        ))}
-                      </Select>
-
-                      {touched.distributorPrice && errors.distributorPrice && (
-                        <FormHelperText error id="standard-weight-helper-text-name-login">
-                          {errors.distributorPrice?.amount}
-                        </FormHelperText>
-                      )}
-                    </FormControl>
-                  </Grid>
-                </Grid>
+                <FormInputMoney<Product>
+                  title="Distributor Price"
+                  errors={errors}
+                  touched={touched}
+                  handleChange={handleChange}
+                  pricefield="distributorPrice.amount"
+                  currencyField="distributorPrice.currency"
+                  value={values.distributorPrice as Price}
+                />
               </Grid>
               <Grid item xs={6} marginTop={'15px'}>
-                <InputLabel htmlFor="outlined-adornment-name-login">Seller Price</InputLabel>
-                <Grid container xs={6} spacing={2}>
-                  <Grid item xs={8}>
-                    <FormControl
-                      error={Boolean(touched.sellerPrice && errors.sellerPrice)}
-                      //@ts-ignore
-                      sx={{ ...theme.typography.customInput }}
-                    >
-                      <InputLabel htmlFor="outlined-adornment-name-login">Price</InputLabel>
-
-                      <OutlinedInput
-                        id="outlined-adornment-seller-price-product"
-                        type="number"
-                        value={values.sellerPrice.amount}
-                        name="sellerPrice.amount"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        label="Amount"
-                        inputProps={{}}
-                        style={{
-                          width: '90px'
-                        }}
-                      />
-                      {touched.sellerPrice && errors.sellerPrice && (
-                        <FormHelperText error id="standard-weight-helper-text-name-login">
-                          {errors.sellerPrice?.amount}
-                        </FormHelperText>
-                      )}
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <FormControl
-                      error={Boolean(touched.sellerPrice && errors.sellerPrice)}
-                      //@ts-ignore
-                      sx={{ ...theme.typography.customInput }}
-                    >
-                      <Select
-                        id="outlined-adornment-currency-product"
-                        value={values.sellerPrice.currency}
-                        label="Currency"
-                        onBlur={handleBlur}
-                        name="sellerPrice.currency"
-                        onChange={handleChange}
-                        sx={{
-                          height: '56px'
-                        }}
-                      >
-                        {currencySupport.map((value) => (
-                          <MenuItem value={value}>{value}</MenuItem>
-                        ))}
-                      </Select>
-
-                      {touched.sellerPrice && errors.sellerPrice && (
-                        <FormHelperText error id="standard-weight-helper-text-name-login">
-                          {errors.sellerPrice?.amount}
-                        </FormHelperText>
-                      )}
-                    </FormControl>
-                  </Grid>
-                </Grid>
+                <FormInputMoney<Product>
+                  title="Seller Price"
+                  errors={errors}
+                  touched={touched}
+                  handleChange={handleChange}
+                  pricefield="sellerPrice.amount"
+                  currencyField="sellerPrice.currency"
+                  value={values.sellerPrice as Price}
+                />
               </Grid>
               <Grid item xs={6}>
                 <FormControl
@@ -253,8 +154,8 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                     value={size}
                     onChange={(e) => setSize(e.currentTarget.value)}
                     name="Size"
-                    onBlur={(e) => handleSaveSize(e, setFieldValue, values)}
-                    onClick={(e) => handleSaveSize(e, setFieldValue, values)}
+                    onBlur={(e) => values && handleSaveSize(e, setFieldValue, values!)}
+                    onClick={(e) => values && handleSaveSize(e, setFieldValue, values!)}
                     label="Size"
                     inputProps={{}}
                     fullWidth

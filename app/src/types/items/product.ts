@@ -9,6 +9,6 @@ export type Product = {
   sellerPrice: Price;
   size?: string[];
   inStock: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 };

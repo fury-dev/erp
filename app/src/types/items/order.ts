@@ -3,17 +3,24 @@ import { Product } from './product';
 
 export type Order = {
   id: string;
-  versionId: string;
-  orderId: Number;
+  versionId: Number;
+  orderId?: Number;
   customerName: string;
   orderDate: string;
-  orderType: 'COD' | 'PREPAID';
+  orderType: 'CASH_ON_DELIVERY' | 'PREPAID';
   amount: Price;
   productId: string;
   product?: Product;
   status: 'PENDING' | 'SHIPPED' | 'OUT_FOR_DELIVERY' | 'DELIVERED';
   paymentStatus: boolean;
   deliveryDate: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+  location?: {
+    address: String;
+    pincode: Number;
+    city: String;
+    state: String;
+    country: String;
+  };
 };

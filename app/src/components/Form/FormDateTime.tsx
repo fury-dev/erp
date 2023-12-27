@@ -12,7 +12,6 @@ export const FormDateTime = <T,>({ handleChange, touched, errors, title, value, 
       //@ts-ignore
       sx={{ ...theme.typography.customInput }}
     >
-      <InputLabel htmlFor="outlined-adornment-name-login">{title}</InputLabel>
       <DateTimePicker label={title} onChange={handleChange} value={dayjs(value)} name={name as string} />
 
       {touched[name as keyof T] && errors[name as keyof T] && (

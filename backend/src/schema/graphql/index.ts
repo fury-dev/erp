@@ -37,6 +37,13 @@ type Expense{
     updatedAt:String!
 }
 
+type Address{
+    address:String
+    pincode:Int
+    city:String
+    state:String
+    country:String
+}
 type Order{
     id:ID!
     customerName:String!
@@ -45,8 +52,10 @@ type Order{
     orderDate:String!
     orderType:String!
     amount:Price
+    productId:String
     product:Product
     status:String
+    location:Address
     paymentStatus:Boolean!
     deliveryDate:String
     createdAt:String!

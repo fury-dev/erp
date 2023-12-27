@@ -43,9 +43,19 @@ export const useList = (item: ITEMS) => {
           orderId
           orderDate
           orderType
-          amount
+          amount {
+            amount
+            currency
+          }
           productId
           status
+          location {
+            address
+            pincode
+            city
+            state
+            country
+          }
           string
           paymentStatus
           deliveryDate

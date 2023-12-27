@@ -1,5 +1,5 @@
 import { DialogBox } from '../../../components/Dialog/DialogBox';
-import { Box, Button, Checkbox, FormControlLabel, Grid } from '@mui/material';
+import { Box, Button, FormLabel, Grid } from '@mui/material';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material';
@@ -7,42 +7,55 @@ import { useTheme } from '@mui/material/styles';
 import AnimateButton from '../../../ui-component/extended/AnimateButton';
 import { useOrder } from './hooks/useOrder';
 import { Order } from '../../../types/items/order';
-import { currencySupport } from '../../../data/Product/currency';
-import { FormDateTime, FormSelect } from '../../../components/Form';
+import { FormDateTime, FormInputMoney, FormSelect } from '../../../components/Form';
+import { Price } from '../../../types';
+import { useMemo } from 'react';
+import { useProduct } from '../Products/hooks/useProduct';
+import { Product } from '../../../types/items/product';
+import { useLocationApi } from '../../../hooks/useLocationApi';
 
 const validation = Yup.object().shape({
   name: Yup.string().required()
 });
 
 const orderStatus: Order['status'][] = ['DELIVERED', 'OUT_FOR_DELIVERY', 'PENDING', 'SHIPPED'];
-const orderType: Order['orderType'][] = ['COD', 'PREPAID'];
+const orderType: Order['orderType'][] = ['CASH_ON_DELIVERY', 'PREPAID'];
 
 export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: () => void; order?: Order }) => {
   const theme = useTheme();
   const { submitData } = useOrder();
+  const {
+    list: { data, updateQuery }
+  } = useProduct();
+
+  const { cities, countries, state, getCities, getCountries, getStates } = useLocationApi();
 
   return (
     <DialogBox title="Order" open={open} onClose={onClose} width="600px">
-      <Formik
+      <Formik<Order>
         initialValues={{
           customerName: '',
           amount: {
             amount: 0,
-            currency: ''
+            currency: 'INR'
           },
           orderDate: new Date().toISOString(),
-          deliveryDate: undefined,
-          productId: null,
+          deliveryDate: '',
+          productId: '',
           status: 'PENDING',
           paymentStatus: false,
-          orderType: 'COD',
+          orderType: 'CASH_ON_DELIVERY',
           id: '',
           versionId: 1,
           ...(order || {})
         }}
-        validation={validation}
+        //@ts-ignore
+        validate={validation}
         onSubmit={async (values, {}) => {
           try {
+            if (values.status === 'DELIVERED') {
+              values.deliveryDate = new Date().toISOString();
+            }
             if (values) await submitData(values as Order);
             onClose();
           } catch (err) {
@@ -65,9 +78,9 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                   <InputLabel htmlFor="outlined-adornment-name-login">Customer Name</InputLabel>
                   <OutlinedInput
                     id="outlined-adornment-name-order"
-                    type="customerName"
+                    type="text"
                     value={values.customerName}
-                    name="name"
+                    name="customerName"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     label="Customer Name"
@@ -80,7 +93,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                   )}
                 </FormControl>
               </Grid>
-              <Grid item xs={6} marginTop={'15px'}>
+              <Grid item xs={6}>
                 <FormDateTime<Order>
                   title="Order Date"
                   name="orderDate"
@@ -89,46 +102,6 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                   handleChange={handleChange}
                   value={values.orderDate}
                 />
-              </Grid>
-              <Grid item xs={6}  alignItems="center">
-                <InputLabel htmlFor="outlined-adornment-name-login">Amount</InputLabel>
-                <Box display="flex" flexDirection="row" width="80%" justifyContent="space-between" alignItems="center">
-                  <FormControl
-                    error={Boolean(touched.amount?.amount && errors.amount?.amount)}
-                    //@ts-ignore
-                    sx={{ ...theme.typography.customInput }}
-                  >
-                    <InputLabel htmlFor="outlined-adornment-name-login">Price</InputLabel>
-
-                    <OutlinedInput
-                      id="outlined-adornment-seller-price-order"
-                      type="number"
-                      value={values.amount.amount}
-                      name="amount.amount"
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      label="Amount"
-                      inputProps={{}}
-                      style={{
-                        width: '90px'
-                      }}
-                    />
-                    {touched.amount?.amount && errors.amount?.amount && (
-                      <FormHelperText error id="standard-weight-helper-text-name-login">
-                        {errors.amount?.amount}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                  <FormSelect<Order>
-                    title="Currency"
-                    name="amount.currency"
-                    errors={errors}
-                    touched={touched}
-                    handleChange={handleChange}
-                    options={currencySupport}
-                    value={values.amount.currency}
-                  />
-                </Box>
               </Grid>
               <Grid item xs={6}>
                 <FormSelect<Order>
@@ -152,8 +125,160 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                   value={values.orderType}
                 />
               </Grid>
+              <Grid item xs={6}>
+                <FormInputMoney<Order>
+                  title="Order Amount"
+                  errors={errors}
+                  touched={touched}
+                  handleChange={handleChange}
+                  pricefield="amount.amount"
+                  currencyField="amount.currency"
+                  value={values.amount as Price}
+                />
+              </Grid>
               <Grid item xs={4} display="flex" alignItems="center">
-                <FormControlLabel onChange={handleChange} control={<Checkbox defaultChecked />} label="In Stock" />
+                <FormSelect<Order>
+                  title="Product"
+                  name="productId"
+                  errors={errors}
+                  touched={touched}
+                  handleChange={handleChange}
+                  apiAction={updateQuery}
+                  options={useMemo(
+                    () =>
+                      (data?.products || []).map((value: Product) => ({
+                        value: value.id,
+                        label: value.name
+                      })),
+                    [data]
+                  )}
+                  value={values.productId}
+                />
+              </Grid>
+              <Grid
+                sx={{
+                  borderStyle: 'solid',
+                  borderWidth: '0.1px',
+                  borderColor: '#DDDD',
+                  borderRadius: '8px',
+                  margin: '15px',
+                  paddingY: '5px'
+                }}
+                container
+                xs={12}
+                spacing={1}
+              >
+                <FormLabel sx={{ padding: '5px' }}>Location Details</FormLabel>
+
+                <Grid item xs={12}>
+                  {/* @ts-ignore */}
+                  <FormControl error={Boolean(touched.location && errors.location)} sx={{ ...theme.typography.customInput, width: '80%' }}>
+                    <InputLabel htmlFor="outlined-adornment-name-login">Address</InputLabel>
+                    <OutlinedInput
+                      id="outlined-adornment-seller-price-order"
+                      type="text"
+                      value={values.location?.address}
+                      name={'location.address'}
+                      onBlur={handleChange}
+                      onChange={handleChange}
+                      style={{
+                        width: '100%',
+                        borderRight: '0'
+                      }}
+                    />
+                    {touched.location && errors.location && (
+                      <FormHelperText error id="standard-weight-helper-text-name-login">
+                        {errors.location}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                </Grid>
+                <Grid item xs={6}>
+                  <FormSelect<Order>
+                    title="Country"
+                    name="location.country"
+                    errors={errors}
+                    touched={touched}
+                    handleChange={handleChange}
+                    apiAction={getCountries}
+                    options={useMemo(
+                      () =>
+                        (countries || []).map((value) => ({
+                          value: value['iso2'],
+                          label: value.name
+                        })),
+                      [data]
+                    )}
+                    value={values.location?.country}
+                    sx={{
+                      width: '100%'
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <FormSelect<Order>
+                    title="State"
+                    name="location.state"
+                    errors={errors}
+                    touched={touched}
+                    handleChange={handleChange}
+                    apiAction={getStates}
+                    options={useMemo(
+                      () =>
+                        (state || []).map((value) => ({
+                          value: value['iso2'],
+                          label: value.name
+                        })),
+                      [data]
+                    )}
+                    value={values.location?.state}
+                    sx={{
+                      width: '100%'
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <FormSelect<Order>
+                    title="City"
+                    name="location.city"
+                    errors={errors}
+                    touched={touched}
+                    handleChange={handleChange}
+                    apiAction={getCities}
+                    options={useMemo(
+                      () =>
+                        (cities || []).map((value) => ({
+                          value: value['iso2'],
+                          label: value.name
+                        })),
+                      [data]
+                    )}
+                    value={values.location?.city}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  {/* @ts-ignore */}
+                  <FormControl error={Boolean(touched.location && errors.location)} sx={{ ...theme.typography.customInput }}>
+                    <InputLabel htmlFor="outlined-adornment-name-login">Pincode</InputLabel>
+                    <OutlinedInput
+                      id="outlined-adornment-seller-price-order"
+                      type="number"
+                      value={values.location?.pincode}
+                      name={'location.pincode'}
+                      onBlur={handleChange}
+                      onChange={handleChange}
+                      style={{
+                        width: '100%',
+                        borderRight: '0'
+                      }}
+                    />
+                    {touched.location && errors.location && (
+                      <FormHelperText error id="standard-weight-helper-text-name-login">
+                        {errors.location}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                </Grid>
               </Grid>
             </Grid>
 

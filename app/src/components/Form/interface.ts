@@ -1,4 +1,5 @@
 import { FormikHandlers, FormikTouched, FormikErrors } from 'formik';
+import { CSSProperties } from 'react';
 
 export interface IFormField<T> {
   handleChange: FormikHandlers['handleChange'];
@@ -7,4 +8,5 @@ export interface IFormField<T> {
   name: keyof T | string;
   title: string;
   errors: FormikErrors<T>;
+  sx?: CSSProperties;
 }
