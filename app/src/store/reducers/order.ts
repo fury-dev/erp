@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { produce } from 'immer';
+import { current, produce } from 'immer';
 import { Order } from '../../types/items/order';
 const initialState: {
   setup: Order;
@@ -12,16 +12,23 @@ const initialState: {
   setup: {
     id: '',
     customerName: '',
-    versionId: '',
+    versionId: 1,
     orderDate: '',
-    orderType: '',
+    orderType: 'CASH_ON_DELIVERY',
     amount: {
       currency: 'INR',
       amount: 0
     },
+    location: {
+      address: '',
+      city: '',
+      country: '',
+      pincode: 0,
+      state: ''
+    },
     productId: '',
     product: undefined,
-    status: '',
+    status: 'PENDING',
     paymentStatus: false,
     deliveryDate: '',
     createdAt: '',
@@ -33,17 +40,24 @@ const initialState: {
   },
   view: {
     id: '',
-    versionId: '',
+    versionId: 1,
     customerName: '',
     orderDate: '',
-    orderType: '',
+    orderType: 'CASH_ON_DELIVERY',
     amount: {
       currency: 'INR',
       amount: 0
     },
+    location: {
+      address: '',
+      city: '',
+      country: '',
+      pincode: 0,
+      state: ''
+    },
     productId: '',
     product: undefined,
-    status: '',
+    status: 'PENDING',
     paymentStatus: false,
     deliveryDate: '',
     createdAt: '',
@@ -56,9 +70,10 @@ const orderSlice = createSlice({
   initialState,
   reducers: {
     setOrders: (_state, action) => {
-      return produce(_state, (draft) => {
-        draft.items.value = action.payload;
-      });
+      return {
+        ...current(_state),
+        items: action.payload
+      };
     },
     setOrder: (_state, action) => {
       return produce(_state, (draft) => {

@@ -40,6 +40,7 @@ export const unpackMessage = (item: any[]) => {
       "_id"
     );
     return {
+      ...value,
       ...response,
       id: value.id,
       updatedAt: value.updatedAt,

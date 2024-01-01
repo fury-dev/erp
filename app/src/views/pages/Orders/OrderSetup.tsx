@@ -49,8 +49,6 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
           versionId: 1,
           ...(order || {})
         }}
-        //@ts-ignore
-        validate={validation}
         onSubmit={async (values, {}) => {
           try {
             if (values.status === 'DELIVERED') {
@@ -199,15 +197,18 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     name="location.country"
                     errors={errors}
                     touched={touched}
-                    handleChange={handleChange}
+                    handleChange={(e: React.ChangeEvent<any>) => {
+                      handleChange(e);
+                      getStates(countries.find((value) => value.name === e.target.value)['iso2']);
+                    }}
                     apiAction={getCountries}
                     options={useMemo(
                       () =>
                         (countries || []).map((value) => ({
-                          value: value['iso2'],
+                          value: value.name,
                           label: value.name
                         })),
-                      [data]
+                      [countries]
                     )}
                     value={values.location?.country}
                     sx={{
@@ -221,15 +222,27 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     name="location.state"
                     errors={errors}
                     touched={touched}
-                    handleChange={handleChange}
+                    handleChange={(e: React.ChangeEvent<any>) => {
+                      handleChange(e);
+                      console.log(
+                        state.find((value) => value.name === e.target.value),
+                        countries.find((item) => item.name === values.location?.country),
+                        state,
+                        e.target.value
+                      );
+                      getCities(
+                        state.find((value) => value.name === e.target.value)['iso2'],
+                        countries.find((item) => item.name === values.location?.country)['iso2']
+                      );
+                    }}
                     apiAction={getStates}
                     options={useMemo(
                       () =>
                         (state || []).map((value) => ({
-                          value: value['iso2'],
+                          value: value.name,
                           label: value.name
                         })),
-                      [data]
+                      [state]
                     )}
                     value={values.location?.state}
                     sx={{
@@ -248,10 +261,10 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     options={useMemo(
                       () =>
                         (cities || []).map((value) => ({
-                          value: value['iso2'],
+                          value: value.name,
                           label: value.name
                         })),
-                      [data]
+                      [cities]
                     )}
                     value={values.location?.city}
                   />

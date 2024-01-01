@@ -1,7 +1,7 @@
 import productModel = require("../../schema/mongo/product");
 import utils = require("../../schema/mongo/utils");
 import mongodb = require("mongodb");
-
+import generateQuery = require("../../utils/generateQuery");
 const ObjectId = mongodb.ObjectId;
 
 const products = async (_: any, args: any, context: any) => {
@@ -41,31 +41,11 @@ const products = async (_: any, args: any, context: any) => {
       },
     });
   }
+  const response = await generateQuery.generateQuery(
+    productModel.controller,
+    args
+  );
 
-  const response = await productModel.controller.aggregate([
-    ...(match.length > 1
-      ? [
-          {
-            $match: {
-              $and: match,
-            },
-          },
-        ]
-      : [
-          {
-            $match: {
-              ...match[0],
-            },
-          },
-        ]),
-    {
-      $project: {
-        updatedAt: 1,
-        message: { $slice: ["$versions", -1] },
-        id: "$_id",
-      },
-    },
-  ]);
   const preprocess = utils.unpackMessage(response);
   console.log("List Products", preprocess.length);
 

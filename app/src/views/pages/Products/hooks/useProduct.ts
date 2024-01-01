@@ -11,7 +11,7 @@ export const useProduct = () => {
     add,
     update,
     remove: { deleteRequest },
-    list: { refetch, data, loading, fetchMore, startPolling, updateQuery }
+    list: { refetch, data, loading, fetchMore, startPolling, updateQuery, stopPolling }
   } = useApiService('product');
   const dispatch = useDispatch();
   const products = useSelector((state: RootState) => state.product.items);
@@ -50,7 +50,7 @@ export const useProduct = () => {
 
   return {
     submitData,
-    list: { apiAction, data, loading, fetchMore, updateQuery },
+    list: { apiAction, data, loading, fetchMore, updateQuery, stopPolling },
     products: items,
     selected,
     deleteRequest

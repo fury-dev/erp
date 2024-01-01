@@ -11,7 +11,7 @@ import { useCallback } from 'react';
 import { useDialogContext } from '../../../context/DialogContext';
 const ProductList = () => {
   const {
-    list: { apiAction, loading, updateQuery },
+    list: { apiAction, loading, updateQuery, stopPolling },
     products,
     selected,
     deleteRequest
@@ -24,6 +24,11 @@ const ProductList = () => {
       <ListView<Product>
         updateApiFilter={updateQuery}
         columns={compact([
+          {
+            field: 'productId',
+            headerName: 'Product ID',
+            width: 100
+          },
           {
             field: 'name',
             headerName: 'Name',
@@ -59,17 +64,18 @@ const ProductList = () => {
             field: 'createdAt',
             headerName: 'Created',
             width: 150,
-            getValue: (params) => moment(parseInt(params.createdAt)).format('DD-MM-YYYY:HH:MM')
+            getValue: (params) => moment(parseInt(params?.createdAt || '0')).format('DD-MM-YYYY:HH:MM')
           },
           {
             field: 'updatedAt',
             headerName: 'Modified',
             width: 150,
-            getValue: (params) => moment(parseInt(params.updatedAt)).format('DD-MM-YYYY:HH:MM')
+            getValue: (params) => moment(parseInt(params?.updatedAt || '0')).format('DD-MM-YYYY:HH:MM')
           }
         ])}
         rows={products || []}
         loading={loading}
+        stopPolling={stopPolling}
         headerButtons={
           <HeaderButtons
             buttons={[
@@ -129,7 +135,7 @@ const ProductList = () => {
             }
           ]
         }}
-        apiAction={apiAction}
+        startPolling={apiAction}
         title={'Product'}
       />
     </div>

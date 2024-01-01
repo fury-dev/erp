@@ -33,7 +33,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { Loader } from '..';
 import { useMultiSelect } from '../../context/MuliSelectContext';
-import { TItems } from '../../types';
+import { ITEMS, TItems } from '../../types';
 import { IButtons } from './ButtonGroup';
 import { FaSearch } from 'react-icons/fa';
 import { TQueryParams } from '../../service/controllers';
@@ -48,14 +48,15 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-interface HeadCell<T extends Product | Order | Expense> {
+interface HeadCell<T extends TItems> {
   disablePadding?: boolean;
   label?: string;
   numeric?: boolean;
   getValue?: (params: T) => string;
   buttons?: IButtons[];
+  field: keyof T;
 }
-type TableColumn<T extends Product | Order | Expense> = Omit<GridColDef, 'type'> & HeadCell<T>;
+type TableColumn<T extends Product | Order | Expense> = Omit<Omit<GridColDef, 'type'>, 'field'> & HeadCell<T>;
 type SortOrder = 'asc' | 'desc';
 type TableOrder = keyof (Product | Order | Expense);
 interface IListView<T extends Product | Order | Expense> {
@@ -65,26 +66,29 @@ interface IListView<T extends Product | Order | Expense> {
   loading?: boolean;
   checkboxSelection?: boolean;
   headerButtons?: React.ReactNode;
-  apiAction: Function;
+  startPolling: Function;
+  stopPolling: Function;
   pageSizeOptions?: number[];
   title: string;
-  actionCell?: TableColumn<T>;
+  actionCell?: Omit<TableColumn<T>, 'field'> & {
+    field: string;
+  };
   updateApiFilter: (params: TQueryParams) => Promise<void>;
 }
-interface LayoutTableProps<T extends Product | Order | Expense> {
+interface LayoutTableProps<T extends TItems> {
   numSelected: number;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: TableOrder) => void;
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof T) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: SortOrder;
-  orderBy: TableOrder;
+  orderBy: keyof T;
   rowCount: number;
   headCells: TableColumn<T>[];
   hasHeader?: boolean;
 }
 
-function LayoutTableHead<T extends Product | Order | Expense>(props: LayoutTableProps<T>) {
+function LayoutTableHead<T extends TItems>(props: LayoutTableProps<T>) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells, hasHeader } = props;
-  const createSortHandler = (property: TableOrder) => (event: React.MouseEvent<unknown>) => {
+  const createSortHandler = (property: keyof T) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
   };
 
@@ -104,7 +108,7 @@ function LayoutTableHead<T extends Product | Order | Expense>(props: LayoutTable
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
-            key={headCell.field}
+            key={headCell.field as string}
             align={headCell?.align ? 'left' : headCell.align}
             padding={headCell?.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.field ? order : false}
@@ -118,7 +122,7 @@ function LayoutTableHead<T extends Product | Order | Expense>(props: LayoutTable
               <TableSortLabel
                 active={orderBy === headCell.field}
                 direction={orderBy === headCell.field ? order : 'asc'}
-                onClick={createSortHandler(headCell.field as TableOrder)}
+                onClick={createSortHandler(headCell.field)}
               >
                 {headCell.headerName}
                 {orderBy === headCell.field ? (
@@ -241,7 +245,7 @@ function LayoutTableToolbar(props: LayoutTableToolbarProps) {
   );
 }
 
-export const ListView = <T extends Product | Order | Expense>({
+export const ListView = <T extends TItems>({
   columns,
   initialState = {
     pagination: {
@@ -254,28 +258,29 @@ export const ListView = <T extends Product | Order | Expense>({
   checkboxSelection = false,
   loading = false,
   headerButtons,
-  apiAction,
+  startPolling,
+  stopPolling,
   pageSizeOptions = [10, 50],
   rows,
   title,
   actionCell,
   updateApiFilter
 }: IListView<T>) => {
-  const executeApiAction = useCallback(async () => {
-    await apiAction();
-  }, [apiAction]);
-
   useEffect(() => {
-    apiAction();
-  }, [apiAction]);
+    console.log('startPolling');
+    startPolling();
+    return () => {
+      stopPolling();
+    };
+  }, [startPolling]);
   const [order, setOrder] = React.useState<SortOrder>('asc');
-  const [orderBy, setOrderBy] = React.useState<TableOrder>('updatedAt');
+  const [orderBy, setOrderBy] = React.useState<keyof T>('updatedAt');
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(20);
   const { selected, setSelected } = useMultiSelect();
 
-  const handleRequestSort = (event: React.MouseEvent<unknown>, property: TableOrder) => {
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof T) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -328,7 +333,7 @@ export const ListView = <T extends Product | Order | Expense>({
     return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
   }
 
-  function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
+  function stableSort<T>(array: readonly T[], comparator: (a: any, b: any) => number) {
     const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
     stabilizedThis.sort((a, b) => {
       const order = comparator(a[0], b[0]);
@@ -343,10 +348,11 @@ export const ListView = <T extends Product | Order | Expense>({
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   const visibleRows = React.useMemo(
-    () => stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    () => rows && stableSort<T>(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [order, orderBy, page, rowsPerPage, rows]
   );
 
+  console.log(visibleRows);
   return (
     <div style={{ height: '100%', width: '100' }}>
       {headerButtons}
@@ -364,7 +370,7 @@ export const ListView = <T extends Product | Order | Expense>({
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
                 rowCount={rows.length}
-                headCells={actionCell ? [...columns, actionCell] : columns}
+                headCells={actionCell ? [...columns, actionCell as TableColumn<T>] : columns}
                 hasHeader={(actionCell?.buttons || []).length > 0}
               />
               <TableBody>
@@ -387,7 +393,7 @@ export const ListView = <T extends Product | Order | Expense>({
 
                       {columns.map((value, index) => (
                         <TableCell
-                          id={`${row.id}-${value.field}`}
+                          id={`${row.id}-${value.field as string}`}
                           key={index.toString()}
                           align={value.align ? 'left' : value.align}
                           width={value.width}
@@ -398,7 +404,13 @@ export const ListView = <T extends Product | Order | Expense>({
                       ))}
                       <TableCell id={`actions`}>
                         {actionCell?.buttons?.map((value, index) => (
-                          <Button key={`header-button-${index}`} id={row.id} endIcon={value.icon} disableElevation {...value.rest}>
+                          <Button
+                            key={`header-button-${index}`}
+                            id={row.id as string}
+                            endIcon={value.icon}
+                            disableElevation
+                            {...value.rest}
+                          >
                             {value.title}
                           </Button>
                         ))}

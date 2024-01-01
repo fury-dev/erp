@@ -11,7 +11,7 @@ import { useCallback } from 'react';
 import { useDialogContext } from '../../../context/DialogContext';
 const OrderList = () => {
   const {
-    list: { apiAction, loading, updateQuery },
+    list: { apiAction, loading, updateQuery, stopPolling },
     orders,
     selected,
     deleteRequest
@@ -23,6 +23,7 @@ const OrderList = () => {
     <div style={{ height: '100%', width: '100' }}>
       <ListView<Order>
         updateApiFilter={updateQuery}
+        stopPolling={stopPolling}
         columns={compact([
           {
             field: 'orderId',
@@ -63,25 +64,25 @@ const OrderList = () => {
             field: 'paymentStatus',
             headerName: 'Payment Status',
             width: 150,
-            getValue: (params) => `${params.paymentStatus}`
+            getValue: (params) => `${params.paymentStatus ? 'DONE' : 'PENDING'}`
           },
           {
             field: 'deliveryDate',
             headerName: 'Delivery Date',
             width: 150,
-            getValue: (params) => moment(parseInt(params.deliveryDate)).format('DD-MM-YYYY:HH:MM')
+            getValue: (params) => (params.deliveryDate ? moment(parseInt(params.deliveryDate)).format('DD-MM-YYYY:HH:MM') : 'N/A')
           },
           {
             field: 'createdAt',
             headerName: 'Created',
             width: 150,
-            getValue: (params) => moment(parseInt(params.createdAt)).format('DD-MM-YYYY:HH:MM')
+            getValue: (params) => moment(parseInt(params.createdAt || '0')).format('DD-MM-YYYY:HH:MM')
           },
           {
             field: 'updatedAt',
             headerName: 'Modified',
             width: 150,
-            getValue: (params) => moment(parseInt(params.updatedAt)).format('DD-MM-YYYY:HH:MM')
+            getValue: (params) => moment(parseInt(params.updatedAt || '0')).format('DD-MM-YYYY:HH:MM')
           }
         ])}
         rows={orders || []}
@@ -145,7 +146,7 @@ const OrderList = () => {
             }
           ]
         }}
-        apiAction={apiAction}
+        startPolling={apiAction}
         title={'Order'}
       />
     </div>

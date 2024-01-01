@@ -41,10 +41,19 @@ export const useAdd = (item: ITEMS) => {
           orderDate
           orderType
           versionId
-          amount
+          amount {
+            amount
+            currency
+          }
           productId
           status
-          string
+          location {
+            address
+            pincode
+            city
+            state
+            country
+          }
           paymentStatus
           deliveryDate
           createdAt

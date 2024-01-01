@@ -18,6 +18,7 @@ const expenses = async (_: any, args: any, context: any) => {
         message: { $slice: ["$yourArray", -1] },
         id: "$_id",
         updatedAt: 1,
+        expenseId: 1,
       },
     },
   ]);

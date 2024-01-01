@@ -1,28 +1,23 @@
 import orderModel = require("../../schema/mongo/order");
 import utils = require("../../schema/mongo/utils");
+import generateQuery = require("../../utils/generateQuery");
 
 const orders = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  const response = await orderModel.controller.aggregate([
-    ...((args.id || []).length > 0
-      ? [
-          {
-            $match: {
-              _id: { $in: args.id },
-            },
-          },
-        ]
-      : []),
+  const response = await generateQuery.generateQuery(
+    orderModel.controller,
+    args,
+    [],
+    "id",
     {
-      $project: {
-        updatedAt: 1,
+      orderId: 1,
+    }
+  );
 
-        message: { $slice: ["$yourArray", -1] },
-        id: "$_id",
-      },
-    },
-  ]);
-  return utils.unpackMessage(response);
+  const preprocess = utils.unpackMessage(response);
+  console.log("List Orders", preprocess.length);
+
+  return preprocess;
 };
 
 const orderSelection = (

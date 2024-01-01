@@ -11,7 +11,7 @@ export const useOrder = () => {
     add,
     update,
     remove: { deleteRequest },
-    list: { refetch, data, loading, fetchMore, startPolling, updateQuery }
+    list: { refetch, data, loading, fetchMore, startPolling, updateQuery, stopPolling }
   } = useApiService('order');
   const dispatch = useDispatch();
   const orders = useSelector((state: RootState) => state.order.items);
@@ -24,6 +24,8 @@ export const useOrder = () => {
         console.log('update', data);
         update.submitData(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'));
       } else {
+        console.log(data);
+
         add.submitData(data);
       }
     },
@@ -50,7 +52,7 @@ export const useOrder = () => {
 
   return {
     submitData,
-    list: { apiAction, data, loading, fetchMore, updateQuery },
+    list: { apiAction, data, loading, fetchMore, updateQuery, stopPolling },
     orders: items,
     selected,
     deleteRequest

@@ -25,7 +25,7 @@ type User{
     username:String
 }
 type Expense{
-    id:ID!
+    id:ID
     expenseType:String!
     amount:Price
     expenseId:Int
@@ -33,8 +33,8 @@ type Expense{
     cashInBank:Price
     cashInHand:Price
     pnl:Price
-    createdAt:String!
-    updatedAt:String!
+    createdAt:String
+    updatedAt:String
 }
 
 type Address{
@@ -45,7 +45,7 @@ type Address{
     country:String
 }
 type Order{
-    id:ID!
+    id:ID
     customerName:String!
     versionId:Int
     orderId:Int
@@ -58,8 +58,8 @@ type Order{
     location:Address
     paymentStatus:Boolean!
     deliveryDate:String
-    createdAt:String!
-    updatedAt:String!
+    createdAt:String
+    updatedAt:String
 }
 
 type Query{
@@ -114,15 +114,22 @@ input OrderValue{
     orderDate:String
     orderType:String
     amount:PriceValue
+    location:AddressValue
     productId:ID!
     status:String
-    paymentStatus:Boolean
+    paymentStatus:Boolean 
     deliveryDate:String
     versionId:Int
 
 
 }
-
+input AddressValue{
+    address:String
+    pincode:Int
+    city:String
+    state:String
+    country:String
+}
 input UserLoginValue{
     email:String!
     password:String!

@@ -13,7 +13,7 @@ export const FormSelect = <T,>({ handleChange, touched, errors, title, value, na
     if (apiAction) {
       apiAction({});
     }
-  }, [apiAction]);
+  }, []);
 
   useEffect(() => {
     if (!value && options.length > 0) {

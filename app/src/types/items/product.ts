@@ -8,6 +8,7 @@ export type Product = {
   distributorPrice: Price;
   sellerPrice: Price;
   size?: string[];
+  productId?: Number;
   inStock: boolean;
   createdAt?: string;
   updatedAt?: string;

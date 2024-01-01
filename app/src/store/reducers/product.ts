@@ -11,7 +11,7 @@ const initialState: {
 } = {
   setup: {
     id: '',
-    versionId: '',
+    versionId: 1,
     distributorPrice: {
       currency: 'INR',
       amount: 0
@@ -47,7 +47,7 @@ const initialState: {
     name: '',
     image: '',
     inStock: false,
-    versionId: ''
+    versionId: 1
   }
 };
 
@@ -56,10 +56,6 @@ const productSlice = createSlice({
   initialState,
   reducers: {
     setProducts: (_state, action) => {
-      console.log({
-        ...current(_state),
-        items: action.payload
-      });
       return {
         ...current(_state),
         items: action.payload

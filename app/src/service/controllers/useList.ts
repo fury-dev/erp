@@ -49,6 +49,25 @@ export const useList = (item: ITEMS) => {
           }
           productId
           status
+          product {
+            id
+            name
+            versionId
+            productId
+            image
+            distributorPrice {
+              amount
+              currency
+            }
+            sellerPrice {
+              amount
+              currency
+            }
+            size
+            inStock
+            createdAt
+            updatedAt
+          }
           location {
             address
             pincode
@@ -56,7 +75,6 @@ export const useList = (item: ITEMS) => {
             state
             country
           }
-          string
           paymentStatus
           deliveryDate
           createdAt

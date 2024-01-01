@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonProps, Grid, ButtonGroup as MUIButtonGroup } from '@mui/material';
+import { Box, Button, ButtonProps, Grid, ButtonGroup as MUIButtonGroup } from '@mui/material';
 import { produce } from 'immer';
 export type IButtons = {
   title: string;
@@ -40,14 +40,15 @@ export const ButtonGroup = ({ buttons, spacing = true, ...rest }: { buttons: IBu
   if (!spacing)
     return (
       <MUIButtonGroup disableElevation variant="contained" aria-label="Disabled elevation buttons" {...rest}>
-        {' '}
         {processButtons}
       </MUIButtonGroup>
     );
 
   return (
-    <Grid gap={1} container xs={buttons.length}>
-      {processButtons}
-    </Grid>
+    <Box display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center">
+      <Grid gap={1} container>
+        {processButtons}
+      </Grid>
+    </Box>
   );
 };
