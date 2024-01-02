@@ -1,13 +1,7 @@
-import { useState } from 'react';
 import { ITEMS } from '../../types/items';
 import { gql, useMutation } from '@apollo/client';
-import { Product } from '../../types/items/product';
-import { Order } from '../../types/items/order';
-import { Expense } from '../../types/items/expense';
 
 export const useAdd = (item: ITEMS) => {
-  const [input, setInput] = useState<Product | Order | Expense>();
-
   let query = null;
   if (item === 'product') {
     query = gql`
@@ -68,6 +62,7 @@ export const useAdd = (item: ITEMS) => {
           id
           expenseType
           versionId
+          expenseId
           amount {
             amount
             currency
@@ -80,7 +75,12 @@ export const useAdd = (item: ITEMS) => {
             amount
             currency
           }
-          pnl
+          pnl {
+            amount
+            currency
+          }
+          note
+          operationType
           createdAt
           updatedAt
         }
@@ -89,7 +89,7 @@ export const useAdd = (item: ITEMS) => {
   }
   const [addData] = useMutation(query, {
     variables: {
-      item: input
+      item: []
     }
   });
 

@@ -12,7 +12,7 @@ const generateQuery = (
   const match: any[] = [
     {
       deleted: {
-        $eq: filters.deleted,
+        $eq: filters.deleted || false,
       },
     },
   ];

@@ -26,13 +26,15 @@ type User{
 }
 type Expense{
     id:ID
-    expenseType:String!
+    expenseType:String
     amount:Price
     expenseId:Int
     versionId:Int
     cashInBank:Price
     cashInHand:Price
     pnl:Price
+    note:String
+    operationType:String
     createdAt:String
     updatedAt:String
 }
@@ -94,6 +96,8 @@ input ExpenseValue{
     amount:PriceValue
     cashInBank:PriceValue
     cashInHand:PriceValue
+    note:String
+    operationType:String
     versionId:Int
 
 }

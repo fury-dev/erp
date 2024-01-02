@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { produce } from 'immer';
+import { current, produce } from 'immer';
 import { Expense } from '../../types/items/expense';
 const initialState: {
   setup: Expense;
@@ -11,8 +11,10 @@ const initialState: {
 } = {
   setup: {
     id: '',
-    expenseType: '',
-    versionId: '',
+    versionId: 1,
+    note: '',
+    operationType: 'CREDIT',
+    expenseType: 'OTHERS',
 
     amount: {
       currency: 'INR',
@@ -35,9 +37,10 @@ const initialState: {
   },
   view: {
     id: '',
-    versionId: '',
-
-    expenseType: '',
+    versionId: 1,
+    note: '',
+    operationType: 'CREDIT',
+    expenseType: 'OTHERS',
     amount: {
       currency: 'INR',
       amount: 0
@@ -68,9 +71,10 @@ const expenseSlice = createSlice({
   initialState,
   reducers: {
     setExpenses: (_state, action) => {
-      return produce(_state, (draft) => {
-        draft.items.value = action.payload;
-      });
+      return {
+        ...current(_state),
+        items: action.payload
+      };
     },
     setExpense: (_state, action) => {
       return produce(_state, (draft) => {

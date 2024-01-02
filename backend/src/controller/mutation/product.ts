@@ -7,12 +7,14 @@ import productQuery = require("../query/product");
 const addProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
-    const lastProduct = (
-      await productModel.controller.findOne({ sort: { _id: 1 } })
-    )?.toJSON();
+    const lastProduct = await productModel.controller
+      .find()
+      .sort({ _id: -1 })
+      .limit(1);
+
     let productId = 124594;
-    if (lastProduct?.productId) {
-      productId = lastProduct.productId + 1;
+    if (lastProduct.length === 1 && lastProduct[0]?.productId) {
+      productId = lastProduct[0]?.productId + 1;
     }
     const product = new productModel.controller({
       productId,
@@ -68,7 +70,6 @@ const deleteProduct = async (_: any, args: any, context: any) => {
     const records = await productQuery.products(null, args, context);
 
     return await records?.map(async (record) => {
-      console.log(utils.updateMongo(record, true, true));
       return await productModel.controller.findByIdAndUpdate(
         args.id,
         utils.updateMongo(record, true, true)

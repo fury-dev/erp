@@ -11,7 +11,7 @@ export const useOrder = () => {
     add,
     update,
     remove: { deleteRequest },
-    list: { refetch, data, loading, fetchMore, startPolling, updateQuery, stopPolling }
+    list: { data, loading, fetchMore, startPolling, updateQuery, stopPolling }
   } = useApiService('order');
   const dispatch = useDispatch();
   const orders = useSelector((state: RootState) => state.order.items);
@@ -22,7 +22,8 @@ export const useOrder = () => {
     (data: Order) => {
       if (data?.id) {
         console.log('update', data);
-        update.submitData(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'));
+        delete data.product;
+        update.submitData(lodash.omit(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'), 'orderId'));
       } else {
         console.log(data);
 
@@ -44,7 +45,7 @@ export const useOrder = () => {
     }
   }, [data]);
   const apiAction = useCallback(
-    async (...rest: any) => {
+    async (..._rest: any) => {
       startPolling(10000);
     },
     [data, startPolling]

@@ -1,28 +1,22 @@
 import expenseModel = require("../../schema/mongo/expense");
 import utils = require("../../schema/mongo/utils");
+import generateQuery = require("../../utils/generateQuery");
 
 const expenses = async (_: any, args: any, context: any) => {
-  if (!context.user) return null;
-  const response = await expenseModel.controller.aggregate([
-    ...((args.id || []).length > 0
-      ? [
-          {
-            $match: {
-              _id: { $in: args.id },
-            },
-          },
-        ]
-      : []),
+  const response = await generateQuery.generateQuery(
+    expenseModel.controller,
+    args,
+    [],
+    "id",
     {
-      $project: {
-        message: { $slice: ["$yourArray", -1] },
-        id: "$_id",
-        updatedAt: 1,
-        expenseId: 1,
-      },
-    },
-  ]);
-  return utils.unpackMessage(response);
+      expenseId: 1,
+    }
+  );
+
+  const preprocess = utils.unpackMessage(response);
+  console.log("List Expense", preprocess.length);
+
+  return preprocess;
 };
 const expenseSelection = (
   _: any,

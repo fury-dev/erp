@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ListView } from '../../../components/List/ListView';
 import { compact } from 'lodash';
 import { OrderSetup } from './OrderSetup';
@@ -52,6 +51,11 @@ const OrderList = () => {
             headerName: 'Amount',
             width: 70,
             getValue: (params) => ` ${params.amount.amount} ${params.amount.currency} `
+          },
+          {
+            field: 'orderType',
+            headerName: 'Type',
+            width: 150
           },
           {
             field: 'status',

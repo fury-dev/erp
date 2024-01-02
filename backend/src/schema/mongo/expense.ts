@@ -18,7 +18,6 @@ const schema = new mongoose.Schema({
       },
       versionId: {
         type: Number,
-        unique: true,
       },
       pnl: common.Price,
       createdAt: { type: Date, default: Date.now },

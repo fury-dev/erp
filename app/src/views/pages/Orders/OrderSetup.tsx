@@ -61,7 +61,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
           }
         }}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
           <form
             noValidate
             onSubmit={handleSubmit}
@@ -107,7 +107,14 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                   name="status"
                   errors={errors}
                   touched={touched}
-                  handleChange={handleChange}
+                  handleChange={(e: React.ChangeEvent<any>) => {
+                    if (e.target.value === 'DELIVERED') {
+                      setFieldValue('deliveryDate', new Date());
+                    } else if (values.deliveryDate) {
+                      setFieldValue('deliveryDate', undefined);
+                    }
+                    handleChange(e);
+                  }}
                   options={orderStatus}
                   value={values.status}
                 />
@@ -298,7 +305,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">
-                  Add Order
+                  {values.id ? 'Update' : 'Add'} Order
                 </Button>
               </AnimateButton>
             </Box>

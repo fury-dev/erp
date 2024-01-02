@@ -28,14 +28,82 @@ export const useDelete = (item: ITEMS) => {
     `;
   } else if (item === 'order') {
     query = gql`
-      mutation Order($id: ID) {
-        deleteOrder(id: $item)
+      mutation Order($id: [ID!]) {
+        deleteOrder(id: $id) {
+          id
+          versionId
+          customerName
+          orderId
+          orderDate
+          orderType
+          amount {
+            amount
+            currency
+          }
+          productId
+          status
+          product {
+            id
+            name
+            versionId
+            productId
+            image
+            distributorPrice {
+              amount
+              currency
+            }
+            sellerPrice {
+              amount
+              currency
+            }
+            size
+            inStock
+            createdAt
+            updatedAt
+          }
+          location {
+            address
+            pincode
+            city
+            state
+            country
+          }
+          paymentStatus
+          deliveryDate
+          createdAt
+          updatedAt
+        }
       }
     `;
   } else {
     query = gql`
-      mutation Expense($id: ID) {
-        deleteExpense(id: $id)
+      mutation Expense($id: [ID!]) {
+        deleteExpense(id: $id) {
+          id
+          expenseType
+          versionId
+          expenseId
+          amount {
+            amount
+            currency
+          }
+          cashInBank {
+            amount
+            currency
+          }
+          cashInHand {
+            amount
+            currency
+          }
+          pnl {
+            amount
+            currency
+          }
+          note
+          operationType
+          createdAt
+          updatedAt
+        }
       }
     `;
   }

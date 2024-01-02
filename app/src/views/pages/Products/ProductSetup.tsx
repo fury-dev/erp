@@ -202,7 +202,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">
-                  Add Product
+                  {values.id ? 'Update' : 'Add'} Product
                 </Button>
               </AnimateButton>
             </Box>

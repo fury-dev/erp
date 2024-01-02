@@ -16,7 +16,6 @@ const schema = new mongoose.Schema({
       },
       versionId: {
         type: Number,
-        unique: true,
       },
       customerName: {
         type: String,

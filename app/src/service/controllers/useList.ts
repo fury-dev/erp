@@ -85,7 +85,7 @@ export const useList = (item: ITEMS) => {
   } else {
     query = gql`
       query Expense($id: [ID], $deleted: Boolean, $search: String) {
-        expense(id: $id, deleted: $deleted, search: $search) {
+        expenses(id: $id, deleted: $deleted, search: $search) {
           id
           expenseType
           versionId
@@ -102,7 +102,12 @@ export const useList = (item: ITEMS) => {
             amount
             currency
           }
-          pnl
+          pnl {
+            amount
+            currency
+          }
+          note
+          operationType
           createdAt
           updatedAt
         }
@@ -115,7 +120,7 @@ export const useList = (item: ITEMS) => {
     error,
     data,
     refetch,
-    updateQuery: updateGraphQuery,
+    updateQuery: _updateGraphQuery,
     fetchMore,
     startPolling,
     stopPolling

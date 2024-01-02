@@ -1,49 +1,49 @@
 import { useApiService } from '../../../../service';
 import { useCallback, useEffect, useState } from 'react';
-import { Product } from '../../../../types/items/product';
 import { useDispatch, useSelector } from 'react-redux';
-import { setProducts } from '../../../../store/reducers';
+import { setExpenses } from '../../../../store/reducers';
 import { RootState } from '../../../../store';
 import { useMultiSelect } from '../../../../context/MuliSelectContext';
 import lodash from 'lodash';
-export const useProduct = () => {
+import { Expense } from '../../../../types/items/expense';
+export const useExpense = () => {
   const {
     add,
     update,
     remove: { deleteRequest },
-    list: { refetch, data, loading, fetchMore, startPolling, updateQuery, stopPolling }
-  } = useApiService('product');
+    list: { data, loading, fetchMore, startPolling, updateQuery, stopPolling }
+  } = useApiService('expense');
   const dispatch = useDispatch();
-  const products = useSelector((state: RootState) => state.product.items);
-  const [items, setItems] = useState(products.value);
+  const expense = useSelector((state: RootState) => state.expense.items);
+  const [items, setItems] = useState(expense.value);
   const { selected } = useMultiSelect();
 
   const submitData = useCallback(
-    (data: Product) => {
+    (data: Expense) => {
       if (data?.id) {
         console.log('update', data);
-
-        update.submitData(lodash.omit(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'), 'productId'));
+        update.submitData(lodash.omit(lodash.omit(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'), 'expenseId'), 'pnl'));
       } else {
-        add.submitData(data);
+        console.log(data);
+        add.submitData(lodash.omit(data, 'pnl'));
       }
     },
     [update, add]
   );
 
   useEffect(() => {
-    if (data?.products) {
+    if (data?.expenses) {
       dispatch(
-        setProducts({
-          value: data.products,
+        setExpenses({
+          value: data.expenses,
           page: 1
         })
       );
-      setItems(data.products);
+      setItems(data.expenses);
     }
   }, [data]);
   const apiAction = useCallback(
-    async (...rest: any) => {
+    async (..._rest: any) => {
       startPolling(10000);
     },
     [data, startPolling]
@@ -52,7 +52,7 @@ export const useProduct = () => {
   return {
     submitData,
     list: { apiAction, data, loading, fetchMore, updateQuery, stopPolling },
-    products: items,
+    expense: items,
     selected,
     deleteRequest
   };

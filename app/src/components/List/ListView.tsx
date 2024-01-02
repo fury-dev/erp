@@ -352,7 +352,6 @@ export const ListView = <T extends TItems>({
     [order, orderBy, page, rowsPerPage, rows]
   );
 
-  console.log(visibleRows);
   return (
     <div style={{ height: '100%', width: '100' }}>
       {headerButtons}
@@ -402,19 +401,21 @@ export const ListView = <T extends TItems>({
                           {value?.getValue ? value.getValue(row) : row[value.field as keyof typeof row]}
                         </TableCell>
                       ))}
-                      <TableCell id={`actions`}>
-                        {actionCell?.buttons?.map((value, index) => (
-                          <Button
-                            key={`header-button-${index}`}
-                            id={row.id as string}
-                            endIcon={value.icon}
-                            disableElevation
-                            {...value.rest}
-                          >
-                            {value.title}
-                          </Button>
-                        ))}
-                      </TableCell>
+                      {actionCell && (
+                        <TableCell id={`actions`}>
+                          {actionCell?.buttons?.map((value, index) => (
+                            <Button
+                              key={`header-button-${index}`}
+                              id={row.id as string}
+                              endIcon={value.icon}
+                              disableElevation
+                              {...value.rest}
+                            >
+                              {value.title}
+                            </Button>
+                          ))}
+                        </TableCell>
+                      )}
                     </TableRow>
                   );
                 })}

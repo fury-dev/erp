@@ -3,7 +3,6 @@ import { lazy } from 'react';
 // project imports
 import MainLayout from '../layout/MainLayout';
 import Loadable from '../ui-component/Loadable';
-import OrderList from '../views/pages/Orders/OrderList';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('../views/dashboard/Default')));
@@ -15,6 +14,8 @@ const UtilsShadow = Loadable(lazy(() => import('../views/utilities/Shadow')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('../views/utilities/MaterialIcons')));
 const UtilsTablerIcons = Loadable(lazy(() => import('../views/utilities/TablerIcons')));
 const ProductList = Loadable(lazy(() => import('../views/pages/Products/ProductList')));
+const OrderList = Loadable(lazy(() => import('../views/pages/Orders/OrderList')));
+const ExpenseList = Loadable(lazy(() => import('../views/pages/Expense/ExpenseList')));
 
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('../views/sample-page')));
@@ -94,6 +95,10 @@ const MainRoutes = {
     {
       path: 'orders',
       element: <OrderList />
+    },
+    {
+      path: 'expenses',
+      element: <ExpenseList />
     }
   ]
 };
