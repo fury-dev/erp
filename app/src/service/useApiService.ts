@@ -1,4 +1,4 @@
-import { useAdd, useDelete, useList, useUpdate } from './controllers';
+import { useAdd, useChart, useDelete, useList, useUpdate } from './controllers';
 import { ITEMS } from '../types/items';
 
 export const useApiService = (item: ITEMS) => {
@@ -7,12 +7,14 @@ export const useApiService = (item: ITEMS) => {
   // const find = useFind(item);
   const update = useUpdate(item);
   const remove = useDelete(item);
+  const chart = useChart();
 
   return {
     add,
     list,
     // find,
     update,
-    remove
+    remove,
+    chart
   };
 };

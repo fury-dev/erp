@@ -63,7 +63,15 @@ type Order{
     createdAt:String
     updatedAt:String
 }
+type Series{
+    name:String
+    data:[Int]
+}
 
+input Filter{
+    dateBy:String
+    item:String
+}   
 type Query{
     orders(id:[ID],deleted:Boolean,search:String):[Order]
     # orderSelection(id:[ID!]):[Order]
@@ -72,6 +80,7 @@ type Query{
     products(id:[ID],deleted:Boolean,search:String):[Product]
     userValidation(token:String):User
     # productSelection(id:[ID!]):[Product]
+    chartData(filter:Filter):[Series]
 
 } 
 
