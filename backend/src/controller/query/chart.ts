@@ -6,17 +6,65 @@ import mongoose = require("mongoose");
 import moment = require("moment");
 type TChart = {
   status: string;
-  total: Number;
-  timeFrame: string | Number;
+  total: number;
+  timeFrame: string | number;
+};
+
+type TDateby = "MONTH" | "ALL_TIME" | "YEAR" | "DAY" | "WEEK";
+
+const fill: Record<TDateby, number> = {
+  ALL_TIME: 1,
+  DAY: 24,
+  MONTH: 31,
+  WEEK: 7,
+
+  YEAR: 12,
+};
+const preprocessTimeSeries = (data: TChart[], dateBy: TDateby) => {
+  const dataByStatus: Record<string, TChart[]> = {};
+
+  data.forEach((value) => {
+    if (!Object.keys(dataByStatus).includes(value.status)) {
+      dataByStatus[value.status] = [];
+    }
+
+    dataByStatus[value.status].push(value);
+  });
+
+  const timeSeries: {
+    name: string;
+    data: number;
+  }[] = [];
+  Object.keys(dataByStatus).map((value) => {
+    const time = {
+      name: value,
+      //@ts-ignore
+      data: dataByStatus[value].sort((a, b) =>
+        a.timeFrame > b.timeFrame ? 1 : a.timeFrame < b.timeFrame ? -1 : 0
+      ),
+    };
+
+    const xdata: number[] = new Array(fill[dateBy]).fill(0);
+
+    time.data.forEach((item) => {
+      xdata[item.timeFrame as number] = item.total;
+    });
+
+    //@ts-ignore
+    time.data = xdata;
+    //@ts-ignore
+    timeSeries.push(time);
+  });
+  return timeSeries;
 };
 const chartData = async (_: any, args: any, context: any) => {
   let createSeries = "status";
 
   let controller: mongoose.Model<any> = orderModel.controller;
-  if (args.filter.item === "PRODUCT") {
+  if (args.filter.item === "product") {
     createSeries = "inStock";
     controller = productModel.controller;
-  } else if (args.filter.item === "EXPENSE") {
+  } else if (args.filter.item === "expense") {
     createSeries = "operationType";
     controller = expenseModel.controller;
   }
@@ -80,34 +128,10 @@ const chartData = async (_: any, args: any, context: any) => {
       },
     },
   ]);
-  const dataByStatus: Record<string, TChart[]> = {};
-
-  data.forEach((value) => {
-    if (!Object.keys(dataByStatus).includes(value.status)) {
-      dataByStatus[value.status] = [];
-    }
-
-    dataByStatus[value.status].push(value);
-  });
-
-  const timeSeries: {
-    name: string;
-    data: Number;
-  }[] = [];
-  Object.keys(dataByStatus).map((value) => {
-    timeSeries.push({
-      name: value,
-      //@ts-ignore
-      data: dataByStatus[value]
-        .sort((a, b) =>
-          a.timeFrame > b.timeFrame ? 1 : a.timeFrame < b.timeFrame ? -1 : 0
-        )
-        .map((value) => value.total),
-    });
-  });
-
-  console.log(timeSeries);
-  return timeSeries;
+  console.log(data);
+  const preprocess = preprocessTimeSeries(data, args.filter.dateBy);
+  console.log(JSON.stringify(preprocess));
+  return preprocess;
 };
 
 export { chartData };

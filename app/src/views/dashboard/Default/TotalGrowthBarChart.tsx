@@ -19,6 +19,7 @@ import { gridSpacing } from '../../../store/constant';
 import chartData from './chart-data/total-growth-bar-chart';
 import { useApiService } from '../../../service';
 import { TChartFilter } from '../../../service/controllers';
+import { ITEMS, TItems } from '../../../types';
 
 const monthCategory = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const weekCategory = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
@@ -30,6 +31,25 @@ const columns: Record<TChartFilter['dateBy'], string[]> = {
   DAY: [],
   YEAR: monthCategory
 };
+
+const items: {
+  value: ITEMS;
+  label: string;
+}[] = [
+  {
+    value: 'expense',
+    label: 'Expense'
+  },
+  {
+    value: 'order',
+    label: 'Order'
+  },
+  {
+    value: 'product',
+    label: 'Product'
+  }
+];
+
 const status: {
   value: TChartFilter['dateBy'];
   label: string;
@@ -60,6 +80,8 @@ const status: {
 
 const TotalGrowthBarChart = ({ isLoading }) => {
   const [value, setValue] = useState<TChartFilter['dateBy']>('YEAR');
+  const [item, setItem] = useState<ITEMS>('order');
+
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
   const {
@@ -118,10 +140,10 @@ const TotalGrowthBarChart = ({ isLoading }) => {
 
   useEffect(() => {
     updateQuery({
-      dateBy: 'YEAR',
-      item: 'order'
+      dateBy: value,
+      item: item
     });
-  }, []);
+  }, [value, item]);
   return (
     <>
       {isLoading ? (
@@ -140,6 +162,15 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                       <Typography variant="h3">$2,324.00</Typography>
                     </Grid>
                   </Grid>
+                </Grid>
+                <Grid item>
+                  <TextField id="standard-select-currency" select value={item} onChange={(e) => setItem(e.target.value)}>
+                    {items.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
                 <Grid item>
                   <TextField id="standard-select-currency" select value={value} onChange={(e) => setValue(e.target.value)}>
