@@ -17,28 +17,76 @@ import { gridSpacing } from '../../../store/constant';
 
 // chart data
 import chartData from './chart-data/total-growth-bar-chart';
+import { useApiService } from '../../../service';
+import { TChartFilter } from '../../../service/controllers';
+import { ITEMS, TItems } from '../../../types';
 
-const status = [
+const monthCategory = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const weekCategory = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
+
+const columns: Record<TChartFilter['dateBy'], string[]> = {
+  WEEK: weekCategory,
+  MONTH: [],
+  ALL_TIME: [],
+  DAY: [],
+  YEAR: monthCategory
+};
+
+const items: {
+  value: ITEMS;
+  label: string;
+}[] = [
   {
-    value: 'today',
+    value: 'expense',
+    label: 'Expense'
+  },
+  {
+    value: 'order',
+    label: 'Order'
+  },
+  {
+    value: 'product',
+    label: 'Product'
+  }
+];
+
+const status: {
+  value: TChartFilter['dateBy'];
+  label: string;
+}[] = [
+  {
+    value: 'DAY',
     label: 'Today'
   },
   {
-    value: 'month',
-    label: 'This Month'
+    value: 'WEEK',
+    label: 'Last Week'
   },
   {
-    value: 'year',
-    label: 'This Year'
+    value: 'MONTH',
+    label: 'Last Month'
+  },
+  {
+    value: 'YEAR',
+    label: 'Last Year'
+  },
+  {
+    value: 'ALL_TIME',
+    label: 'All time'
   }
 ];
 
 // ==============================|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||============================== //
 
 const TotalGrowthBarChart = ({ isLoading }) => {
-  const [value, setValue] = useState('today');
+  const [value, setValue] = useState<TChartFilter['dateBy']>('YEAR');
+  const [item, setItem] = useState<ITEMS>('order');
+
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
+  const {
+    chart: { series, updateQuery }
+  } = useApiService('order');
 
   const { navType } = customization;
   const { primary } = theme.palette.text;
@@ -60,7 +108,9 @@ const TotalGrowthBarChart = ({ isLoading }) => {
           style: {
             colors: [primary, primary, primary, primary, primary, primary, primary, primary, primary, primary, primary, primary]
           }
-        }
+        },
+        type: 'category',
+        categories: columns[value]
       },
       yaxis: {
         labels: {
@@ -88,6 +138,12 @@ const TotalGrowthBarChart = ({ isLoading }) => {
     }
   }, [navType, primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500]);
 
+  useEffect(() => {
+    updateQuery({
+      dateBy: value,
+      item: item
+    });
+  }, [value, item]);
   return (
     <>
       {isLoading ? (
@@ -100,12 +156,21 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                 <Grid item>
                   <Grid container direction="column" spacing={1}>
                     <Grid item>
-                      <Typography variant="subtitle2">Total Growth</Typography>
+                      <Typography variant="subtitle2">Total Orders</Typography>
                     </Grid>
                     <Grid item>
                       <Typography variant="h3">$2,324.00</Typography>
                     </Grid>
                   </Grid>
+                </Grid>
+                <Grid item>
+                  <TextField id="standard-select-currency" select value={item} onChange={(e) => setItem(e.target.value)}>
+                    {items.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
                 <Grid item>
                   <TextField id="standard-select-currency" select value={value} onChange={(e) => setValue(e.target.value)}>
@@ -119,7 +184,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <Chart {...chartData} />
+              <Chart {...chartData} series={series} />
             </Grid>
           </Grid>
         </MainCard>

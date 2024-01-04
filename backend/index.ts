@@ -7,6 +7,7 @@ import graphql = require("graphql");
 import dotenv = require("dotenv");
 import orderQuery = require("./src/controller/query/order");
 import userQuery = require("./src/controller/query/user");
+import chartQuery = require("./src/controller/query/chart");
 
 import productQuery = require("./src/controller/query/product");
 import expenseQuery = require("./src/controller/query/expense");
@@ -22,6 +23,7 @@ const resolvers = {
     ...expenseQuery,
     ...productQuery,
     ...userQuery,
+    ...chartQuery,
   },
   Mutation: {
     ...productMutation,
