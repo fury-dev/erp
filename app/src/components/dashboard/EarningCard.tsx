@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -19,6 +19,9 @@ import GetAppTwoToneIcon from '@mui/icons-material/GetAppOutlined';
 import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
 import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
+import { useApiService } from '../../service';
+import { sum } from 'lodash';
+import { Order } from '../../types/items/order';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.dark,
@@ -60,9 +63,17 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 const EarningCard = ({ isLoading }) => {
   const theme = useTheme();
-
   const [anchorEl, setAnchorEl] = useState(null);
+  const {
+    // chart: { series, updateQuery },
+    list: { data, updateQuery }
+  } = useApiService('order');
 
+  useEffect(() => {
+    updateQuery({
+      dateBy: 'YEAR'
+    });
+  }, []);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -145,7 +156,14 @@ const EarningCard = ({ isLoading }) => {
               <Grid item>
                 <Grid container alignItems="center">
                   <Grid item>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>$500.00</Typography>
+                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
+                      {sum(
+                        data.orders.map(
+                          (value: Order) =>
+                            value.amount.amount - (value.product?.distributorPrice.amount || 0) - (value.product?.sellerPrice.amount || 0)
+                        )
+                      )}
+                    </Typography>
                   </Grid>
                   <Grid item>
                     <Avatar

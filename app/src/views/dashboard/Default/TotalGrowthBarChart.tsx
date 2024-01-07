@@ -136,7 +136,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
     if (!isLoading) {
       ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
     }
-  }, [navType, primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500]);
+  }, [navType, primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500, series]);
 
   useEffect(() => {
     updateQuery({
@@ -156,7 +156,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                 <Grid item>
                   <Grid container direction="column" spacing={1}>
                     <Grid item>
-                      <Typography variant="subtitle2">Total Orders</Typography>
+                      <Typography variant="subtitle2">Total {items.find((value) => value.value === item)?.label}</Typography>
                     </Grid>
                     <Grid item>
                       <Typography variant="h3">$2,324.00</Typography>

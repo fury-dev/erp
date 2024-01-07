@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -17,6 +17,12 @@ import GetAppTwoToneIcon from '@mui/icons-material/GetAppOutlined';
 import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
 import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
+import { useApiService } from '../../../service';
+import { Order } from '../../../types/items/order';
+import { sum } from 'lodash';
+import { convertFromINR, convertToINR } from '../../../data/Product/currency';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.dark,
@@ -60,6 +66,7 @@ const EarningCard = ({ isLoading }) => {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const currency = useSelector((state: RootState) => state.customization.currency);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -68,7 +75,16 @@ const EarningCard = ({ isLoading }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const {
+    // chart: { series, updateQuery },
+    list: { data, updateQuery }
+  } = useApiService('order');
 
+  useEffect(() => {
+    updateQuery({
+      dateBy: 'YEAR'
+    });
+  }, []);
   return (
     <>
       {isLoading ? (
@@ -143,7 +159,18 @@ const EarningCard = ({ isLoading }) => {
               <Grid item>
                 <Grid container alignItems="center">
                   <Grid item>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>$500.00</Typography>
+                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
+                      {sum(
+                        (data?.orders || []).map((value: Order) =>
+                          convertFromINR(
+                            convertToINR(value.amount.amount, value.amount.currency) -
+                              convertToINR(value.product?.distributorPrice.amount || 0, value.product?.distributorPrice.currency || 'INR') -
+                              convertToINR(value.product?.sellerPrice.amount || 0, value.product?.sellerPrice.currency || 'INR'),
+                            currency
+                          )
+                        )
+                      )}
+                    </Typography>
                   </Grid>
                   <Grid item>
                     <Avatar
@@ -167,7 +194,7 @@ const EarningCard = ({ isLoading }) => {
                     color: theme.palette.secondary[200]
                   }}
                 >
-                  Total Earning
+                  Total Earnings this month
                 </Typography>
               </Grid>
             </Grid>

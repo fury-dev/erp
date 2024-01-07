@@ -9,6 +9,7 @@ export type TChartFilter = {
 export type TChartData = {
   name: string;
   data: Number[];
+  value: any;
 };
 
 export const useChart = () => {
@@ -17,6 +18,7 @@ export const useChart = () => {
       chartData(filter: $filter) {
         name
         data
+        value
       }
     }
   `;
@@ -33,7 +35,10 @@ export const useChart = () => {
     stopPolling
   } = useQuery(query, {
     variables: {
-      filter: {}
+      filter: {
+        item: 'order',
+        dateBy: 'ALL_TIME'
+      }
     }
   });
 

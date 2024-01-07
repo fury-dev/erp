@@ -4,23 +4,29 @@ import expenseModel = require("../../schema/mongo/expense");
 import productModel = require("../../schema/mongo/product");
 import mongoose = require("mongoose");
 import moment = require("moment");
+import filter = require("../../utils/filter");
 type TChart = {
   status: string;
   total: number;
   timeFrame: string | number;
+  value: any;
+  createdAt: String;
 };
 
-type TDateby = "MONTH" | "ALL_TIME" | "YEAR" | "DAY" | "WEEK";
+export type ITEMS = "order" | "expense" | "product";
 
-const fill: Record<TDateby, number> = {
+const fill: Record<filter.TDateby, number> = {
   ALL_TIME: 1,
   DAY: 24,
-  MONTH: 31,
   WEEK: 7,
-
   YEAR: 12,
+  MONTH: 0,
 };
-const preprocessTimeSeries = (data: TChart[], dateBy: TDateby) => {
+const preprocessTimeSeries = (
+  data: TChart[],
+  dateBy: filter.TDateby,
+  itemType: ITEMS
+) => {
   const dataByStatus: Record<string, TChart[]> = {};
 
   data.forEach((value) => {
@@ -42,16 +48,24 @@ const preprocessTimeSeries = (data: TChart[], dateBy: TDateby) => {
       data: dataByStatus[value].sort((a, b) =>
         a.timeFrame > b.timeFrame ? 1 : a.timeFrame < b.timeFrame ? -1 : 0
       ),
+      value: 0,
     };
 
-    const xdata: number[] = new Array(fill[dateBy]).fill(0);
-
+    const xdata: number[] = new Array(
+      dateBy === "MONTH"
+        ? //@ts-ignore
+          moment(dataByStatus[value][0].createdAt, "YYYY-MM-DD").daysInMonth()
+        : fill[dateBy]
+    ).fill(0);
+    let data = itemType === "order" || itemType === "expense" ? 0 : [0, 0];
     time.data.forEach((item) => {
-      xdata[item.timeFrame as number] = item.total;
+      xdata[(item.timeFrame as number) - 1] = item.total;
     });
 
     //@ts-ignore
     time.data = xdata;
+    //@ts-ignore
+    time.value = JSON.stringify(data);
     //@ts-ignore
     timeSeries.push(time);
   });
@@ -68,70 +82,61 @@ const chartData = async (_: any, args: any, context: any) => {
     createSeries = "operationType";
     controller = expenseModel.controller;
   }
-  let timeSpan;
-  const date = new Date();
-  let timeFilter: string | undefined = undefined;
-  if (args.filter.dateBy === "MONTH") {
-    timeFilter = "dayOfMonth";
-    timeSpan = [moment(date).subtract("1", "month").toDate(), date];
-  } else if (args.filter.dateBy === "YEAR") {
-    timeFilter = "month";
 
-    timeSpan = [moment(date).subtract("1", "year").toDate(), date];
-  } else if (args.filter.dateBy === "DAY") {
-    timeFilter = "hour";
+  const { timeFilter, timeSpan } = filter.filterTimeQuery(args.filter.dateBy);
 
-    timeSpan = [moment(date).subtract("24", "hours").toDate(), date];
-  } else if (args.filter.dateBy === "WEEK") {
-    timeFilter = "dayOfWeek";
-
-    timeSpan = [moment(date).subtract("7", "days").toDate(), date];
-  }
-
-  const data: TChart[] = await controller.aggregate([
-    ...((timeSpan || [])?.length === 2
-      ? [
-          {
-            $match: {
-              createdAt: { $gte: timeSpan![0], $lte: timeSpan![1] },
+  try {
+    const data: TChart[] = await controller.aggregate([
+      ...((timeSpan || [])?.length === 2
+        ? [
+            {
+              $match: {
+                createdAt: { $gte: timeSpan![0], $lte: timeSpan![1] },
+              },
             },
+          ]
+        : []),
+
+      {
+        $group: {
+          _id: {
+            status: "$" + createSeries,
+            ...(timeFilter
+              ? {
+                  [timeFilter]: {
+                    ["$" + timeFilter]: "$createdAt",
+                  },
+                }
+              : {}),
           },
-        ]
-      : []),
-    {
-      $project: {
-        status: { $arrayElemAt: ["$versions.status", -1] },
-        createdAt: 1,
-      },
-    },
-    {
-      $group: {
-        _id: {
-          status: "$" + createSeries,
-          ...(timeFilter
-            ? {
-                [timeFilter]: {
-                  ["$" + timeFilter]: "$createdAt",
-                },
-              }
-            : {}), // Extract month from orderDate
+
+          total: { $sum: 1 },
+          createdAt: { $first: "$createdAt" },
         },
-        total: { $sum: 1 },
       },
-    },
-    {
-      $project: {
-        _id: 0,
-        status: "$_id." + createSeries,
-        ...(timeFilter ? { timeFrame: "$_id." + timeFilter } : {}),
-        total: 1,
+      {
+        $project: {
+          _id: 0,
+          status: "$_id." + createSeries,
+          ...(timeFilter ? { timeFrame: "$_id." + timeFilter } : {}),
+          total: 1,
+          createdAt: 1,
+          product: 1,
+        },
       },
-    },
-  ]);
-  console.log(data);
-  const preprocess = preprocessTimeSeries(data, args.filter.dateBy);
-  console.log(JSON.stringify(preprocess));
-  return preprocess;
+    ]);
+    console.log(JSON.stringify(data));
+    const preprocess = preprocessTimeSeries(
+      data,
+      args.filter.dateBy,
+      args.filter.item
+    );
+    console.log(JSON.stringify(preprocess));
+    return preprocess;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
 };
 
 export { chartData };

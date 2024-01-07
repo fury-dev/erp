@@ -1,6 +1,7 @@
 import mongoose = require("mongoose");
 import mongodb = require("mongodb");
 const ObjectId = mongodb.ObjectId;
+import filter = require("./filter");
 
 const generateQuery = (
   controller: mongoose.Model<any>,
@@ -32,6 +33,14 @@ const generateQuery = (
         ),
       },
     });
+  }
+  if (filters?.dateBy) {
+    const { timeSpan } = filter.filterTimeQuery(filters.dateBy);
+    if (timeSpan) {
+      match.push({
+        createdAt: { $gte: timeSpan[0], $lte: timeSpan[1] },
+      });
+    }
   }
   if ((filters?.search || "").length > 0) {
     match.push({

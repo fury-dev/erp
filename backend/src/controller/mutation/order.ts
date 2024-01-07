@@ -54,7 +54,7 @@ const deleteOrder = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
     console.log("Deleting Order", args);
-    const records = await orderQuery.orders(null, args, context);
+    const records = (await orderQuery.orders(null, args, context)) as any[];
     console.log("Deleting Order", records);
 
     return await records?.map(async (record) => {
