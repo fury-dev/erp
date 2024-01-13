@@ -27,7 +27,7 @@ const orders = async (_: any, args: any, context: any) => {
     );
 
     const preprocess = utils.unpackMessage(response, "product");
-    console.log("List Orders", preprocess);
+    console.log("List Orders", preprocess.length);
 
     return preprocess;
   } catch (err) {

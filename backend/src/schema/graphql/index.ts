@@ -72,15 +72,16 @@ type Series{
 input Filter{
     dateBy:String
     item:String
+    group:String
 }   
 
 
 type Query{
-    orders(id:[ID],deleted:Boolean,search:String,dateBy:String):[Order]
+    orders(id:[ID],deleted:Int,search:String,dateBy:String):[Order]
     # orderSelection(id:[ID!]):[Order]
-    expenses(id:[ID],deleted:Boolean,search:String,dateBy:String):[Expense]
+    expenses(id:[ID],deleted:Int,search:String,dateBy:String):[Expense]
     # expenseSelection(id:[ID!]):[Expense]
-    products(id:[ID],deleted:Boolean,search:String,dateBy:String):[Product]
+    products(id:[ID],deleted:Int,search:String,dateBy:String):[Product]
     userValidation(token:String):User
     # productSelection(id:[ID!]):[Product]
     chartData(filter:Filter):[Series]

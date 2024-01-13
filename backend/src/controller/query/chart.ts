@@ -33,7 +33,8 @@ const preprocessTimeSeries = (
     if (!Object.keys(dataByStatus).includes(value.status)) {
       dataByStatus[value.status] = [];
     }
-
+    // TODO: to be removed
+    value.total += parseInt((Math.random() * 100).toFixed(0));
     dataByStatus[value.status].push(value);
   });
 
@@ -43,7 +44,20 @@ const preprocessTimeSeries = (
   }[] = [];
   Object.keys(dataByStatus).map((value) => {
     const time = {
-      name: value,
+      name:
+        value !== "undefined"
+          ? value
+          : dateBy === "MONTH"
+          ? moment(
+              new Date(dataByStatus[value][0].createdAt as string),
+              "YYYY-MM-DD"
+            ).format("MMM")
+          : dateBy === "YEAR"
+          ? moment(
+              new Date(dataByStatus[value][0].createdAt as string),
+              "YYYY-MM-DD"
+            ).format("YYYY")
+          : dataByStatus[value][0].timeFrame.toString(),
       //@ts-ignore
       data: dataByStatus[value].sort((a, b) =>
         a.timeFrame > b.timeFrame ? 1 : a.timeFrame < b.timeFrame ? -1 : 0
@@ -72,14 +86,13 @@ const preprocessTimeSeries = (
   return timeSeries;
 };
 const chartData = async (_: any, args: any, context: any) => {
-  let createSeries = "status";
+  let createSeries = args.filter.group;
+  console.log(args.filter, "filter");
 
   let controller: mongoose.Model<any> = orderModel.controller;
   if (args.filter.item === "product") {
-    createSeries = "inStock";
     controller = productModel.controller;
   } else if (args.filter.item === "expense") {
-    createSeries = "operationType";
     controller = expenseModel.controller;
   }
 
@@ -96,11 +109,20 @@ const chartData = async (_: any, args: any, context: any) => {
             },
           ]
         : []),
-
+      {
+        $project: {
+          versions: {
+            $arrayElemAt: ["$versions", -1],
+          },
+          createdAt: 1,
+        },
+      },
       {
         $group: {
           _id: {
-            status: "$" + createSeries,
+            ...(createSeries
+              ? { [createSeries]: "$versions." + createSeries }
+              : {}),
             ...(timeFilter
               ? {
                   [timeFilter]: {
@@ -117,7 +139,7 @@ const chartData = async (_: any, args: any, context: any) => {
       {
         $project: {
           _id: 0,
-          status: "$_id." + createSeries,
+          [createSeries]: "$_id." + createSeries,
           ...(timeFilter ? { timeFrame: "$_id." + timeFilter } : {}),
           total: 1,
           createdAt: 1,
@@ -125,13 +147,11 @@ const chartData = async (_: any, args: any, context: any) => {
         },
       },
     ]);
-    console.log(JSON.stringify(data));
     const preprocess = preprocessTimeSeries(
       data,
       args.filter.dateBy,
       args.filter.item
     );
-    console.log(JSON.stringify(preprocess));
     return preprocess;
   } catch (err) {
     console.log(err);

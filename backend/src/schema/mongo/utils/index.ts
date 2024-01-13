@@ -35,7 +35,6 @@ export { updateMongo };
 
 export const unpackMessage = (item: any[], mask?: string) => {
   return item.map((value) => {
-    console.log(value);
     const response = lodash.omit(
       value.message[Object.keys(value.message)[0]],
       "_id"
@@ -49,7 +48,7 @@ export const unpackMessage = (item: any[], mask?: string) => {
               ...value[mask][0]["versions"][
                 value[mask][0]["versions"].length - 1
               ],
-              id: value[mask]._id,
+              id: value[mask][0]._id,
             },
           }
         : {}),

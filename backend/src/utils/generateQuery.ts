@@ -10,13 +10,15 @@ const generateQuery = (
   searchElement: string = "name",
   project: mongoose.PipelineStage.Project["$project"] = {}
 ) => {
-  const match: any[] = [
-    {
+  const match: any[] = [];
+
+  if (filters.deleted > 0) {
+    match.push({
       deleted: {
-        $eq: filters.deleted || false,
+        $eq: filters.deleted === 2,
       },
-    },
-  ];
+    });
+  }
   if ((filters?.id || []).length > 0) {
     match.push({
       _id: {
