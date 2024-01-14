@@ -189,7 +189,7 @@ export const Filter = ({ updateApiFilter, loading }: IFilter) => {
         <Button
           disableElevation
           disabled={loading}
-          onClick={() => updateApiFilter({ search, deleted: deleted === 'obsolete' })}
+          onClick={() => updateApiFilter({ search, deleted: deleted === 'obsolete' ? 2 : 1 })}
           size="large"
           variant="contained"
           color="secondary"

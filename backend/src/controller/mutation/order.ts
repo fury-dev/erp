@@ -2,10 +2,12 @@ import orderModel = require("../../schema/mongo/order");
 import utils = require("../../schema/mongo/utils");
 import lodash = require("lodash");
 import orderQuery = require("../query/order");
+import processObject = require("../../utils/processObject");
 
 const addOrder = async (_: any, args: any, context: any) => {
   console.log(context, args);
   if (!context.user) return null;
+  const data = processObject.preProcessCurrency(args.order, ["amount"]);
   const lastOrder = await orderModel.controller
     .find()
     .sort({ _id: -1 })
@@ -17,7 +19,7 @@ const addOrder = async (_: any, args: any, context: any) => {
   }
   const order = new orderModel.controller({
     orderId,
-    ...utils.updateMongo(args.order),
+    ...utils.updateMongo(data),
   });
 
   return await order.save().catch((err: any) => {

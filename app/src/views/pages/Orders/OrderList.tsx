@@ -8,6 +8,9 @@ import { FaEdit } from 'react-icons/fa';
 import { Order } from '../../../types/items/order';
 import { useCallback } from 'react';
 import { useDialogContext } from '../../../context/DialogContext';
+import { convertFromINR, currencySymbol as _currencySymbol } from '../../../data/Product/currency';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 const OrderList = () => {
   const {
     list: { apiAction, loading, updateQuery, stopPolling },
@@ -17,7 +20,8 @@ const OrderList = () => {
   } = useOrder();
 
   const { setComponent } = useDialogContext();
-
+  const currency = useSelector((state: RootState) => state.customization.currency);
+  const currencySymbol = _currencySymbol[currency];
   return (
     <div style={{ height: '100%', width: '100' }}>
       <ListView<Order>
@@ -50,7 +54,10 @@ const OrderList = () => {
             field: 'amount',
             headerName: 'Amount',
             width: 70,
-            getValue: (params) => ` ${params.amount.amount} ${params.amount.currency} `
+            getValue: (params) =>
+              ` ${
+                params.amount.currency !== currency ? convertFromINR(params.amount.amount, currency).toFixed(2) : params.amount.amount
+              } ${currencySymbol} `
           },
           {
             field: 'orderType',

@@ -38,8 +38,8 @@ const customization = createSlice({
       state.borderRadius = action.payload.borderRadius;
     },
     saveCurrency: (state, action) => {
-      state.currency = action.payload.currency;
-      localStorage.setItem('currency', action.payload.currency);
+      state.currency = action.payload;
+      localStorage.setItem('currency', action.payload);
     }
   }
 });

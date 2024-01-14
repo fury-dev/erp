@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ListView } from '../../../components/List/ListView';
 import { compact } from 'lodash';
 import { ProductSetup } from './ProductSetup';
@@ -9,6 +8,10 @@ import { FaEdit } from 'react-icons/fa';
 import { Product } from '../../../types/items/product';
 import { useCallback } from 'react';
 import { useDialogContext } from '../../../context/DialogContext';
+import { convertFromINR, currencySymbol as _currencySymbol } from '../../../data/Product/currency';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
+
 const ProductList = () => {
   const {
     list: { apiAction, loading, updateQuery, stopPolling },
@@ -18,7 +21,8 @@ const ProductList = () => {
   } = useProduct();
 
   const { setComponent } = useDialogContext();
-
+  const currency = useSelector((state: RootState) => state.customization.currency);
+  const currencySymbol = _currencySymbol[currency];
   return (
     <div style={{ height: '100%', width: '100' }}>
       <ListView<Product>
@@ -38,14 +42,24 @@ const ProductList = () => {
             field: 'distributorPrice',
             headerName: 'Distributor Price',
             width: 170,
-            getValue: (params: any) => ` ${params?.distributorPrice.amount} ${params.distributorPrice.currency} `
+            getValue: (params: any) => `
+            ${
+              params.distributorPrice.currency !== currency
+                ? convertFromINR(params.distributorPrice.amount, currency).toFixed(2)
+                : params.distributorPrice.amount
+            } ${currencySymbol}`
           },
           {
             field: 'sellerPrice',
             headerName: 'Seller Price',
             width: 130,
             numeric: true,
-            getValue: (params: any) => ` ${params?.sellerPrice.amount} ${params.sellerPrice.currency} `
+            getValue: (params: any) => `
+            ${
+              params.sellerPrice.currency !== currency
+                ? convertFromINR(params.sellerPrice.amount, currency).toFixed(2)
+                : params.sellerPrice.amount
+            } ${currencySymbol}`
           },
           {
             field: 'size',

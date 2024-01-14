@@ -1,12 +1,7 @@
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useLocation } from '@remix-run/react';
 
-//types
-import PropTypes from 'prop-types';
-
-// ==============================|| NAVIGATION SCROLL TO TOP ||============================== //
-
-const NavigationScroll = ({ children }: any) => {
+const NavigationScroll = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
   const { pathname } = location;
 
@@ -19,10 +14,6 @@ const NavigationScroll = ({ children }: any) => {
   }, [pathname]);
 
   return children || null;
-};
-
-NavigationScroll.propTypes = {
-  children: PropTypes.node
 };
 
 export default NavigationScroll;

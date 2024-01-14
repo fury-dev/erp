@@ -1,26 +1,22 @@
 import PropTypes from 'prop-types';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
-import { Avatar, Box, Grid, Menu, MenuItem, Typography } from '@mui/material';
+import { Avatar, Box, Grid, Typography } from '@mui/material';
 
 // project imports
 import MainCard from '../../../ui-component/cards/MainCard';
 import SkeletonEarningCard from '../../../ui-component/cards/Skeleton/EarningCard';
 
 // assets
+//@ts-ignore
 import EarningIcon from '../../../assets/images/icons/earning.svg';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import GetAppTwoToneIcon from '@mui/icons-material/GetAppOutlined';
-import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
-import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
-import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
 import { useApiService } from '../../../service';
 import { Order } from '../../../types/items/order';
 import { sum } from 'lodash';
-import { convertFromINR, convertToINR } from '../../../data/Product/currency';
+import { convertFromINR, convertToINR, currencySymbol } from '../../../data/Product/currency';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 
@@ -34,7 +30,8 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: theme.palette.secondary[800],
+    //@ts-ignore
+    backgroundColor: theme.palette.secondary[200],
     borderRadius: '50%',
     top: -85,
     right: -95,
@@ -48,7 +45,8 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: theme.palette.secondary[800],
+    //@ts-ignore
+    backgroundColor: theme.palette.secondary[800],
     borderRadius: '50%',
     top: -125,
     right: -15,
@@ -60,23 +58,12 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
   }
 }));
 
-// ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
-
-const EarningCard = ({ isLoading }) => {
+const EarningCard = ({ isLoading }: { isLoading: boolean }) => {
   const theme = useTheme();
 
-  const [anchorEl, setAnchorEl] = useState(null);
   const currency = useSelector((state: RootState) => state.customization.currency);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   const {
-    // chart: { series, updateQuery },
     list: { data, updateQuery }
   } = useApiService('order');
 
@@ -85,6 +72,20 @@ const EarningCard = ({ isLoading }) => {
       dateBy: 'YEAR'
     });
   }, []);
+  const earnings = useMemo(
+    () =>
+      sum(
+        (data?.orders || []).map((value: Order) =>
+          convertFromINR(
+            convertToINR(value.amount.amount, value.amount.currency) -
+              convertToINR(value.product?.distributorPrice.amount || 0, value.product?.distributorPrice.currency || 'INR') -
+              convertToINR(value.product?.sellerPrice.amount || 0, value.product?.sellerPrice.currency || 'INR'),
+            currency
+          )
+        )
+      ),
+    [currency]
+  );
   return (
     <>
       {isLoading ? (
@@ -99,8 +100,11 @@ const EarningCard = ({ isLoading }) => {
                     <Avatar
                       variant="rounded"
                       sx={{
+                        //@ts-ignore
                         ...theme.typography.commonAvatar,
+                        //@ts-ignore
                         ...theme.typography.largeAvatar,
+                        //@ts-ignore
                         backgroundColor: theme.palette.secondary[800],
                         mt: 1
                       }}
@@ -108,75 +112,23 @@ const EarningCard = ({ isLoading }) => {
                       <img src={EarningIcon} alt="Notification" />
                     </Avatar>
                   </Grid>
-                  <Grid item>
-                    <Avatar
-                      variant="rounded"
-                      sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.mediumAvatar,
-                        backgroundColor: theme.palette.secondary.dark,
-                        color: theme.palette.secondary[200],
-                        zIndex: 1
-                      }}
-                      aria-controls="menu-earning-card"
-                      aria-haspopup="true"
-                      onClick={handleClick}
-                    >
-                      <MoreHorizIcon fontSize="inherit" />
-                    </Avatar>
-                    <Menu
-                      id="menu-earning-card"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={handleClose}
-                      variant="selectedMenu"
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right'
-                      }}
-                      transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right'
-                      }}
-                    >
-                      <MenuItem onClick={handleClose}>
-                        <GetAppTwoToneIcon sx={{ mr: 1.75 }} /> Import Card
-                      </MenuItem>
-                      <MenuItem onClick={handleClose}>
-                        <FileCopyTwoToneIcon sx={{ mr: 1.75 }} /> Copy Data
-                      </MenuItem>
-                      <MenuItem onClick={handleClose}>
-                        <PictureAsPdfTwoToneIcon sx={{ mr: 1.75 }} /> Export
-                      </MenuItem>
-                      <MenuItem onClick={handleClose}>
-                        <ArchiveTwoToneIcon sx={{ mr: 1.75 }} /> Archive File
-                      </MenuItem>
-                    </Menu>
-                  </Grid>
                 </Grid>
               </Grid>
               <Grid item>
                 <Grid container alignItems="center">
                   <Grid item>
                     <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
-                      {sum(
-                        (data?.orders || []).map((value: Order) =>
-                          convertFromINR(
-                            convertToINR(value.amount.amount, value.amount.currency) -
-                              convertToINR(value.product?.distributorPrice.amount || 0, value.product?.distributorPrice.currency || 'INR') -
-                              convertToINR(value.product?.sellerPrice.amount || 0, value.product?.sellerPrice.currency || 'INR'),
-                            currency
-                          )
-                        )
-                      )}
+                      {currencySymbol[currency]}
+                      {earnings.toFixed(2)}
                     </Typography>
                   </Grid>
                   <Grid item>
                     <Avatar
                       sx={{
                         cursor: 'pointer',
+                        //@ts-ignore
                         ...theme.typography.smallAvatar,
+                        //@ts-ignore
                         backgroundColor: theme.palette.secondary[200],
                         color: theme.palette.secondary.dark
                       }}
@@ -191,6 +143,8 @@ const EarningCard = ({ isLoading }) => {
                   sx={{
                     fontSize: '1rem',
                     fontWeight: 500,
+                    //@ts-ignore
+
                     color: theme.palette.secondary[200]
                   }}
                 >

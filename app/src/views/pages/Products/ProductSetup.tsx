@@ -195,7 +195,16 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                 </FormControl>
               </Grid>
               <Grid item xs={4} display="flex" alignItems="center">
-                <FormControlLabel onChange={handleChange} control={<Checkbox defaultChecked />} label="In Stock" />
+                <FormControlLabel
+                  name="inStock"
+                  onChange={(e) => {
+                    e.currentTarget.value = e.currentTarget.value === 'checked';
+                    handleChange(e);
+                  }}
+                  value={values.inStock ? 'checked' : false}
+                  control={<Checkbox name="inStock" value={values.inStock ? 'checked' : false} />}
+                  label="In Stock"
+                />
               </Grid>
             </Grid>
 

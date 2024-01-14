@@ -2,7 +2,7 @@ const GraphqlSchema = `#graphql
 
 type Price{
     currency:String
-    amount:Int
+    amount:Float
 }
 
 type  Product{
@@ -19,6 +19,7 @@ type  Product{
     updatedAt:String!
 }
 
+
 type User{
     email:String
     password:String
@@ -32,7 +33,6 @@ type Expense{
     versionId:Int
     cashInBank:Price
     cashInHand:Price
-    pnl:Price
     note:String
     operationType:String
     createdAt:String
@@ -75,13 +75,19 @@ input Filter{
     group:String
 }   
 
-
+input ListFilter{
+    id:[ID] 
+    deleted:Int 
+    search:String 
+    dateBy:String
+    limit:Int
+}
 type Query{
-    orders(id:[ID],deleted:Int,search:String,dateBy:String):[Order]
+    orders(filter:ListFilter):[Order]
     # orderSelection(id:[ID!]):[Order]
-    expenses(id:[ID],deleted:Int,search:String,dateBy:String):[Expense]
+    expenses(filter:ListFilter):[Expense]
     # expenseSelection(id:[ID!]):[Expense]
-    products(id:[ID],deleted:Int,search:String,dateBy:String):[Product]
+    products(filter:ListFilter):[Product]
     userValidation(token:String):User
     # productSelection(id:[ID!]):[Product]
     chartData(filter:Filter):[Series]

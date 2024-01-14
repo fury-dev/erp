@@ -12,6 +12,10 @@ const schema = new mongoose.Schema({
       cashInBank: common.Price,
       amount: common.Price,
       cashInHand: common.Price,
+      operationType: {
+        type: String,
+        required: [true, "Operation type is required"],
+      },
       expenseType: {
         type: String,
         required: [true, "Expense type is required"],
@@ -19,7 +23,6 @@ const schema = new mongoose.Schema({
       versionId: {
         type: Number,
       },
-      pnl: common.Price,
       createdAt: { type: Date, default: Date.now },
       updatedAt: { type: Date, default: Date.now },
       uri: String,

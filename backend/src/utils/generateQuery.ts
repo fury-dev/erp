@@ -5,13 +5,19 @@ import filter = require("./filter");
 
 const generateQuery = (
   controller: mongoose.Model<any>,
-  filters: any,
+  args: any,
   piplines: mongoose.PipelineStage[] = [],
   searchElement: string = "name",
   project: mongoose.PipelineStage.Project["$project"] = {}
 ) => {
   const match: any[] = [];
-
+  const filters: {
+    deleted: number;
+    id: string[];
+    dateBy: filter.TDateby;
+    search: string;
+    limit: number;
+  } = args.filter;
   if (filters.deleted > 0) {
     match.push({
       deleted: {
@@ -81,6 +87,14 @@ const generateQuery = (
         ...project,
       },
     },
+
+    ...(filters.limit !== -1
+      ? [
+          {
+            $limit: filters.limit,
+          },
+        ]
+      : []),
   ]);
 };
 export { generateQuery };

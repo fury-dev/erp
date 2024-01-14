@@ -5,10 +5,11 @@ const POLLING_INTERVAL = 10000;
 export type TChartFilter = {
   dateBy: 'MONTH' | 'YEAR' | 'DAY' | 'ALL_TIME' | 'WEEK';
   item: ITEMS;
+  group?: string;
 };
 export type TChartData = {
   name: string;
-  data: Number[];
+  data: number[];
   value: any;
 };
 
@@ -37,7 +38,8 @@ export const useChart = () => {
     variables: {
       filter: {
         item: 'order',
-        dateBy: 'ALL_TIME'
+        dateBy: 'ALL_TIME',
+        group: 'status'
       }
     }
   });

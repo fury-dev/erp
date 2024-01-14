@@ -67,7 +67,7 @@ export const ExpenseSetup = ({ open, onClose, expense }: { open: boolean; onClos
               <Grid item xs={6}>
                 {/* @ts-ignore */}
                 <FormSelect<Expense>
-                  title="Expense"
+                  title="Mode"
                   name="operationType"
                   errors={errors}
                   touched={touched}
@@ -148,7 +148,7 @@ export const ExpenseSetup = ({ open, onClose, expense }: { open: boolean; onClos
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">
-                  {values.id ? 'Update' : 'Add'} Order
+                  {values.id ? 'Update' : 'Add'} Expense
                 </Button>
               </AnimateButton>
             </Box>
