@@ -1,7 +1,6 @@
 import { forwardRef } from 'react';
 
 // types
-import PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -10,7 +9,7 @@ import { Card, CardContent, CardHeader, Divider, Typography } from '@mui/materia
 // ==============================|| CUSTOM SUB CARD ||============================== //
 
 const SubCard = forwardRef(
-  ({ children, content, contentClass, darkTitle, secondary, sx = {}, contentSX = {}, title, ...others }: any, ref) => {
+  ({ children, content = true, contentClass, darkTitle, secondary, sx = {}, contentSX = {}, title, ...others }: any, ref) => {
     const theme = useTheme();
 
     return (
@@ -51,20 +50,5 @@ const SubCard = forwardRef(
     );
   }
 );
-
-SubCard.propTypes = {
-  children: PropTypes.node,
-  content: PropTypes.bool,
-  contentClass: PropTypes.string,
-  darkTitle: PropTypes.bool,
-  secondary: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object]),
-  sx: PropTypes.object,
-  contentSX: PropTypes.object,
-  title: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object])
-};
-
-SubCard.defaultProps = {
-  content: true
-};
 
 export default SubCard;
