@@ -106,6 +106,7 @@ type Mutation{
     deleteExpense(id:[ID!]):[Expense]
     registerUser(user:UserRegisterValue!):String
     loginUser(user:UserLoginValue!):String
+    loginWithGoogle(credentials:String!):String
 
 }
 
@@ -168,6 +169,8 @@ input PriceValue{
     currency:String
     amount:Int
 }
+
+
 `;
 
 export { GraphqlSchema };

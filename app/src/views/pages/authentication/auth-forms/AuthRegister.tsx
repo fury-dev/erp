@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useGoogleLogin } from '../../../../hooks/useGoogleLogin';
+import { GoogleLogin } from '@react-oauth/google';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -17,7 +19,6 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  TextField,
   Typography,
   useMediaQuery
 } from '@mui/material';
@@ -28,7 +29,6 @@ import { Formik } from 'formik';
 
 // project imports
 import useScriptRef from '../../../../hooks/useScriptRef';
-import Google from '../../../../assets/images/icons/social-google.svg';
 import AnimateButton from '../../../../ui-component/extended/AnimateButton';
 import { strengthColor, strengthIndicator } from '../../../../utils/password-strength';
 
@@ -49,6 +49,7 @@ const FirebaseRegister = ({ ...others }) => {
   const { submitQuery, data, apiErrors } = userRegister();
   const [checked, setChecked] = useState(true);
   const navigate = useNavigate();
+  const { loginWithGoogle } = useGoogleLogin();
 
   const [strength, setStrength] = useState(0);
   const [level, setLevel] = useState();
@@ -80,22 +81,14 @@ const FirebaseRegister = ({ ...others }) => {
       <Grid container direction="column" justifyContent="center" spacing={2}>
         <Grid item xs={12}>
           <AnimateButton>
-            <Button
-              variant="outlined"
-              fullWidth
-              onClick={googleHandler}
-              size="large"
-              sx={{
-                color: 'grey.700',
-                backgroundColor: theme.palette.grey[50],
-                borderColor: theme.palette.grey[100]
+            <GoogleLogin
+              onSuccess={(credentialResponse) => {
+                if (credentialResponse.credential) loginWithGoogle(credentialResponse.credential);
               }}
-            >
-              <Box sx={{ mr: { xs: 1, sm: 2, width: 20 } }}>
-                <img src={Google} alt="google" width={16} height={16} style={{ marginRight: matchDownSM ? 8 : 16 }} />
-              </Box>
-              Sign up with Google
-            </Button>
+              onError={() => {
+                console.log('Login Failed');
+              }}
+            />
           </AnimateButton>
         </Grid>
         <Grid item xs={12}>

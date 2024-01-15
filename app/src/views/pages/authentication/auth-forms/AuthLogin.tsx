@@ -33,10 +33,10 @@ import AnimateButton from '../../../../ui-component/extended/AnimateButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-import Google from '../../../../assets/images/icons/social-google.svg';
 import { useLogin } from '../../../../hooks/useLogin';
 import { omit } from 'lodash';
-import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '../../../../hooks/useGoogleLogin';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -47,6 +47,8 @@ const FirebaseLogin = ({ ...others }) => {
   const customization = useSelector((state) => state.customization);
   const [checked, setChecked] = useState(true);
   const { updateQuery, apiErrors, data, loading } = useLogin();
+
+  const { loginWithGoogle } = useGoogleLogin();
 
   const googleHandler = async () => {
     console.error('Login');
@@ -66,23 +68,14 @@ const FirebaseLogin = ({ ...others }) => {
       <Grid container direction="column" justifyContent="center" spacing={2}>
         <Grid item xs={12}>
           <AnimateButton>
-            <Button
-              disableElevation
-              fullWidth
-              onClick={googleHandler}
-              size="large"
-              variant="outlined"
-              sx={{
-                color: 'grey.700',
-                backgroundColor: theme.palette.grey[50],
-                borderColor: theme.palette.grey[100]
+            <GoogleLogin
+              onSuccess={(credentialResponse) => {
+                if (credentialResponse.credential) loginWithGoogle(credentialResponse.credential);
               }}
-            >
-              <Box sx={{ mr: { xs: 1, sm: 2, width: 20 } }}>
-                <img src={Google} alt="google" width={16} height={16} style={{ marginRight: matchDownSM ? 8 : 16 }} />
-              </Box>
-              Sign in with Google
-            </Button>
+              onError={() => {
+                console.log('Login Failed');
+              }}
+            />
           </AnimateButton>
         </Grid>
         <Grid item xs={12}>
