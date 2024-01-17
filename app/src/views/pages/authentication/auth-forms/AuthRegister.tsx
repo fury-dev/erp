@@ -19,8 +19,8 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  Typography,
-  useMediaQuery
+  Typography
+  // useMediaQuery
 } from '@mui/material';
 
 // third party
@@ -37,14 +37,15 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { userRegister } from '../../../../hooks/useRegister';
 import { omit } from 'lodash';
+import { RootState } from '../../../../store';
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
 const FirebaseRegister = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
-  const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-  const customization = useSelector((state) => state.customization);
+  // const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
+  const customization = useSelector((state: RootState) => state.customization);
   const [showPassword, setShowPassword] = useState(false);
   const { submitQuery, data, apiErrors } = userRegister();
   const [checked, setChecked] = useState(true);
@@ -52,21 +53,17 @@ const FirebaseRegister = ({ ...others }) => {
   const { loginWithGoogle } = useGoogleLogin();
 
   const [strength, setStrength] = useState(0);
-  const [level, setLevel] = useState();
-
-  const googleHandler = async () => {
-    console.error('Register');
-  };
+  const [level, setLevel] = useState<any>();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = (event: { preventDefault: () => void }) => {
     event.preventDefault();
   };
 
-  const changePassword = (value) => {
+  const changePassword = (value: string) => {
     const temp = strengthIndicator(value);
     setStrength(temp);
     setLevel(strengthColor(temp));
@@ -82,6 +79,7 @@ const FirebaseRegister = ({ ...others }) => {
         <Grid item xs={12}>
           <AnimateButton>
             <GoogleLogin
+              theme="filled_blue"
               onSuccess={(credentialResponse) => {
                 if (credentialResponse.credential) loginWithGoogle(credentialResponse.credential);
               }}
@@ -134,12 +132,11 @@ const FirebaseRegister = ({ ...others }) => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            console.log(values);
             await submitQuery(omit(values, 'submit'));
             navigate('/home');
             setStatus({ success: true });
             setSubmitting(false);
-          } catch (err) {
+          } catch (err: any) {
             console.log(err);
             if (scriptedRef.current) {
               setStatus({ success: false });
@@ -151,6 +148,7 @@ const FirebaseRegister = ({ ...others }) => {
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
+            {/* @ts-ignore */}
             <FormControl fullWidth error={Boolean(touched.username && errors.username)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-email-register"> Username</InputLabel>
               <OutlinedInput
@@ -168,6 +166,8 @@ const FirebaseRegister = ({ ...others }) => {
                 </FormHelperText>
               )}
             </FormControl>
+            {/* @ts-ignore */}
+
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-email-register">Email Address </InputLabel>
               <OutlinedInput
@@ -185,6 +185,7 @@ const FirebaseRegister = ({ ...others }) => {
                 </FormHelperText>
               )}
             </FormControl>
+            {/* @ts-ignore */}
 
             <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-password-register">Password</InputLabel>

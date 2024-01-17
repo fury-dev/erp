@@ -17,8 +17,8 @@ import {
   InputLabel,
   OutlinedInput,
   Stack,
-  Typography,
-  useMediaQuery
+  Typography
+  // useMediaQuery
 } from '@mui/material';
 
 // third party
@@ -37,22 +37,19 @@ import { useLogin } from '../../../../hooks/useLogin';
 import { omit } from 'lodash';
 import { GoogleLogin } from '@react-oauth/google';
 import { useGoogleLogin } from '../../../../hooks/useGoogleLogin';
+import { RootState } from '../../../../store';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const FirebaseLogin = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
-  const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-  const customization = useSelector((state) => state.customization);
+  // const _matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
+  const customization = useSelector((state: RootState) => state.customization);
   const [checked, setChecked] = useState(true);
   const { updateQuery, apiErrors, data, loading } = useLogin();
 
   const { loginWithGoogle } = useGoogleLogin();
-
-  const googleHandler = async () => {
-    console.error('Login');
-  };
 
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
@@ -69,6 +66,8 @@ const FirebaseLogin = ({ ...others }) => {
         <Grid item xs={12}>
           <AnimateButton>
             <GoogleLogin
+              theme="filled_blue"
+              size="large"
               onSuccess={(credentialResponse) => {
                 if (credentialResponse.credential) loginWithGoogle(credentialResponse.credential);
               }}
@@ -131,7 +130,7 @@ const FirebaseLogin = ({ ...others }) => {
             setStatus({ success: true });
             setSubmitting(false);
             await updateQuery(omit(values, 'submit'));
-          } catch (err) {
+          } catch (err: any) {
             console.error(err);
             if (scriptedRef.current) {
               setStatus({ success: false });
@@ -143,6 +142,8 @@ const FirebaseLogin = ({ ...others }) => {
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
+            {/* @ts-ignore */}
+
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
               <OutlinedInput
@@ -161,7 +162,7 @@ const FirebaseLogin = ({ ...others }) => {
                 </FormHelperText>
               )}
             </FormControl>
-
+            {/* @ts-ignore */}
             <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-password-login">Password</InputLabel>
               <OutlinedInput

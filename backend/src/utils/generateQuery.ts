@@ -18,7 +18,7 @@ const generateQuery = (
     search: string;
     limit: number;
   } = args.filter;
-  if (filters.deleted > 0) {
+  if (filters && filters.deleted > 0) {
     match.push({
       deleted: {
         $eq: filters.deleted === 2,
@@ -88,7 +88,7 @@ const generateQuery = (
       },
     },
 
-    ...(filters.limit !== -1
+    ...((filters?.limit || -1) !== -1
       ? [
           {
             $limit: filters.limit,
