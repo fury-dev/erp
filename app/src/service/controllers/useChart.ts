@@ -6,6 +6,8 @@ export type TChartFilter = {
   dateBy: 'MONTH' | 'YEAR' | 'DAY' | 'ALL_TIME' | 'WEEK';
   item: ITEMS;
   group?: string;
+  id?: string[];
+  queryPath?: string;
 };
 export type TChartData = {
   name: string;
@@ -39,7 +41,9 @@ export const useChart = () => {
       filter: {
         item: 'order',
         dateBy: 'ALL_TIME',
-        group: 'status'
+        group: 'status',
+        id: [],
+        queryPath: ''
       }
     }
   });

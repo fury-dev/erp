@@ -57,7 +57,7 @@ const preprocessTimeSeries = (
               new Date(dataByStatus[value][0].createdAt as string),
               "YYYY-MM-DD"
             ).format("YYYY")
-          : dataByStatus[value][0].timeFrame.toString(),
+          : dataByStatus[value][0].timeFrame?.toString(),
       //@ts-ignore
       data: dataByStatus[value].sort((a, b) =>
         a.timeFrame > b.timeFrame ? 1 : a.timeFrame < b.timeFrame ? -1 : 0
@@ -97,15 +97,29 @@ const chartData = async (_: any, args: any, context: any) => {
   }
 
   const { timeFilter, timeSpan } = filter.filterTimeQuery(args.filter.dateBy);
+  let match: any = undefined;
 
+  if (args.id?.[0] && timeSpan) {
+    match = {
+      $and: [
+        { createdAt: { $gte: timeSpan![0], $lte: timeSpan![1] } },
+        { id: { $in: args.id } },
+      ],
+    };
+  } else if (timeSpan)
+    match = { createdAt: { $gte: timeSpan![0], $lte: timeSpan![1] } };
+  else if (args.id?.[0]) {
+    match = {
+      [args?.query ? `$version.${args?.query}` : "id"]: { $in: args.id },
+    };
+  }
+  console.log(match, "x");
   try {
     const data: TChart[] = await controller.aggregate([
-      ...((timeSpan || [])?.length === 2
+      ...(match
         ? [
             {
-              $match: {
-                createdAt: { $gte: timeSpan![0], $lte: timeSpan![1] },
-              },
+              $match: match,
             },
           ]
         : []),

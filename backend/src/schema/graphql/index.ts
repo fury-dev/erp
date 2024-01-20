@@ -17,6 +17,7 @@ type  Product{
     inStock: Boolean
     createdAt:String!
     updatedAt:String!
+    
 }
 
 
@@ -73,10 +74,12 @@ input Filter{
     dateBy:String
     item:String
     group:String
+    id:[String] 
+    queryPath:String
 }   
 
 input ListFilter{
-    id:[ID] 
+    id:[String] 
     deleted:Int 
     search:String 
     dateBy:String

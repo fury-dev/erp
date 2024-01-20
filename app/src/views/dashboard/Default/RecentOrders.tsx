@@ -132,7 +132,7 @@ const RecentOrders = ({ isLoading }: { isLoading: Boolean }) => {
                           </Grid>
                           <Grid item>
                             <Typography variant="subtitle1" color="inherit">
-                              {convertFromINR(order.amount.amount, currency)} {currencySymbol}
+                              {convertFromINR(order.amount.amount, currency).toFixed(2)} {currencySymbol}
                             </Typography>
                           </Grid>
                         </Grid>

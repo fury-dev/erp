@@ -163,7 +163,6 @@ export const useList = (item: ITEMS) => {
   );
 
   const updateMask = useCallback(async (mask: string) => {
-    console.log(gql(baseQuery(mask)));
     _updateGraphQuery(() => gql(baseQuery(mask)));
     stopPolling();
     await refetch();
@@ -176,6 +175,7 @@ export const useList = (item: ITEMS) => {
     data,
     startPolling,
     stopPolling,
-    updateMask
+    updateMask,
+    error
   };
 };

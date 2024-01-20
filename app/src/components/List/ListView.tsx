@@ -39,6 +39,7 @@ interface IListView<T extends Product | Order | Expense> {
     field: string;
   };
   updateApiFilter: (params: TQueryParams) => Promise<void>;
+  rowOnClick?: (item: T) => void;
 }
 
 export const ListView = <T extends TItems>({
@@ -50,7 +51,8 @@ export const ListView = <T extends TItems>({
   rows,
   title,
   actionCell,
-  updateApiFilter
+  updateApiFilter,
+  rowOnClick
 }: IListView<T>) => {
   useEffect(() => {
     console.log('startPolling');
@@ -130,7 +132,6 @@ export const ListView = <T extends TItems>({
     });
     return stabilizedThis.map((el) => el[0]);
   }
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   const visibleRows = React.useMemo(
@@ -166,7 +167,7 @@ export const ListView = <T extends TItems>({
                   const labelId = `layout-table-checkbox-${index}`;
 
                   return (
-                    <TableRow tabIndex={-1} key={row.id} selected={isItemSelected}>
+                    <TableRow tabIndex={-1} key={row.id} selected={isItemSelected} onClick={rowOnClick ? () => rowOnClick(row) : () => {}}>
                       <TableCell padding="checkbox">
                         <Checkbox
                           color="primary"

@@ -45,10 +45,11 @@ const OrderList = () => {
             getValue: (params) => moment(parseInt(params.orderDate)).format('DD-MM-YYYY:HH:MM')
           },
           {
-            field: 'productId',
-            headerName: 'Product Id',
+            field: 'product',
+            headerName: 'Product Name',
             width: 130,
-            numeric: true
+            numeric: true,
+            getValue: (params) => params.product?.name || ''
           },
           {
             field: 'amount',

@@ -11,6 +11,7 @@ import { useDialogContext } from '../../../context/DialogContext';
 import { convertFromINR, currencySymbol as _currencySymbol } from '../../../data/Product/currency';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
+import { useNavigate } from 'react-router-dom';
 
 const ProductList = () => {
   const {
@@ -23,6 +24,7 @@ const ProductList = () => {
   const { setComponent } = useDialogContext();
   const currency = useSelector((state: RootState) => state.customization.currency);
   const currencySymbol = _currencySymbol[currency];
+  const navigate = useNavigate();
   return (
     <div style={{ height: '100%', width: '100' }}>
       <ListView<Product>
@@ -90,6 +92,7 @@ const ProductList = () => {
         rows={products || []}
         loading={loading}
         stopPolling={stopPolling}
+        rowOnClick={(item) => navigate('/home/product/' + item.id)}
         headerButtons={
           <HeaderButtons
             buttons={[

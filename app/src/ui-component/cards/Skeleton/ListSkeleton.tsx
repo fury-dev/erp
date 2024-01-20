@@ -35,7 +35,7 @@ export const ListSkeleton = () => (
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
             <TableHead>
               <TableRow>
-                {new Array(8).map((value) => (
+                {new Array(8).map((_value) => (
                   <TableCell>
                     <Skeleton variant="rectangular" width={50} height={20} />
                   </TableCell>
@@ -43,10 +43,10 @@ export const ListSkeleton = () => (
               </TableRow>
             </TableHead>
             <TableBody>
-              {new Array(10).fill(0).map((row, index) => {
+              {new Array(10).fill(0).map((_row, index) => {
                 return (
                   <TableRow tabIndex={-1} key={index}>
-                    {new Array(9).fill(0).map((value, s) => (
+                    {new Array(9).fill(0).map((_value, s) => (
                       <TableCell id={s.toString()} key={`${index}-${s}`}>
                         <Skeleton variant="rectangular" width={50} height={20} />
                       </TableCell>
