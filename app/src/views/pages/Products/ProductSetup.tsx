@@ -19,6 +19,7 @@ const validation = Yup.object().shape({
 export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClose: () => void; product?: Product }) => {
   const theme = useTheme();
   const [size, setSize] = useState('');
+  const [showImage, setShowImage] = useState<boolean>(false);
   const { submitData } = useProduct();
   const fileRef = useRef<LegacyRef<HTMLInputElement>>(null);
   const handleSaveSize = (
@@ -31,13 +32,38 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
       setSize('');
     }
   };
+  const handleImage = (event: React.ChangeEvent<HTMLInputElement>, setFieldValue: (arg0: string, arg1: any) => void, values: Product) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileReader = new FileReader();
+      fileReader.onloadend = () => {
+        setFieldValue('image', convertToPNG(fileReader.result));
+      };
+      fileReader.readAsDataURL(file);
+    }
+  };
+  const convertToPNG = (base64String: string | ArrayBuffer | null) => {
+    const image = new Image();
+    image.src = base64String as string;
 
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = image.width;
+      canvas.height = image.height;
+      if (ctx) ctx.drawImage(image, 0, 0);
+
+      const pngDataUrl = canvas.toDataURL('image/png');
+
+      return pngDataUrl;
+    };
+  };
   return (
     <DialogBox title="Product" open={open} onClose={onClose} width="600px">
       <Formik<Product>
         initialValues={{
           name: 'testName',
-          image: 'testUrl',
+          image: undefined,
           distributorPrice: {
             amount: 70,
             currency: 'INR'
@@ -101,7 +127,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                     //@ts-ignore
                     ref={fileRef}
                     name="image"
-                    onChange={handleChange}
+                    onChange={(e) => handleImage(e, setFieldValue, values)}
                     style={{
                       display: 'none'
                     }}
@@ -117,6 +143,18 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                   >
                     Upload
                   </Button>
+                  {values.image && (
+                    <Button
+                      disableElevation
+                      size="large"
+                      type="submit"
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => setShowImage(true)}
+                    >
+                      View
+                    </Button>
+                  )}
                 </Box>
               </Grid>
               <Grid item xs={6} marginTop={'15px'}>
@@ -195,7 +233,17 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                 </FormControl>
               </Grid>
               <Grid item xs={4} display="flex" alignItems="center">
-                <FormControlLabel onChange={handleChange} control={<Checkbox defaultChecked />} label="In Stock" />
+                <FormControlLabel
+                  name="inStock"
+                  onChange={(e) => {
+                    //@ts-ignore
+                    e.currentTarget.value = e.currentTarget.value === 'checked';
+                    handleChange(e);
+                  }}
+                  value={values.inStock ? 'checked' : false}
+                  control={<Checkbox name="inStock" value={values.inStock ? 'checked' : false} />}
+                  label="In Stock"
+                />
               </Grid>
             </Grid>
 

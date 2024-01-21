@@ -4,20 +4,36 @@ import generateQuery = require("../../utils/generateQuery");
 
 const orders = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  const response = await generateQuery.generateQuery(
-    orderModel.controller,
-    args,
-    [],
-    "id",
-    {
-      orderId: 1,
-    }
-  );
+  console.log(args);
+  try {
+    const response = await generateQuery.generateQuery(
+      orderModel.controller,
+      args,
+      [
+        {
+          $lookup: {
+            from: "products",
+            localField: "versions.productId",
+            foreignField: "_id",
+            as: "product",
+          },
+        },
+      ],
+      "id",
+      {
+        orderId: 1,
+        product: 1,
+      }
+    );
 
-  const preprocess = utils.unpackMessage(response);
-  console.log("List Orders", preprocess.length);
+    const preprocess = utils.unpackMessage(response, "product");
+    console.log("List Orders", preprocess.length);
 
-  return preprocess;
+    return preprocess;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
 };
 
 const orderSelection = (
@@ -40,7 +56,7 @@ const orderSelection = (
       {
         $lookup: {
           from: "product",
-          localField: "productId",
+          localField: "versions.productId",
           foreignField: "_id",
           as: "product",
         },

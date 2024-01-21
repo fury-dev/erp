@@ -5,10 +5,14 @@ const POLLING_INTERVAL = 10000;
 export type TChartFilter = {
   dateBy: 'MONTH' | 'YEAR' | 'DAY' | 'ALL_TIME' | 'WEEK';
   item: ITEMS;
+  group?: string;
+  id?: string[];
+  queryPath?: string;
 };
 export type TChartData = {
   name: string;
-  data: Number[];
+  data: number[];
+  value: any;
 };
 
 export const useChart = () => {
@@ -17,6 +21,7 @@ export const useChart = () => {
       chartData(filter: $filter) {
         name
         data
+        value
       }
     }
   `;
@@ -33,7 +38,13 @@ export const useChart = () => {
     stopPolling
   } = useQuery(query, {
     variables: {
-      filter: {}
+      filter: {
+        item: 'order',
+        dateBy: 'ALL_TIME',
+        group: 'status',
+        id: [],
+        queryPath: ''
+      }
     }
   });
 

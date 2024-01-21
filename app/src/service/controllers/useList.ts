@@ -1,18 +1,59 @@
 import { useCallback, useEffect } from 'react';
 import { ITEMS } from '../../types/items';
 import { gql, useQuery } from '@apollo/client';
+import { TChartFilter } from '.';
 const POLLING_INTERVAL = 10000;
 export type TQueryParams = {
   id?: string[];
-  deleted?: boolean;
+  deleted?: number;
   search?: string | null;
+  dateBy?: TChartFilter['dateBy'];
+  limit?: number;
 };
 export const useList = (item: ITEMS) => {
-  let query = null;
-  if (item === 'product') {
-    query = gql`
-      query Product($id: [ID], $deleted: Boolean, $search: String) {
-        products(id: $id, deleted: $deleted, search: $search) {
+  const updateQueryStructure = (): ((mask?: string) => string) => {
+    let query = null;
+    let defaultMask = '';
+    if (item === 'product') {
+      defaultMask = `
+        id
+        name
+        versionId
+        productId
+        image
+        distributorPrice {
+          amount
+          currency
+        }
+        sellerPrice {
+          amount
+          currency
+        }
+        size
+        inStock
+        createdAt
+        updatedAt
+      `;
+      query = (mask: any = defaultMask) => `
+        query Product($filter:ListFilter) {
+          products(filter: $filter){ ${mask}}
+        }
+      `;
+    } else if (item === 'order') {
+      defaultMask = `
+        id
+        versionId
+        customerName
+        orderId
+        orderDate
+        orderType
+        amount {
+          amount
+          currency
+        }
+        productId
+        status
+        product {
           id
           name
           versionId
@@ -28,93 +69,57 @@ export const useList = (item: ITEMS) => {
           }
           size
           inStock
-          createdAt
-          updatedAt
         }
-      }
-    `;
-  } else if (item === 'order') {
-    query = gql`
-      query Order($id: [ID], $deleted: Boolean, $search: String) {
-        orders(id: $id, deleted: $deleted, search: $search) {
-          id
-          versionId
-          customerName
-          orderId
-          orderDate
-          orderType
-          amount {
-            amount
-            currency
-          }
-          productId
-          status
-          product {
-            id
-            name
-            versionId
-            productId
-            image
-            distributorPrice {
-              amount
-              currency
-            }
-            sellerPrice {
-              amount
-              currency
-            }
-            size
-            inStock
-            createdAt
-            updatedAt
-          }
-          location {
-            address
-            pincode
-            city
-            state
-            country
-          }
-          paymentStatus
-          deliveryDate
-          createdAt
-          updatedAt
+        location {
+          address
+          pincode
+          city
+          state
+          country
         }
-      }
-    `;
-  } else {
-    query = gql`
-      query Expense($id: [ID], $deleted: Boolean, $search: String) {
-        expenses(id: $id, deleted: $deleted, search: $search) {
-          id
-          expenseType
-          versionId
-          expenseId
-          amount {
-            amount
-            currency
-          }
-          cashInBank {
-            amount
-            currency
-          }
-          cashInHand {
-            amount
-            currency
-          }
-          pnl {
-            amount
-            currency
-          }
-          note
-          operationType
-          createdAt
-          updatedAt
+        paymentStatus
+        deliveryDate
+        createdAt
+        updatedAt
+      `;
+      query = (mask: any = defaultMask) => `
+        query Order($filter:ListFilter) {
+          orders(filter: $filter){${mask}}
         }
-      }
-    `;
-  }
+      `;
+    } else {
+      defaultMask = `
+        id
+        expenseType
+        versionId
+        expenseId
+        amount {
+          amount
+          currency
+        }
+        cashInBank {
+          amount
+          currency
+        }
+        cashInHand {
+          amount
+          currency
+        }
+        note
+        operationType
+        createdAt
+        updatedAt
+      `;
+      query = (mask: any = defaultMask) => `
+        query Expense($filter:ListFilter) {
+          expenses(filter: $filter){${mask}}
+        }
+      `;
+    }
+    return query;
+  };
 
+  const baseQuery = updateQueryStructure();
   const {
     loading,
     error,
@@ -124,10 +129,11 @@ export const useList = (item: ITEMS) => {
     fetchMore,
     startPolling,
     stopPolling
-  } = useQuery(query, {
+  } = useQuery(gql(baseQuery()), {
     variables: {
       id: [],
-      deleted: false
+      deleted: 1,
+      dateBy: 'ALL_TIME'
     }
   });
 
@@ -139,14 +145,27 @@ export const useList = (item: ITEMS) => {
     console.log(data, error, 'response');
   }, [data]);
 
-  const updateQuery = useCallback(async ({ deleted = false, id = [], search = null }: TQueryParams) => {
+  const updateQuery = useCallback(
+    async ({ deleted = 0, id = [], search = null, dateBy = 'ALL_TIME', limit = -1 }: TQueryParams, poll: boolean = true) => {
+      stopPolling();
+      await refetch({
+        filter: {
+          id,
+          deleted,
+          search,
+          dateBy,
+          limit
+        }
+      });
+      if (poll) startPolling(POLLING_INTERVAL);
+    },
+    []
+  );
+
+  const updateMask = useCallback(async (mask: string) => {
+    _updateGraphQuery(() => gql(baseQuery(mask)));
     stopPolling();
-    await refetch({
-      id,
-      deleted,
-      search
-    });
-    startPolling(POLLING_INTERVAL);
+    await refetch();
   }, []);
   return {
     loading,
@@ -155,6 +174,8 @@ export const useList = (item: ITEMS) => {
     fetchMore,
     data,
     startPolling,
-    stopPolling
+    stopPolling,
+    updateMask,
+    error
   };
 };

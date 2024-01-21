@@ -2,7 +2,7 @@ const GraphqlSchema = `#graphql
 
 type Price{
     currency:String
-    amount:Int
+    amount:Float
 }
 
 type  Product{
@@ -17,7 +17,9 @@ type  Product{
     inStock: Boolean
     createdAt:String!
     updatedAt:String!
+    
 }
+
 
 type User{
     email:String
@@ -32,7 +34,6 @@ type Expense{
     versionId:Int
     cashInBank:Price
     cashInHand:Price
-    pnl:Price
     note:String
     operationType:String
     createdAt:String
@@ -66,18 +67,30 @@ type Order{
 type Series{
     name:String
     data:[Int]
+    value:String
 }
 
 input Filter{
     dateBy:String
     item:String
+    group:String
+    id:[String] 
+    queryPath:String
 }   
+
+input ListFilter{
+    id:[String] 
+    deleted:Int 
+    search:String 
+    dateBy:String
+    limit:Int
+}
 type Query{
-    orders(id:[ID],deleted:Boolean,search:String):[Order]
+    orders(filter:ListFilter):[Order]
     # orderSelection(id:[ID!]):[Order]
-    expenses(id:[ID],deleted:Boolean,search:String):[Expense]
+    expenses(filter:ListFilter):[Expense]
     # expenseSelection(id:[ID!]):[Expense]
-    products(id:[ID],deleted:Boolean,search:String):[Product]
+    products(filter:ListFilter):[Product]
     userValidation(token:String):User
     # productSelection(id:[ID!]):[Product]
     chartData(filter:Filter):[Series]
@@ -96,6 +109,7 @@ type Mutation{
     deleteExpense(id:[ID!]):[Expense]
     registerUser(user:UserRegisterValue!):String
     loginUser(user:UserLoginValue!):String
+    loginWithGoogle(credentials:String!):String
 
 }
 
@@ -158,6 +172,8 @@ input PriceValue{
     currency:String
     amount:Int
 }
+
+
 `;
 
 export { GraphqlSchema };

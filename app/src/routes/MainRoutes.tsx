@@ -3,6 +3,7 @@ import { lazy } from 'react';
 // project imports
 import MainLayout from '../layout/MainLayout';
 import Loadable from '../ui-component/Loadable';
+import { ProductView } from '../views/pages/Products/ProductView';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('../views/dashboard/Default')));
@@ -91,6 +92,10 @@ const MainRoutes = {
     {
       path: 'products',
       element: <ProductList />
+    },
+    {
+      path: 'product/:id',
+      element: <ProductView />
     },
     {
       path: 'orders',

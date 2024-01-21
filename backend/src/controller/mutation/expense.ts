@@ -2,33 +2,37 @@ import expenseModel = require("../../schema/mongo/expense");
 import utils = require("../../schema/mongo/utils");
 import lodash = require("lodash");
 import expenseQuery = require("../query/expense");
-
+import processObject = require("../../utils/processObject");
 const addExpense = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   const lastExpense = await expenseModel.controller
     .find()
     .sort({ _id: -1 })
     .limit(1);
-  const data = args.expense;
-  console.log(data, lastExpense);
-  data["pnl"] = {
-    amount:
-      (data.cashInHand?.amount || 0) +
-      (data.cashInBank?.amount || 0) +
-      ((data.operationType === "DEBIT" ? -data.amount?.amount : 0) || 0),
-    currency: "INR",
-  };
+  const data = processObject.preProcessCurrency(args.expense, [
+    "cashInBank",
+    "cashInHand",
+    "amount",
+  ]);
+
+  // data["pnl"] = {
+  //   amount:
+  //     (data.cashInHand?.amount || 0) +
+  //     (data.cashInBank?.amount || 0) +
+  //     ((data.operationType === "DEBIT" ? -data.amount?.amount : 0) || 0),
+  //   currency: "INR",
+  // };
 
   let expenseId = 124594;
   if (lastExpense.length === 1 && lastExpense[0]?.expenseId) {
     expenseId = lastExpense[0]?.expenseId + 1;
     const lastExpenseVersion =
       lastExpense[0]?.versions[lastExpense[0].versions.length];
-    data["pnl"].amount -= lastExpense[0]
-      ? (lastExpenseVersion?.cashInHand?.amount || 0) +
-        (lastExpenseVersion?.cashInBank?.amount || 0) +
-        (lastExpenseVersion?.amount?.amount || 0)
-      : 1;
+    // data["pnl"].amount -= lastExpense[0]
+    //   ? (lastExpenseVersion?.cashInHand?.amount || 0) +
+    //     (lastExpenseVersion?.cashInBank?.amount || 0) +
+    //     (lastExpenseVersion?.amount?.amount || 0)
+    //   : 1;
   }
 
   const expense = new expenseModel.controller({
@@ -36,6 +40,7 @@ const addExpense = async (_: any, args: any, context: any) => {
     ...utils.updateMongo(data),
   });
   return await expense.save().catch((err: any) => {
+    if (err) console.log(err);
     if (err?.code === 11000) {
       return new Error(err);
     } else {

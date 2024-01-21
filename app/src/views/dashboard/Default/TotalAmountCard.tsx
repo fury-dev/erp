@@ -10,6 +10,7 @@ import TotalIncomeCard from '../../../ui-component/cards/Skeleton/TotalIncomeCar
 
 // assets
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
+import { useApiService } from '../../../service';
 
 // styles
 const CardWrapper = styled(MainCard)(({ theme }) => ({
@@ -41,8 +42,16 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ==============================|| DASHBOARD - TOTAL INCOME DARK CARD ||============================== //
 
-const TotalIncomeDarkCard = ({ isLoading }) => {
+interface ITotalAmountCard {
+  isLoading: boolean;
+  amount: string;
+  title: String;
+}
+const TotalAmountCard = ({ isLoading, title, amount }: ITotalAmountCard) => {
   const theme = useTheme();
+  const {
+    chart: {}
+  } = useApiService('expense');
 
   return (
     <>
@@ -74,12 +83,12 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
                   }}
                   primary={
                     <Typography variant="h4" sx={{ color: '#fff' }}>
-                      $203k
+                      {amount}
                     </Typography>
                   }
                   secondary={
                     <Typography variant="subtitle2" sx={{ color: 'primary.light', mt: 0.25 }}>
-                      Total Income
+                      {title}
                     </Typography>
                   }
                 />
@@ -92,8 +101,4 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
   );
 };
 
-TotalIncomeDarkCard.propTypes = {
-  isLoading: PropTypes.bool
-};
-
-export default TotalIncomeDarkCard;
+export default TotalAmountCard;

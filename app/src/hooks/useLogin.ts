@@ -52,13 +52,13 @@ export const useLogin = () => {
     }
   }, [res]);
   const updateQuery = useCallback(async (value: Login) => {
-    console.log(value);
     await loginUser({
       variables: {
         user: value
       }
     });
   }, []);
+
   return {
     loading,
     error,

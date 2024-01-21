@@ -7,17 +7,26 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { BrowserView, MobileView } from 'react-device-detect';
 
 // types
-import PropTypes from 'prop-types';
 
 // project imports
 import MenuList from './MenuList';
 import LogoSection from '../LogoSection';
-import MenuCard from './MenuCard';
 import { drawerWidth } from '../../../store/constant';
+import styled from 'styled-components';
+interface ISidebar {
+  drawerOpen: boolean;
+  drawerToggle: any;
+  window: any;
+}
 
-// ==============================|| SIDEBAR DRAWER ||============================== //
-
-const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
+const StyledPerfectScrollbar = styled(PerfectScrollbar)`
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    background-color: #f5f5f5;
+  }
+`;
+const Sidebar = ({ drawerOpen = false, drawerToggle = () => {}, window }: ISidebar) => {
   const theme = useTheme();
   const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -29,7 +38,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
         </Box>
       </Box>
       <BrowserView>
-        <PerfectScrollbar
+        <StyledPerfectScrollbar
           component="div"
           style={{
             height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
@@ -38,13 +47,11 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
           }}
         >
           <MenuList />
-          <MenuCard />
-        </PerfectScrollbar>
+        </StyledPerfectScrollbar>
       </BrowserView>
       <MobileView>
         <Box sx={{ px: 2 }}>
           <MenuList />
-          <MenuCard />
         </Box>
       </MobileView>
     </>
@@ -78,12 +85,6 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
       </Drawer>
     </Box>
   );
-};
-
-Sidebar.propTypes = {
-  drawerOpen: PropTypes.bool,
-  drawerToggle: PropTypes.func,
-  window: PropTypes.object
 };
 
 export default Sidebar;

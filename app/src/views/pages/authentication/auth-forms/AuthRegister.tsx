@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useGoogleLogin } from '../../../../hooks/useGoogleLogin';
+import { GoogleLogin } from '@react-oauth/google';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -17,9 +19,8 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  TextField,
-  Typography,
-  useMediaQuery
+  Typography
+  // useMediaQuery
 } from '@mui/material';
 
 // third party
@@ -28,7 +29,6 @@ import { Formik } from 'formik';
 
 // project imports
 import useScriptRef from '../../../../hooks/useScriptRef';
-import Google from '../../../../assets/images/icons/social-google.svg';
 import AnimateButton from '../../../../ui-component/extended/AnimateButton';
 import { strengthColor, strengthIndicator } from '../../../../utils/password-strength';
 
@@ -37,35 +37,33 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { userRegister } from '../../../../hooks/useRegister';
 import { omit } from 'lodash';
+import { RootState } from '../../../../store';
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
 const FirebaseRegister = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
-  const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-  const customization = useSelector((state) => state.customization);
+  // const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
+  const customization = useSelector((state: RootState) => state.customization);
   const [showPassword, setShowPassword] = useState(false);
   const { submitQuery, data, apiErrors } = userRegister();
   const [checked, setChecked] = useState(true);
   const navigate = useNavigate();
+  const { loginWithGoogle } = useGoogleLogin();
 
   const [strength, setStrength] = useState(0);
-  const [level, setLevel] = useState();
-
-  const googleHandler = async () => {
-    console.error('Register');
-  };
+  const [level, setLevel] = useState<any>();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = (event: { preventDefault: () => void }) => {
     event.preventDefault();
   };
 
-  const changePassword = (value) => {
+  const changePassword = (value: string) => {
     const temp = strengthIndicator(value);
     setStrength(temp);
     setLevel(strengthColor(temp));
@@ -80,22 +78,15 @@ const FirebaseRegister = ({ ...others }) => {
       <Grid container direction="column" justifyContent="center" spacing={2}>
         <Grid item xs={12}>
           <AnimateButton>
-            <Button
-              variant="outlined"
-              fullWidth
-              onClick={googleHandler}
-              size="large"
-              sx={{
-                color: 'grey.700',
-                backgroundColor: theme.palette.grey[50],
-                borderColor: theme.palette.grey[100]
+            <GoogleLogin
+              theme="filled_blue"
+              onSuccess={(credentialResponse) => {
+                if (credentialResponse.credential) loginWithGoogle(credentialResponse.credential);
               }}
-            >
-              <Box sx={{ mr: { xs: 1, sm: 2, width: 20 } }}>
-                <img src={Google} alt="google" width={16} height={16} style={{ marginRight: matchDownSM ? 8 : 16 }} />
-              </Box>
-              Sign up with Google
-            </Button>
+              onError={() => {
+                console.log('Login Failed');
+              }}
+            />
           </AnimateButton>
         </Grid>
         <Grid item xs={12}>
@@ -141,12 +132,11 @@ const FirebaseRegister = ({ ...others }) => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            console.log(values);
             await submitQuery(omit(values, 'submit'));
             navigate('/home');
             setStatus({ success: true });
             setSubmitting(false);
-          } catch (err) {
+          } catch (err: any) {
             console.log(err);
             if (scriptedRef.current) {
               setStatus({ success: false });
@@ -158,6 +148,7 @@ const FirebaseRegister = ({ ...others }) => {
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
+            {/* @ts-ignore */}
             <FormControl fullWidth error={Boolean(touched.username && errors.username)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-email-register"> Username</InputLabel>
               <OutlinedInput
@@ -175,6 +166,8 @@ const FirebaseRegister = ({ ...others }) => {
                 </FormHelperText>
               )}
             </FormControl>
+            {/* @ts-ignore */}
+
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-email-register">Email Address </InputLabel>
               <OutlinedInput
@@ -192,6 +185,7 @@ const FirebaseRegister = ({ ...others }) => {
                 </FormHelperText>
               )}
             </FormControl>
+            {/* @ts-ignore */}
 
             <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-password-register">Password</InputLabel>
