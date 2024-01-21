@@ -2,7 +2,10 @@ import userModel = require("../../schema/mongo/user");
 import auth = require("../../auth");
 import password = require("../../utils/encryptPassword");
 import response = require("../../utils/generateMessage");
+import googleAuth = require("google-auth-library");
 
+const cliendId = process.env.CLIENT_ID;
+const { OAuth2Client } = googleAuth;
 const registerUser = async (_: any, { user = null }: any) => {
   const userObj = new userModel.controller({
     ...user,
@@ -46,7 +49,7 @@ const loginUser = async (_: any, { user = null }: any) => {
       );
     }
     const passwordCheck = await password.checkIfHasMatches(
-      record.password,
+      record.password || "",
       user.password
     );
     if (!passwordCheck) {
@@ -76,5 +79,46 @@ const loginUser = async (_: any, { user = null }: any) => {
     return new Error("Server error");
   }
 };
+const loginWithGoogle = async (_: any, args: any) => {
+  try {
+    console.log("Login In With Google", args);
 
-export { loginUser, registerUser };
+    const { credentials } = args;
+    const authClient = new OAuth2Client(cliendId);
+    if (credentials) {
+      const ticket = await authClient.verifyIdToken({
+        idToken: credentials,
+        audience: cliendId,
+      });
+      const payload = ticket.getPayload();
+      let res = await userModel.controller.findOne({
+        email: payload?.email,
+      });
+      if (!res) {
+        const user = new userModel.controller({
+          email: payload?.email,
+          username: payload?.name,
+          auth_login: true,
+        });
+        res = await user.save();
+      }
+
+      const token = auth.createToken(res?.id);
+      return JSON.stringify(
+        response.generateMessage(200, {
+          message: "Signin successful",
+          auth: {
+            token,
+            duration: process.env.TOKEN_LIFESPAN,
+          },
+        })
+      );
+    }
+
+    return {};
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+};
+export { loginUser, registerUser, loginWithGoogle };

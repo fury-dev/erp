@@ -3,6 +3,7 @@ import lodash = require("lodash");
 import generateTimestamp = require("../../utils/generateTimestamp");
 import utils = require("../../schema/mongo/utils");
 import productQuery = require("../query/product");
+import processObject = require("../../utils/processObject");
 
 const addProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
@@ -11,6 +12,10 @@ const addProduct = async (_: any, args: any, context: any) => {
       .find()
       .sort({ _id: -1 })
       .limit(1);
+    const data = processObject.preProcessCurrency(args.product, [
+      "sellerPrice",
+      "distributorPrice",
+    ]);
 
     let productId = 124594;
     if (lastProduct.length === 1 && lastProduct[0]?.productId) {
@@ -18,7 +23,7 @@ const addProduct = async (_: any, args: any, context: any) => {
     }
     const product = new productModel.controller({
       productId,
-      ...utils.updateMongo(args.product),
+      ...utils.updateMongo(data),
     });
     return await product
       .save()

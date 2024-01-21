@@ -67,9 +67,10 @@ const productSlice = createSlice({
       });
     },
     setProductView: (_state, action) => {
-      return produce(_state, (draft) => {
-        draft.view = action.payload;
-      });
+      return {
+        ...current(_state),
+        view: action.payload
+      };
     }
   }
 });

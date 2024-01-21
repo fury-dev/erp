@@ -75,10 +75,6 @@ export const useAdd = (item: ITEMS) => {
             amount
             currency
           }
-          pnl {
-            amount
-            currency
-          }
           note
           operationType
           createdAt

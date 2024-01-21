@@ -1,6 +1,7 @@
 import { ThemeOptions, createTheme } from '@mui/material/styles';
 
 // assets
+//@ts-ignore
 import colors from '../assets/scss/_themes-vars.module.scss';
 
 // project imports

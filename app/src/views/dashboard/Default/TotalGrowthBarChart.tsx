@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -19,7 +18,8 @@ import { gridSpacing } from '../../../store/constant';
 import chartData from './chart-data/total-growth-bar-chart';
 import { useApiService } from '../../../service';
 import { TChartFilter } from '../../../service/controllers';
-import { ITEMS, TItems } from '../../../types';
+import { ITEMS } from '../../../types';
+import { sum } from 'lodash';
 
 const monthCategory = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const weekCategory = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
@@ -78,24 +78,22 @@ const status: {
 
 // ==============================|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||============================== //
 
-const TotalGrowthBarChart = ({ isLoading }) => {
+const TotalGrowthBarChart = ({ isLoading }: any) => {
   const [value, setValue] = useState<TChartFilter['dateBy']>('YEAR');
   const [item, setItem] = useState<ITEMS>('order');
 
   const theme = useTheme();
-  const customization = useSelector((state) => state.customization);
   const {
     chart: { series, updateQuery }
   } = useApiService('order');
 
-  const { navType } = customization;
   const { primary } = theme.palette.text;
-  const darkLight = theme.palette.dark.light;
+  const darkLight = theme.palette.primary.main;
   const grey200 = theme.palette.grey[200];
   const grey500 = theme.palette.grey[500];
 
-  const primary200 = theme.palette.primary[200];
-  const primaryDark = theme.palette.primary.dark;
+  const primary200 = theme.palette.info.light;
+  const primaryDark = theme.palette.info.dark;
   const secondaryMain = theme.palette.secondary.main;
   const secondaryLight = theme.palette.secondary.light;
 
@@ -136,12 +134,13 @@ const TotalGrowthBarChart = ({ isLoading }) => {
     if (!isLoading) {
       ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
     }
-  }, [navType, primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500]);
+  }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500, series]);
 
   useEffect(() => {
     updateQuery({
       dateBy: value,
-      item: item
+      item: item,
+      group: 'status'
     });
   }, [value, item]);
   return (
@@ -156,15 +155,15 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                 <Grid item>
                   <Grid container direction="column" spacing={1}>
                     <Grid item>
-                      <Typography variant="subtitle2">Total Orders</Typography>
+                      <Typography variant="subtitle2">Total {items.find((value) => value.value === item)?.label}</Typography>
                     </Grid>
                     <Grid item>
-                      <Typography variant="h3">$2,324.00</Typography>
+                      <Typography variant="h3">{sum(series.map((value) => sum(value.data)))}</Typography>
                     </Grid>
                   </Grid>
                 </Grid>
                 <Grid item>
-                  <TextField id="standard-select-currency" select value={item} onChange={(e) => setItem(e.target.value)}>
+                  <TextField id="standard-select-currency" select value={item} onChange={(e) => setItem(e.target.value as ITEMS)} disabled>
                     {items.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
@@ -173,7 +172,12 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                   </TextField>
                 </Grid>
                 <Grid item>
-                  <TextField id="standard-select-currency" select value={value} onChange={(e) => setValue(e.target.value)}>
+                  <TextField
+                    id="standard-select-currency"
+                    select
+                    value={value}
+                    onChange={(e) => setValue(e.target.value as TChartFilter['dateBy'])}
+                  >
                     {status.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
@@ -184,7 +188,8 @@ const TotalGrowthBarChart = ({ isLoading }) => {
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <Chart {...chartData} series={series} />
+              {/* @ts-ignore */}
+              <Chart {...chartData} series={series as ApexAxisChartSeries} />
             </Grid>
           </Grid>
         </MainCard>

@@ -1,6 +1,7 @@
 import userModel = require("../../schema/mongo/user");
 import auth = require("../../auth");
 import password = require("../../utils/encryptPassword");
+import keys = require("../../../oauth2.keys.json");
 
 const userValidation = async (_: any, args: any) => {
   try {

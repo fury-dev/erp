@@ -1,39 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ITEMS } from '../../types/items';
-import { DocumentNode, gql, useQuery } from '@apollo/client';
+import { useList } from '.';
+import { useDispatch } from 'react-redux';
+import { setExpenseView, setOrderView, setProductView } from '../../store/reducers';
 
-export const useFind = (item: ITEMS) => {
-  const getQuery = (data: DocumentNode, ids: string[]) => gql`
-  query ${item}(id:${ids}){
-      ${data}
-  }
-`;
-  const {
-    loading,
-    error,
-    data,
-    refetch,
-    updateQuery: updateGraphQuery,
-    fetchMore
-  } = useQuery(gql`
-  query ${item}s{
-      _id
-  }
-`);
-
+export const useFind = <T>(_item: ITEMS) => {
+  const { data, error, ...rest } = useList(_item);
+  const [item, setItem] = useState<T>();
+  const dispatch = useDispatch();
   useEffect(() => {
     if (error) console.error('API error', error);
-  }, [error]);
-  const updateQuery = (data: DocumentNode, ids: string[]) => {
-    updateGraphQuery((_prev) => getQuery(data, ids));
-    refetch();
-  };
+
+    if (data)
+      setItem(() => {
+        let item = data[`${_item}s`][0];
+        if (_item === 'expense') {
+          dispatch(setExpenseView(item));
+        } else if (_item === 'order') {
+          dispatch(setOrderView(item));
+        } else {
+          dispatch(setProductView(item));
+        }
+        return item;
+      });
+  }, [error, data]);
 
   return {
-    loading,
-    refetch,
-    updateQuery,
-    fetchMore,
-    data
+    ...rest,
+    data,
+    item
   };
 };

@@ -19,6 +19,7 @@ const validation = Yup.object().shape({
 export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClose: () => void; product?: Product }) => {
   const theme = useTheme();
   const [size, setSize] = useState('');
+  const [showImage, setShowImage] = useState<boolean>(false);
   const { submitData } = useProduct();
   const { setOpen } = useDialogContext();
   const fileRef = useRef<LegacyRef<HTMLInputElement>>(null);
@@ -71,7 +72,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
       <Formik<Product>
         initialValues={{
           name: 'testName',
-          image: 'testUrl',
+          image: undefined,
           distributorPrice: {
             amount: 70,
             currency: 'INR'
@@ -135,7 +136,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                     //@ts-ignore
                     ref={fileRef}
                     name="image"
-                    onChange={handleChange}
+                    onChange={(e) => handleImage(e, setFieldValue, values)}
                     style={{
                       display: 'none'
                     }}
@@ -151,6 +152,18 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                   >
                     Upload
                   </Button>
+                  {values.image && (
+                    <Button
+                      disableElevation
+                      size="large"
+                      type="submit"
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => setShowImage(true)}
+                    >
+                      View
+                    </Button>
+                  )}
                 </Box>
               </Grid>
               <Grid item xs={6} marginTop={'15px'}>
@@ -229,7 +242,17 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                 </FormControl>
               </Grid>
               <Grid item xs={4} display="flex" alignItems="center">
-                <FormControlLabel onChange={handleChange} control={<Checkbox defaultChecked />} label="In Stock" />
+                <FormControlLabel
+                  name="inStock"
+                  onChange={(e) => {
+                    //@ts-ignore
+                    e.currentTarget.value = e.currentTarget.value === 'checked';
+                    handleChange(e);
+                  }}
+                  value={values.inStock ? 'checked' : false}
+                  control={<Checkbox name="inStock" value={values.inStock ? 'checked' : false} />}
+                  label="In Stock"
+                />
               </Grid>
             </Grid>
 

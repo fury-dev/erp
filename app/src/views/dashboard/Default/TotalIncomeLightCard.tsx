@@ -10,6 +10,8 @@ import TotalIncomeCard from '../../../ui-component/cards/Skeleton/TotalIncomeCar
 
 // assets
 import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
+import { useApiService } from '../../../service';
+import { useEffect } from 'react';
 
 // styles
 const CardWrapper = styled(MainCard)(({ theme }) => ({
@@ -37,11 +39,19 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
   }
 }));
 
-// ==============================|| DASHBOARD - TOTAL INCOME LIGHT CARD ||============================== //
-
 const TotalIncomeLightCard = ({ isLoading }) => {
   const theme = useTheme();
+  const {
+    chart: { updateQuery, series }
+  } = useApiService('expense');
 
+  useEffect(() => {
+    updateQuery({
+      dateBy: 'YEAR',
+      item: 'expense',
+      group: 'operationType'
+    });
+  }, []);
   return (
     <>
       {isLoading ? (

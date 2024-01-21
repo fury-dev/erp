@@ -26,7 +26,9 @@ import { gridSpacing } from '../../store/constant';
 import { SET_BORDER_RADIUS, SET_FONT_FAMILY } from '../../store/actions';
 import SubCard from '../../ui-component/cards/SubCard';
 import AnimateButton from '../../ui-component/extended/AnimateButton';
-import { saveBorderRadius } from '../../store/reducers/customizationReducer';
+import { saveBorderRadius, saveCurrency } from '../../store/reducers/customizationReducer';
+import { RootState } from '../../store';
+import { TCurrency } from '../../types';
 
 // concat 'px'
 function valueText(value) {
@@ -38,8 +40,9 @@ function valueText(value) {
 const Customization = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const customization = useSelector((state) => state.customization);
+  const customization = useSelector((state: RootState) => state.customization);
 
+  const [currency, setCurrency] = useState(customization.currency);
   // drawer on/off
   const [open, setOpen] = useState(false);
   const handleToggle = () => {
@@ -171,6 +174,56 @@ const Customization = () => {
                       value="Inter"
                       control={<Radio />}
                       label="Inter"
+                      sx={{
+                        '& .MuiSvgIcon-root': { fontSize: 28 },
+                        '& .MuiFormControlLabel-label': {
+                          color: theme.palette.grey[900]
+                        }
+                      }}
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </SubCard>
+              <SubCard title="Currency">
+                <FormControl>
+                  <RadioGroup
+                    aria-label="font-family"
+                    value={currency}
+                    onChange={(e) =>
+                      setCurrency(() => {
+                        console.log(e.target.value);
+                        dispatch(saveCurrency(e.target.value));
+                        return e.target.value as TCurrency;
+                      })
+                    }
+                    name="row-radio-buttons-group"
+                  >
+                    <FormControlLabel
+                      value="INR"
+                      control={<Radio />}
+                      label="Rupee ₹"
+                      sx={{
+                        '& .MuiSvgIcon-root': { fontSize: 28 },
+                        '& .MuiFormControlLabel-label': {
+                          color: theme.palette.grey[900]
+                        }
+                      }}
+                    />
+                    <FormControlLabel
+                      value="USD"
+                      control={<Radio />}
+                      label="Dollar $"
+                      sx={{
+                        '& .MuiSvgIcon-root': { fontSize: 28 },
+                        '& .MuiFormControlLabel-label': {
+                          color: theme.palette.grey[900]
+                        }
+                      }}
+                    />
+                    <FormControlLabel
+                      value="STER"
+                      control={<Radio />}
+                      label="POUND £"
                       sx={{
                         '& .MuiSvgIcon-root': { fontSize: 28 },
                         '& .MuiFormControlLabel-label': {

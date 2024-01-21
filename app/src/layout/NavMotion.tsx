@@ -1,12 +1,9 @@
 // third party
 import { motion } from 'framer-motion';
 
-// types
-import PropTypes from 'prop-types';
+import { ReactNode } from 'react';
 
-// ==============================|| ANIMATION FOR CONTENT ||============================== //
-
-const NavMotion = ({ children }) => {
+const NavMotion = ({ children }: { children: ReactNode }) => {
   const motionVariants = {
     initial: {
       opacity: 0,
@@ -33,10 +30,6 @@ const NavMotion = ({ children }) => {
       {children}
     </motion.div>
   );
-};
-
-NavMotion.propTypes = {
-  children: PropTypes.node
 };
 
 export default NavMotion;

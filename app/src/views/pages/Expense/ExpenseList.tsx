@@ -7,6 +7,9 @@ import moment from 'moment';
 
 import { useDialogContext } from '../../../context/DialogContext';
 import { Expense } from '../../../types/items/expense';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
+import { convertFromINR, currencySymbol as _currencySymbol } from '../../../data/Product/currency';
 const ExpenseList = () => {
   const {
     list: { apiAction, loading, updateQuery, stopPolling },
@@ -16,7 +19,8 @@ const ExpenseList = () => {
   } = useExpense();
 
   const { setComponent } = useDialogContext();
-
+  const currency = useSelector((state: RootState) => state.customization.currency);
+  const currencySymbol = _currencySymbol[currency];
   return (
     <div style={{ height: '100%', width: '100' }}>
       <ListView<Expense>
@@ -29,28 +33,44 @@ const ExpenseList = () => {
             width: 100
           },
           {
-            field: 'expenseType',
-            headerName: 'Customer Name',
+            field: 'operationType',
+            headerName: 'Mode',
             width: 100
           },
-
+          {
+            field: 'expenseType',
+            headerName: 'Expense Type',
+            width: 100
+          },
+          {
+            field: 'amount',
+            headerName: 'Amount',
+            width: 70,
+            getValue: (params) => `${convertFromINR(params.amount.amount, currency).toFixed(2)}  ${currencySymbol}`
+          },
           {
             field: 'cashInHand',
             headerName: 'Cash in Hand',
             width: 70,
-            getValue: (params) => ` ${params.cashInHand.amount} ${params.cashInHand.currency} `
+            getValue: (params) => `${convertFromINR(params.cashInHand.amount, currency).toFixed(2)}  ${currencySymbol}`
           },
           {
             field: 'cashInBank',
             headerName: 'Cash in Bank',
             width: 70,
-            getValue: (params) => ` ${params.cashInBank.amount} ${params.cashInBank.currency} `
+            getValue: (params) => ` 
+            ${convertFromINR(params.cashInBank.amount, currency).toFixed(2)}  ${currencySymbol}
+            `
           },
           {
             field: 'pnl',
             headerName: 'P/L',
             width: 70,
-            getValue: (params) => ` ${params.pnl.amount} ${params.pnl.currency} `
+            getValue: (params) =>
+              `${convertFromINR(
+                params.cashInBank.amount + params.cashInHand.amount + params.amount.amount * (params.operationType === 'DEBIT' ? -1 : 1),
+                currency
+              ).toFixed(2)} ${currencySymbol} `
           },
           {
             field: 'note',
