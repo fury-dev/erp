@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setProducts } from '../../../../store/reducers';
 import { RootState } from '../../../../store';
 import { useMultiSelect } from '../../../../context/MuliSelectContext';
-import lodash from 'lodash';
+import lodash, { compact } from 'lodash';
 export const useProduct = () => {
   const {
     add,
@@ -35,11 +35,11 @@ export const useProduct = () => {
     if (data?.products) {
       dispatch(
         setProducts({
-          value: data.products,
+          value: compact(data.products),
           page: 1
         })
       );
-      setItems(data.products);
+      setItems(compact(data.products));
     }
   }, [data]);
   const apiAction = useCallback(

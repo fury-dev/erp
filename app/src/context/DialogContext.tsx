@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useMemo, useState } from 'react';
+import React, { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 const FilteredDiv = styled.div`
   filter: blur(5px);
@@ -14,7 +14,7 @@ type TDialogContext = {
 const DialogContext = createContext<TDialogContext | null>(null);
 
 export const DialogContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(true);
   const [component, setComponent] = useState<ReactNode | null>(null);
 
   const values = useMemo(
@@ -26,9 +26,15 @@ export const DialogContextProvider = ({ children }: { children: React.ReactNode 
     }),
     [open, setOpen]
   );
+  useEffect(() => {
+    console.log(component);
+  }, [component]);
+  useEffect(() => {
+    console.log(open);
+  }, [open]);
   return (
     <DialogContext.Provider value={values}>
-      {component ? (
+      {component && open ? (
         <FilteredDiv>
           {component}
           {children}

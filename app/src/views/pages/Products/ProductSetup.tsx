@@ -1,10 +1,9 @@
 import { DialogBox } from '../../../components/Dialog/DialogBox';
-import { Box, Button, Checkbox, FormControlLabel, Grid, IconButton, MenuItem, Select } from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, Grid, IconButton } from '@mui/material';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { currencySupport } from '../../../data/Product/currency';
 import { MdDeleteOutline } from 'react-icons/md';
 import { LegacyRef, useRef, useState } from 'react';
 import AnimateButton from '../../../ui-component/extended/AnimateButton';
@@ -12,6 +11,7 @@ import { useProduct } from './hooks/useProduct';
 import { Product } from '../../../types/items/product';
 import { FormInputMoney } from '../../../components/Form';
 import { Price } from '../../../types';
+import { useDialogContext } from '../../../context/DialogContext';
 
 const validation = Yup.object().shape({
   name: Yup.string().required()
@@ -20,6 +20,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
   const theme = useTheme();
   const [size, setSize] = useState('');
   const { submitData } = useProduct();
+  const { setOpen } = useDialogContext();
   const fileRef = useRef<LegacyRef<HTMLInputElement>>(null);
   const handleSaveSize = (
     _event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
@@ -31,9 +32,42 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
       setSize('');
     }
   };
+  const handleImage = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    setFieldValue: (arg0: string, arg1: any) => void,
+    values: Product
+  ) => {
+    const file = event.target.files?.[0];
+    console.log(file);
+    if (file) {
+      const fileReader = new FileReader();
+      fileReader.onloadend = async () => {
+        setFieldValue('image', convertToPNG(fileReader.result));
+        console.log(await convertToPNG(fileReader.result));
+      };
+      await fileReader.readAsDataURL(file);
+    }
+    setOpen(true);
+  };
+  const convertToPNG = (base64String: string | ArrayBuffer | null) => {
+    const image = new Image();
+    image.src = base64String as string;
 
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = image.width;
+      canvas.height = image.height;
+      if (ctx) ctx.drawImage(image, 0, 0);
+
+      const pngDataUrl = canvas.toDataURL('image/png');
+
+      return pngDataUrl;
+    };
+    return image;
+  };
   return (
-    <DialogBox title="Product" open={open} onClose={onClose} width="600px">
+    <DialogBox title="Product" open={open} onClose={() => setOpen(false)} width="600px">
       <Formik<Product>
         initialValues={{
           name: 'testName',

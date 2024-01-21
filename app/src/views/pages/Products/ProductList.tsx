@@ -87,7 +87,7 @@ const ProductList = () => {
                       <ProductSetup
                         open={true}
                         onClose={() => {
-                          setComponent(false);
+                          // setComponent(false);
                         }}
                       />
                     )

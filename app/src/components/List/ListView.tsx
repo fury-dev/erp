@@ -402,7 +402,7 @@ export const ListView = <T extends TItems>({
                         </TableCell>
                       ))}
                       {actionCell && (
-                        <TableCell id={`actions`}>
+                        <TableCell id={`actions`} onClick={(e) => e.stopPropagation()}>
                           {actionCell?.buttons?.map((value, index) => (
                             <Button
                               key={`header-button-${index}`}
