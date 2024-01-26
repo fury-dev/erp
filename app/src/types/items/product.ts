@@ -4,7 +4,7 @@ export type Product = {
   id: string;
   versionId: number;
   name: string;
-  image: String | undefined;
+  image: string | undefined;
   distributorPrice: Price;
   sellerPrice: Price;
   size?: string[];

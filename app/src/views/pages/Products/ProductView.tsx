@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useChart, useFind } from '../../../service/controllers';
+import { useFind } from '../../../service/controllers';
 import { getIdFromUrl } from '../../utilities/Validators';
 import { Box, Grid } from '@mui/material';
 import { Product } from '../../../types/items/product';
@@ -10,25 +10,20 @@ import { RootState } from '../../../store';
 import { convertFromINR, currencySymbol } from '../../../data/Product/currency';
 import { ViewSkeleton } from '../../../ui-component/cards/Skeleton/ViewSkeleton';
 import GenericChart from '../../../components/Chart';
+import { IoMdImage } from 'react-icons/io';
+import { ElevatedBox } from '../../../components/StyledComponents/ElevatedBox';
 
 export const ProductView = () => {
   const location = useLocation();
+  const customization = useSelector((state: RootState) => state.customization);
 
   const { item, updateQuery, loading } = useFind<Product>('product');
-  const { updateQuery: updateChartsQuery, series } = useChart();
 
   const id = getIdFromUrl(location.pathname);
   useEffect(() => {
     updateQuery({
       deleted: 0,
       id: [id]
-    });
-    updateChartsQuery({
-      item: 'order',
-      group: 'status',
-      dateBy: 'ALL_TIME',
-      id: [id],
-      queryPath: 'productId'
     });
   }, [updateQuery, id]);
 
@@ -38,20 +33,29 @@ export const ProductView = () => {
   return loading ? (
     <ViewSkeleton />
   ) : (
-    <Grid container>
+    <Grid container gap={1}>
       <Grid item xs={10}>
-        {item?.image && (
-          <img
-            src={item?.image || ''}
-            width="80%"
-            height="80%"
-            style={{
-              objectFit: 'contain'
-            }}
-          />
-        )}
+        <ElevatedBox
+          display="flex"
+          flexDirection="row"
+          justifyContent="center"
+          sx={{ height: '100%', alignItems: 'center', borderRadius: `${customization.borderRadius}px` }}
+        >
+          {item?.image ? (
+            <img
+              src={item.image}
+              width="80%"
+              height="80%"
+              style={{
+                objectFit: 'contain'
+              }}
+            />
+          ) : (
+            <IoMdImage />
+          )}
+        </ElevatedBox>
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={1}>
         <Box
           sx={{
             display: 'flex',

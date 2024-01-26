@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { TChartFilter } from '../../service/controllers';
+import React, { useEffect, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -10,83 +10,74 @@ import ApexCharts from 'apexcharts';
 import Chart from 'react-apexcharts';
 
 // project imports
-import SkeletonTotalGrowthBarChart from '../../../ui-component/cards/Skeleton/TotalGrowthBarChart';
-import MainCard from '../../../ui-component/cards/MainCard';
-import { gridSpacing } from '../../../store/constant';
 
 // chart data
-import chartData from './chart-data/total-growth-bar-chart';
-import { useApiService } from '../../../service';
-import { TChartFilter } from '../../../service/controllers';
-import { ITEMS } from '../../../types';
-import { sum } from 'lodash';
-import { barChartData } from '../../../components/Chart/data';
 
+import { sum } from 'lodash';
+import { useApiService } from '../../service';
+import { gridSpacing } from '../../store/constant';
+import { ITEMS, TItems } from '../../types';
+import MainCard from '../../ui-component/cards/MainCard';
+import SkeletonTotalGrowthBarChart from '../../ui-component/cards/Skeleton/TotalGrowthBarChart';
+import { barChartData } from './data';
+
+interface IGenericChart<T extends ITEMS> {
+  filter: Omit<TChartFilter, 'dateBy'>;
+  columns?: Record<TChartFilter['dateBy'], string[]>;
+  items: {
+    value: T;
+    label: string;
+  }[];
+  item: ITEMS;
+  setItem?: React.Dispatch<React.SetStateAction<ITEMS>>;
+  title?: string;
+  status?: { value: TChartFilter['dateBy']; label: string }[];
+}
 const monthCategory = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const weekCategory = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
 
-const columns: Record<TChartFilter['dateBy'], string[]> = {
-  WEEK: weekCategory,
-  MONTH: [],
-  ALL_TIME: [],
-  DAY: [],
-  YEAR: monthCategory
-};
-
-const items: {
-  value: ITEMS;
-  label: string;
-}[] = [
-  {
-    value: 'expense',
-    label: 'Expense'
+const GenericChart = <T extends ITEMS>({
+  filter,
+  columns = {
+    WEEK: weekCategory,
+    MONTH: [],
+    ALL_TIME: [],
+    DAY: [],
+    YEAR: monthCategory
   },
-  {
-    value: 'order',
-    label: 'Order'
-  },
-  {
-    value: 'product',
-    label: 'Product'
-  }
-];
-
-const status: {
-  value: TChartFilter['dateBy'];
-  label: string;
-}[] = [
-  {
-    value: 'DAY',
-    label: 'Today'
-  },
-  {
-    value: 'WEEK',
-    label: 'Last Week'
-  },
-  {
-    value: 'MONTH',
-    label: 'Last Month'
-  },
-  {
-    value: 'YEAR',
-    label: 'Last Year'
-  },
-  {
-    value: 'ALL_TIME',
-    label: 'All time'
-  }
-];
-
-// ==============================|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||============================== //
-
-const TotalGrowthBarChart = ({ isLoading }: any) => {
+  items,
+  item,
+  setItem,
+  title = 'Total',
+  status = [
+    {
+      value: 'DAY',
+      label: 'Today'
+    },
+    {
+      value: 'WEEK',
+      label: 'Last Week'
+    },
+    {
+      value: 'MONTH',
+      label: 'Last Month'
+    },
+    {
+      value: 'YEAR',
+      label: 'Last Year'
+    },
+    {
+      value: 'ALL_TIME',
+      label: 'All time'
+    }
+  ]
+}: IGenericChart<T>) => {
   const [value, setValue] = useState<TChartFilter['dateBy']>('YEAR');
-  const [item, setItem] = useState<ITEMS>('order');
 
   const theme = useTheme();
   const {
-    chart: { series, updateQuery }
-  } = useApiService('order');
+    chart: { series, updateQuery, loading }
+  } = useApiService(item);
 
   const { primary } = theme.palette.text;
   const darkLight = theme.palette.primary.main;
@@ -97,10 +88,9 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
   const primaryDark = theme.palette.info.dark;
   const secondaryMain = theme.palette.secondary.main;
   const secondaryLight = theme.palette.secondary.light;
-
   useEffect(() => {
     const newChartData = {
-      ...chartData.options,
+      ...barChartData.options,
       colors: [primary200, primaryDark, secondaryMain, secondaryLight],
       xaxis: {
         labels: {
@@ -131,23 +121,17 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
       }
     };
 
-    // do not load chart when loading
-    if (!isLoading) {
+    if (!loading) {
       ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
     }
-  }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500, series]);
+  }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, loading, grey500, series]);
 
   useEffect(() => {
-    updateQuery({
-      dateBy: value,
-      item: item,
-      group: 'status'
-    });
-  }, [value, item]);
-  console.log(columns[value], series);
+    updateQuery({ ...filter, dateBy: value });
+  }, [filter]);
   return (
     <>
-      {isLoading ? (
+      {loading ? (
         <SkeletonTotalGrowthBarChart />
       ) : (
         <MainCard>
@@ -157,7 +141,7 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
                 <Grid item>
                   <Grid container direction="column" spacing={1}>
                     <Grid item>
-                      <Typography variant="subtitle2">Total {items.find((value) => value.value === item)?.label}</Typography>
+                      <Typography variant="subtitle2">{title}</Typography>
                     </Grid>
                     <Grid item>
                       <Typography variant="h3">{sum(series.map((value) => sum(value.data)))}</Typography>
@@ -165,7 +149,13 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
                   </Grid>
                 </Grid>
                 <Grid item>
-                  <TextField id="standard-select-currency" select value={item} onChange={(e) => setItem(e.target.value as ITEMS)} disabled>
+                  <TextField
+                    id="standard-select-currency"
+                    select
+                    value={item}
+                    onChange={(e) => setItem && setItem(e.target.value as ITEMS)}
+                    disabled
+                  >
                     {items.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
@@ -190,7 +180,6 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              {/* @ts-ignore */}
               <Chart {...barChartData} series={series as ApexAxisChartSeries} />
             </Grid>
           </Grid>
@@ -199,9 +188,4 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
     </>
   );
 };
-
-TotalGrowthBarChart.propTypes = {
-  isLoading: PropTypes.bool
-};
-
-export default TotalGrowthBarChart;
+export default GenericChart;
