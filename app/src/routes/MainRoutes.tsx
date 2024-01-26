@@ -19,7 +19,6 @@ const OrderList = Loadable(lazy(() => import('../views/pages/Orders/OrderList'))
 const ExpenseList = Loadable(lazy(() => import('../views/pages/Expense/ExpenseList')));
 
 // sample page routing
-const SamplePage = Loadable(lazy(() => import('../views/sample-page')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -85,10 +84,7 @@ const MainRoutes = {
         }
       ]
     },
-    {
-      path: 'sample-page',
-      element: <SamplePage />
-    },
+
     {
       path: 'products',
       element: <ProductList />

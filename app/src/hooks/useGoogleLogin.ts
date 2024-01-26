@@ -10,7 +10,7 @@ export const useGoogleLogin = () => {
   const navigate = useNavigate();
   const { setUser } = useAuthContext();
 
-  const [loginUser, { loading, error, data: res, client }] = useMutation(
+  const [loginUser, { data: res }] = useMutation(
     gql`
       mutation Login($credentials: String!) {
         loginWithGoogle(credentials: $credentials)

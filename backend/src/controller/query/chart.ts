@@ -108,12 +108,12 @@ const chartData = async (_: any, args: any, context: any) => {
     };
   } else if (timeSpan)
     match = { createdAt: { $gte: timeSpan![0], $lte: timeSpan![1] } };
-  else if (args.id?.[0]) {
+  else if (args.id?.length > 0) {
     match = {
       [args?.query ? `$version.${args?.query}` : "id"]: { $in: args.id },
     };
   }
-  console.log(match, "x");
+  console.log(match, "match");
   try {
     const data: TChart[] = await controller.aggregate([
       ...(match
