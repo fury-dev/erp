@@ -10,6 +10,8 @@ import userQuery = require("./src/controller/query/user");
 import chartQuery = require("./src/controller/query/chart");
 
 import productQuery = require("./src/controller/query/product");
+import getVersionItem = require("./src/controller/query/getVersionItem");
+
 import expenseQuery = require("./src/controller/query/expense");
 import expenseMutation = require("./src/controller/mutation/expense");
 import productMutation = require("./src/controller/mutation/product");
@@ -24,6 +26,7 @@ const resolvers = {
     ...productQuery,
     ...userQuery,
     ...chartQuery,
+    ...getVersionItem,
   },
   Mutation: {
     ...productMutation,

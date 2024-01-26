@@ -18,7 +18,7 @@ const Schema = new mongoose.Schema({
       sellerPrice: common.Price,
       size: [String],
       inStock: Boolean,
-      uri: String,
+      image: String,
       createdAt: { type: Date, default: Date.now },
       deleted: Boolean,
     },

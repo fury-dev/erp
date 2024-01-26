@@ -129,13 +129,30 @@ const chartData = async (_: any, args: any, context: any) => {
             $arrayElemAt: ["$versions", -1],
           },
           createdAt: 1,
+          year: {
+            $year: "$createdAt",
+          },
+          month: {
+            $month: "$createdAt",
+          },
         },
       },
       {
         $group: {
           _id: {
             ...(createSeries
-              ? { [createSeries]: "$versions." + createSeries }
+              ? {
+                  [createSeries]: "$versions." + createSeries,
+                  ...(args.filter.dateBy === "ALL_TIME"
+                    ? {
+                        year: "$year",
+                        month: "$month",
+                      }
+                    : {
+                        year: "$year",
+                        month: "$month",
+                      }),
+                }
               : {}),
             ...(timeFilter
               ? {
@@ -161,6 +178,7 @@ const chartData = async (_: any, args: any, context: any) => {
         },
       },
     ]);
+    console.log(data);
     const preprocess = preprocessTimeSeries(
       data,
       args.filter.dateBy,

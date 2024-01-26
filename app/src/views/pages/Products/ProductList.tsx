@@ -21,7 +21,7 @@ const ProductList = () => {
     deleteRequest
   } = useProduct();
 
-  const { setComponent } = useDialogContext();
+  const { setComponent, setOpen } = useDialogContext();
   const currency = useSelector((state: RootState) => state.customization.currency);
   const currencySymbol = _currencySymbol[currency];
   const navigate = useNavigate();
@@ -99,7 +99,7 @@ const ProductList = () => {
               {
                 title: 'Add',
                 rest: {
-                  onClick: () =>
+                  onClick: () => {
                     setComponent(
                       <ProductSetup
                         open={true}
@@ -107,7 +107,10 @@ const ProductList = () => {
                           // setComponent(false);
                         }}
                       />
-                    )
+                    );
+
+                    setOpen(true);
+                  }
                 }
               },
 
@@ -143,6 +146,7 @@ const ProductList = () => {
                         }}
                       />
                     );
+                    setOpen(true);
                   },
                   [selected]
                 ),

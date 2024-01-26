@@ -21,6 +21,8 @@ const filterTimeQuery = (dateBy: TDateby) => {
     timeFilter = "dayOfWeek";
 
     timeSpan = [moment(date).subtract("7", "days").toDate(), date];
+  } else {
+    timeFilter = "month";
   }
 
   return {

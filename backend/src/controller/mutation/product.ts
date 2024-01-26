@@ -8,6 +8,7 @@ import processObject = require("../../utils/processObject");
 const addProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
+    console.log(args.product);
     const lastProduct = await productModel.controller
       .find()
       .sort({ _id: -1 })
@@ -34,7 +35,7 @@ const addProduct = async (_: any, args: any, context: any) => {
         return {
           ...lodash.omit(data.versions[0], "_id"),
           updatedAt: data.updatedAt,
-          objectId: res.id,
+          id: res.id,
         };
       })
       .catch((err: any) => {

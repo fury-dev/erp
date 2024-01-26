@@ -143,6 +143,7 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
       group: 'status'
     });
   }, [value, item]);
+  console.log(columns[value], series);
   return (
     <>
       {isLoading ? (

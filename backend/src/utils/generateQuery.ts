@@ -8,7 +8,8 @@ const generateQuery = (
   args: any,
   piplines: mongoose.PipelineStage[] = [],
   searchElement: string = "name",
-  project: mongoose.PipelineStage.Project["$project"] = {}
+  project: mongoose.PipelineStage.Project["$project"] = {},
+  version: number = -1
 ) => {
   const match: any[] = [];
   const filters: {
@@ -82,7 +83,7 @@ const generateQuery = (
     {
       $project: {
         updatedAt: 1,
-        message: { $slice: ["$versions", -1] },
+        message: { $slice: ["$versions", version] },
         id: "$_id",
         ...project,
       },

@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { MdDeleteOutline } from 'react-icons/md';
+import { MdCancel, MdDeleteOutline } from 'react-icons/md';
 import { LegacyRef, useRef, useState } from 'react';
 import AnimateButton from '../../../ui-component/extended/AnimateButton';
 import { useProduct } from './hooks/useProduct';
@@ -36,7 +36,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
   const handleImage = async (
     event: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: (arg0: string, arg1: any) => void,
-    values: Product
+    _values: Product
   ) => {
     const file = event.target.files?.[0];
     console.log(file);
@@ -65,7 +65,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
 
       return pngDataUrl;
     };
-    return image;
+    return image.src;
   };
   return (
     <DialogBox title="Product" open={open} onClose={() => setOpen(false)} width="600px">
@@ -105,6 +105,24 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
               height: '100%'
             }}
           >
+            <DialogBox title="image" open={showImage} onClose={() => setShowImage(false)} width="600px">
+              <Box
+                sx={{
+                  position: 'relative'
+                }}
+              >
+                <IconButton
+                  sx={{
+                    position: 'absolute',
+                    right: 0
+                  }}
+                  onClick={() => setShowImage(false)}
+                >
+                  <MdCancel />
+                </IconButton>
+                <img src={values.image || ''} />
+              </Box>
+            </DialogBox>
             <Grid container xs={12}>
               <Grid item xs={6}>
                 {/* @ts-ignore */}

@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { convertFromINR, currencySymbol } from '../../../data/Product/currency';
 import { ViewSkeleton } from '../../../ui-component/cards/Skeleton/ViewSkeleton';
+import GenericChart from '../../../components/Chart';
 
 export const ProductView = () => {
   const location = useLocation();
@@ -16,8 +17,8 @@ export const ProductView = () => {
   const { item, updateQuery, loading } = useFind<Product>('product');
   const { updateQuery: updateChartsQuery, series } = useChart();
 
+  const id = getIdFromUrl(location.pathname);
   useEffect(() => {
-    const id = getIdFromUrl(location.pathname);
     updateQuery({
       deleted: 0,
       id: [id]
@@ -29,20 +30,28 @@ export const ProductView = () => {
       id: [id],
       queryPath: 'productId'
     });
-  }, [updateQuery]);
+  }, [updateQuery, id]);
 
   const currency = useSelector((state: RootState) => state.customization.currency);
 
   const symbol = currencySymbol[currency];
-  console.log(series);
   return loading ? (
     <ViewSkeleton />
   ) : (
     <Grid container>
-      <Grid item xs={8}>
-        {item?.image && <img src={`data:image/png;base64,${item?.image}`} />}
+      <Grid item xs={10}>
+        {item?.image && (
+          <img
+            src={item?.image || ''}
+            width="80%"
+            height="80%"
+            style={{
+              objectFit: 'contain'
+            }}
+          />
+        )}
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={2}>
         <Box
           sx={{
             display: 'flex',
@@ -60,7 +69,21 @@ export const ProductView = () => {
         </Box>
       </Grid>
       <Grid item xs={12}>
-        {/* charts */}
+        <GenericChart<'product'>
+          item="product"
+          filter={{
+            item: 'order',
+            group: 'status',
+            id: [id],
+            queryPath: 'productId'
+          }}
+          items={[
+            {
+              label: 'Product',
+              value: 'product'
+            }
+          ]}
+        />
       </Grid>
     </Grid>
   );

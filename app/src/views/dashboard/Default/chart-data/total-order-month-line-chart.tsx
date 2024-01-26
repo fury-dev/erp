@@ -1,6 +1,8 @@
 // ===========================|| DASHBOARD - TOTAL ORDER MONTH CHART ||=========================== //
 
-const chartData = {
+import ReactApexChart from 'react-apexcharts';
+
+const chartData: ReactApexChart = {
   type: 'line',
   height: 90,
   options: {

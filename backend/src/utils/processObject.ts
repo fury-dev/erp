@@ -43,4 +43,15 @@ const preProcessCurrency = (data: object, mask: string[]) => {
   return data;
 };
 
-export { preProcessCurrency };
+const processId = (id: string) => {
+  const values = id.split(":");
+  if (values.length === 1) {
+    throw new Error("Invalid Id");
+  }
+  return {
+    id: values[0],
+    item: values[1],
+    version: values.length > 2 ? parseInt(values[2]) : -1,
+  };
+};
+export { preProcessCurrency, processId };

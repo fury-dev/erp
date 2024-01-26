@@ -94,6 +94,7 @@ type Query{
     userValidation(token:String):User
     # productSelection(id:[ID!]):[Product]
     chartData(filter:Filter):[Series]
+    getVersionItem(id:ID):String
 
 } 
 
