@@ -9,10 +9,11 @@ import { useOrder } from './hooks/useOrder';
 import { Order } from '../../../types/items/order';
 import { FormDateTime, FormInputMoney, FormSelect } from '../../../components/Form';
 import { Price } from '../../../types';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useProduct } from '../Products/hooks/useProduct';
 import { Product } from '../../../types/items/product';
 import { useLocationApi } from '../../../hooks/useLocationApi';
+import GoogleMapReact from 'google-map-react';
 
 const validation = Yup.object().shape({
   name: Yup.string().required()
@@ -20,6 +21,7 @@ const validation = Yup.object().shape({
 
 const orderStatus: Order['status'][] = ['DELIVERED', 'OUT_FOR_DELIVERY', 'PENDING', 'SHIPPED'];
 const orderType: Order['orderType'][] = ['CASH_ON_DELIVERY', 'PREPAID'];
+const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: () => void; order?: Order }) => {
   const theme = useTheme();
@@ -27,9 +29,12 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
   const {
     list: { data, updateQuery }
   } = useProduct();
+  const [showMap, setShowMap] = useState<boolean>(false);
 
   const { cities, countries, state, getCities, getCountries, getStates } = useLocationApi();
-
+  const defaultProps = {
+    zoom: 11
+  };
   return (
     <DialogBox title="Order" open={open} onClose={onClose} width="600px">
       <Formik<Order>
@@ -47,6 +52,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
           orderType: 'CASH_ON_DELIVERY',
           id: '',
           versionId: 1,
+          geoLocation: null,
           ...(order || {})
         }}
         onSubmit={async (values, {}) => {
@@ -69,6 +75,12 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
               height: '100%'
             }}
           >
+            <DialogBox title="image" open={showMap} onClose={() => setShowMap(false)} width="600rem" height="500px">
+              <GoogleMapReact {...defaultProps} bootstrapURLKeys={{ key: '' }}>
+                {/* //@ts-ignore */}
+                <AnyReactComponent lat={values.geoLocation?.coords.latitude} lng={values.geoLocation?.coords.longitude} text="My Marker" />
+              </GoogleMapReact>
+            </DialogBox>
             <Grid container xs={12} spacing={2}>
               <Grid item xs={6}>
                 {/* @ts-ignore */}
@@ -231,12 +243,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     touched={touched}
                     handleChange={(e: React.ChangeEvent<any>) => {
                       handleChange(e);
-                      console.log(
-                        state.find((value) => value.name === e.target.value),
-                        countries.find((item) => item.name === values.location?.country),
-                        state,
-                        e.target.value
-                      );
+
                       getCities(
                         state.find((value) => value.name === e.target.value)['iso2'],
                         countries.find((item) => item.name === values.location?.country)['iso2']
@@ -299,9 +306,41 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     )}
                   </FormControl>
                 </Grid>
+                <Grid item xs={6}>
+                  <Box flexDirection="row" display="flex" alignItems="center">
+                    <Button
+                      disableElevation
+                      size="large"
+                      variant="contained"
+                      color="secondary"
+                      onClick={() =>
+                        navigator.geolocation.getCurrentPosition(
+                          (position) => {
+                            setFieldValue('geoLocation', position);
+                            setShowMap(true);
+                          },
+                          (error) => {
+                            console.error(error);
+                          }
+                        )
+                      }
+                    >
+                      Upload
+                    </Button>
+
+                    <Button
+                      disableElevation
+                      size="large"
+                      variant="contained"
+                      color="secondary"
+                      // onClick={() => setShowImage(true)}
+                    >
+                      View
+                    </Button>
+                  </Box>
+                </Grid>
               </Grid>
             </Grid>
-
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">

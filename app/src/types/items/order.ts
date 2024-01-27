@@ -23,4 +23,5 @@ export type Order = {
     state: String;
     country: String;
   };
+  geoLocation?: GeolocationPosition | null;
 };

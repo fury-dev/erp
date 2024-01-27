@@ -162,7 +162,6 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                   <Button
                     disableElevation
                     size="large"
-                    type="submit"
                     variant="contained"
                     color="secondary"
                     //@ts-ignore
@@ -171,14 +170,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                     Upload
                   </Button>
                   {values.image && (
-                    <Button
-                      disableElevation
-                      size="large"
-                      type="submit"
-                      variant="contained"
-                      color="secondary"
-                      onClick={() => setShowImage(true)}
-                    >
+                    <Button disableElevation size="large" variant="contained" color="secondary" onClick={() => setShowImage(true)}>
                       View
                     </Button>
                   )}

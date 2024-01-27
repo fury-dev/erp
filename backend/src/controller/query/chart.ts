@@ -113,7 +113,6 @@ const chartData = async (_: any, args: any, context: any) => {
       [args?.query ? `$version.${args?.query}` : "id"]: { $in: args.id },
     };
   }
-  console.log(match, "match");
   try {
     const data: TChart[] = await controller.aggregate([
       ...(match
