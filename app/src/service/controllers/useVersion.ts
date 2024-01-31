@@ -1,13 +1,15 @@
-import { useCallback, useEffect } from 'react';
-import { ITEMS } from '../../types/items';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { useCallback, useEffect, useState } from 'react';
+import { ITEMS, TItems } from '../../types/items';
+import { gql, useQuery } from '@apollo/client';
 
-export const useVersion = (item: ITEMS) => {
+export const useVersion = <T extends TItems>(item: ITEMS) => {
+  const [versions, setVersions] = useState<T[]>([]);
   const updateQueryStructure = (): ((mask?: string) => string) => {
     let query = null;
     let defaultMask = '';
     if (item === 'product') {
       defaultMask = `
+      versions{
         id
         name
         versionId
@@ -25,63 +27,57 @@ export const useVersion = (item: ITEMS) => {
         inStock
         createdAt
         updatedAt
-      `;
-      query = (mask: any = defaultMask) => `
-        query Product($filter:ListFilter) {
-          products(filter: $filter){ ${mask}}
-        }
+      }
       `;
     } else if (item === 'order') {
       defaultMask = `
-        id
-        versionId
-        customerName
-        orderId
-        orderDate
-        orderType
-        amount {
-          amount
-          currency
-        }
-        productId
-        status
-        product {
+        versions{
           id
-          name
           versionId
+          customerName
+          orderId
+          orderDate
+          orderType
+          amount {
+            amount
+            currency
+          }
           productId
-          image
-          distributorPrice {
-            amount
-            currency
+          status
+          product {
+            id
+            name
+            versionId
+            productId
+            image
+            distributorPrice {
+              amount
+              currency
+            }
+            sellerPrice {
+              amount
+              currency
+            }
+            size
+            inStock
           }
-          sellerPrice {
-            amount
-            currency
+          location {
+            address
+            pincode
+            city
+            state
+            country
           }
-          size
-          inStock
-        }
-        location {
-          address
-          pincode
-          city
-          state
-          country
-        }
-        paymentStatus
-        deliveryDate
-        createdAt
-        updatedAt
-      `;
-      query = (mask: any = defaultMask) => `
-        query Order($filter:ListFilter) {
-          orders(filter: $filter){${mask}}
+          paymentStatus
+          deliveryDate
+          createdAt
+          updatedAt
         }
       `;
     } else {
       defaultMask = `
-        id
+        versions{
+          id
         expenseType
         versionId
         expenseId
@@ -101,13 +97,14 @@ export const useVersion = (item: ITEMS) => {
         operationType
         createdAt
         updatedAt
-      `;
-      query = (mask: any = defaultMask) => `
-        query Expense($filter:ListFilter) {
-          expenses(filter: $filter){${mask}}
         }
       `;
     }
+    query = (mask: any = defaultMask) => `
+    query VerionedItem($id:ID,$all:Boolean) {
+      getVersionItem($id:$id,all:$all){ ${mask}}
+    }
+  `;
     return query;
   };
 
@@ -123,7 +120,8 @@ export const useVersion = (item: ITEMS) => {
     stopPolling
   } = useQuery(gql(baseQuery()), {
     variables: {
-      id: ''
+      id: '',
+      all: false
     }
   });
 
@@ -133,13 +131,15 @@ export const useVersion = (item: ITEMS) => {
 
   useEffect(() => {
     console.log(data, error, 'response');
+    if (data?.getVersionItem && data?.getVersionItem?.versions.length > 0) {
+      setVersions(data?.getVersionItem?.versions);
+    }
   }, [data]);
 
-  const updateQuery = useCallback(async (id: string, version: string) => {
+  const updateQuery = useCallback(async (id: string, version: string = '', all: boolean = false) => {
     await refetch({
-      id,
-      version,
-      item
+      id: `${id}:${item}:${version}`,
+      all
     });
   }, []);
 
@@ -156,6 +156,7 @@ export const useVersion = (item: ITEMS) => {
     startPolling,
     stopPolling,
     updateMask,
-    error
+    error,
+    versions
   };
 };
