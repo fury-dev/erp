@@ -1,7 +1,7 @@
 import orderModel = require("../../schema/mongo/order");
 import utils = require("../../schema/mongo/utils");
 import expenseModel = require("../../schema/mongo/expense");
-import productModel = require("../../schema/mongo/product");
+import productModel = require("../../schema/mongo/productSchema");
 import processObjects = require("../../utils/processObject");
 import generateQuery = require("../../utils/generateQuery");
 
@@ -28,10 +28,13 @@ const getVersionItem = async (_: any, args: any) => {
     [],
     "",
     [],
-    version
+    args?.all ? -2 : version
   );
-  const preprocess = utils.unpackMessage(response);
 
-  return preprocess[0];
+  return {
+    versions: response[0].versions.map((_value: any, index: number) =>
+      utils.unpackMessage(response, undefined, index)
+    ),
+  };
 };
 export { getVersionItem };
