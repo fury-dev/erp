@@ -85,6 +85,11 @@ input ListFilter{
     dateBy:String
     limit:Int
 }
+union VersionItem = Product | Expense | Order
+
+type VersionedItem{
+    versions:[VersionItem]
+}
 type Query{
     orders(filter:ListFilter):[Order]
     # orderSelection(id:[ID!]):[Order]
@@ -94,7 +99,7 @@ type Query{
     userValidation(token:String):User
     # productSelection(id:[ID!]):[Product]
     chartData(filter:Filter):[Series]
-    getVersionItem(id:ID):String
+    getVersionItem(id:ID,all:Boolean):VersionedItem
 
 } 
 

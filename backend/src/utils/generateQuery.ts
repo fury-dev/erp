@@ -83,7 +83,9 @@ const generateQuery = (
     {
       $project: {
         updatedAt: 1,
-        message: { $slice: ["$versions", version] },
+        ...(version !== -2
+          ? { message: { $slice: ["$versions", version] } }
+          : {}),
         id: "$_id",
         ...project,
       },

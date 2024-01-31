@@ -1,25 +1,22 @@
 import mongoose = require("mongoose");
-const ObjectId = mongoose.Schema.ObjectId;
+import common = require("./common");
 
 const Schema = new mongoose.Schema({
   deleted: Boolean,
-  productId: {
+  productSchemaId: {
     type: Number,
     unique: true,
   },
-  schema: {
-    type: ObjectId,
-    required: [true, "Product required"],
-  },
   versions: [
     {
+      name: String,
       versionId: {
         type: Number,
         default: 1,
       },
-      quantity: Number,
-
-      size: String,
+      distributorPrice: common.Price,
+      sellerPrice: common.Price,
+      size: [String],
       inStock: Boolean,
       image: String,
       createdAt: { type: Date, default: Date.now },
@@ -29,5 +26,5 @@ const Schema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
-const controller = mongoose.model("product", Schema);
+const controller = mongoose.model("productSchema", Schema);
 export { controller };

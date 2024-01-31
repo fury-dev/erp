@@ -15,13 +15,13 @@ import { Product } from '../../../types/items/product';
 import { useLocationApi } from '../../../hooks/useLocationApi';
 import GoogleMapReact from 'google-map-react';
 
-const validation = Yup.object().shape({
+const _validation = Yup.object().shape({
   name: Yup.string().required()
 });
 
 const orderStatus: Order['status'][] = ['DELIVERED', 'OUT_FOR_DELIVERY', 'PENDING', 'SHIPPED'];
 const orderType: Order['orderType'][] = ['CASH_ON_DELIVERY', 'PREPAID'];
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
+const AnyReactComponent = ({ text }: any) => <div>{text}</div>;
 
 export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: () => void; order?: Order }) => {
   const theme = useTheme();
@@ -72,15 +72,37 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
             noValidate
             onSubmit={handleSubmit}
             style={{
-              height: '100%'
+              height: '100%',
+              width: '100%'
             }}
           >
-            <DialogBox title="image" open={showMap} onClose={() => setShowMap(false)} width="600rem" height="500px">
-              <GoogleMapReact {...defaultProps} bootstrapURLKeys={{ key: '' }}>
-                {/* //@ts-ignore */}
-                <AnyReactComponent lat={values.geoLocation?.coords.latitude} lng={values.geoLocation?.coords.longitude} text="My Marker" />
-              </GoogleMapReact>
-            </DialogBox>
+            {showMap && (
+              <Box
+                style={{
+                  zIndex: 5555,
+                  width: '100%'
+                }}
+              >
+                <GoogleMapReact
+                  {...defaultProps}
+                  bootstrapURLKeys={{ key: '' }}
+                  style={{
+                    zIndex: 44,
+                    width: '100%'
+                  }}
+                >
+                  <AnyReactComponent
+                    //@ts-ignore
+                    style={{
+                      width: '100%'
+                    }}
+                    lat={values.geoLocation?.coords.latitude}
+                    lng={values.geoLocation?.coords.longitude}
+                    text="My Marker"
+                  />
+                </GoogleMapReact>
+              </Box>
+            )}
             <Grid container xs={12} spacing={2}>
               <Grid item xs={6}>
                 {/* @ts-ignore */}
@@ -325,17 +347,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                         )
                       }
                     >
-                      Upload
-                    </Button>
-
-                    <Button
-                      disableElevation
-                      size="large"
-                      variant="contained"
-                      color="secondary"
-                      // onClick={() => setShowImage(true)}
-                    >
-                      View
+                      Locate Me
                     </Button>
                   </Box>
                 </Grid>

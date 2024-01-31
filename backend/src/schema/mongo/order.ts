@@ -22,7 +22,6 @@ const schema = new mongoose.Schema({
         required: [true, "Customer name required"],
       },
       deleted: Boolean,
-
       orderDate: String,
       orderType: String,
       status: String,

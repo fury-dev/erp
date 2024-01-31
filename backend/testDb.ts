@@ -1,6 +1,6 @@
 import mongoConnect = require("./src/utils/MongoConnect");
 import expenseModel = require("./src/schema/mongo/expense");
-import productModel = require("./src/schema/mongo/product");
+import productModel = require("./src/schema/mongo/productSchema");
 import orderModel = require("./src/schema/mongo/order");
 
 const data = {
