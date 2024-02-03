@@ -65,7 +65,7 @@ const EarningCard = ({ isLoading }: { isLoading: boolean }) => {
 
   const {
     list: { data, updateQuery }
-  } = useApiService('order');
+  } = useApiService<Order>('order');
 
   useEffect(() => {
     updateQuery({
@@ -78,8 +78,11 @@ const EarningCard = ({ isLoading }: { isLoading: boolean }) => {
         (data?.orders || []).map((value: Order) =>
           convertFromINR(
             convertToINR(value.amount.amount, value.amount.currency) -
-              convertToINR(value.product?.distributorPrice.amount || 0, value.product?.distributorPrice.currency || 'INR') -
-              convertToINR(value.product?.sellerPrice.amount || 0, value.product?.sellerPrice.currency || 'INR'),
+              convertToINR(
+                value.product?.productSchema?.distributorPrice.amount || 0,
+                value.product?.productSchema?.distributorPrice.currency || 'INR'
+              ) -
+              convertToINR(value.product?.price.amount || 0, value.product?.price.currency || 'INR'),
             currency
           )
         )

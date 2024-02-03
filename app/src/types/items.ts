@@ -1,8 +1,8 @@
 import { Expense } from './items/expense';
 import { Order } from './items/order';
-import { Product } from './items/product';
+import { Product, ProductSchema } from './items/product';
 
-export type ITEMS = 'order' | 'expense' | 'product';
+export type ITEMS = 'order' | 'expense' | 'product' | 'productSchema';
 
 export type Price = {
   currency: TCurrency;
@@ -10,4 +10,4 @@ export type Price = {
 };
 
 export type TCurrency = 'INR' | 'USD' | 'STER';
-export type TItems = Order | Product | Expense;
+export type TItems = Order | Product | Expense | ProductSchema;

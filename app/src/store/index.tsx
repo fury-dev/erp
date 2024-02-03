@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { productReducer, userReducer, orderReducer, expenseReducer } from './reducers';
+import { productReducer, userReducer, orderReducer, expenseReducer, productSchemaReducer } from './reducers';
 import { customizationReducer } from './reducers/customizationReducer';
 
 // export type ItemState={
@@ -13,7 +13,8 @@ export const store = configureStore({
     product: productReducer,
     order: orderReducer,
     expense: expenseReducer,
-    customization: customizationReducer
+    customization: customizationReducer,
+    productSchema: productSchemaReducer
   }
 });
 export const persister = 'Free';

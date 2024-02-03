@@ -1,10 +1,10 @@
-import productModel = require("../../schema/mongo/productSchema");
+import productSchemaModel = require("../../schema/mongo/productSchema");
 import utils = require("../../schema/mongo/utils");
 import mongodb = require("mongodb");
 import generateQuery = require("../../utils/generateQuery");
 const ObjectId = mongodb.ObjectId;
 
-const products = async (_: any, args: any, context: any) => {
+const productSchemas = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   const match: any[] = [
     {
@@ -42,16 +42,19 @@ const products = async (_: any, args: any, context: any) => {
     });
   }
   const response = await generateQuery.generateQuery(
-    productModel.controller,
-    args
+    productSchemaModel.controller,
+    args,
+    [],
+    "",
+    { productSchemaId: 1 }
   );
 
   const preprocess = utils.unpackMessage(response);
-  console.log("List Products", preprocess.length);
+  console.log("List ProductSchemas", preprocess.length);
 
   return preprocess;
 };
-const productSelection = (
+const productSchemaSelection = (
   _: any,
   args: {
     id: string;
@@ -60,7 +63,7 @@ const productSelection = (
 ) => {
   if (!context.user) return null;
   try {
-    return productModel.controller.find({
+    return productSchemaModel.controller.find({
       _id: {
         $in: args.id,
       },
@@ -70,4 +73,4 @@ const productSelection = (
     return {};
   }
 };
-export { products };
+export { productSchemas };

@@ -1,27 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { current, produce } from 'immer';
-import { Product } from '../../types/items/product';
+import { ProductSchema } from '../../types/items/product';
 const initialState: {
-  setup: Product;
+  setup: ProductSchema;
   items: {
     page: number;
-    value: Product[];
+    value: ProductSchema[];
   };
-  view: Product;
+  view: ProductSchema;
 } = {
   setup: {
     id: '',
     versionId: 1,
-    productSchemaId: '',
-    price: {
+    distributorPrice: {
       currency: 'INR',
       amount: 0
     },
-    size: '',
+    sellerPrice: {
+      currency: 'INR',
+      amount: 0
+    },
+    size: [],
     createdAt: '',
     updatedAt: '',
     name: '',
-    image: '',
     inStock: false
   },
   items: {
@@ -30,38 +32,39 @@ const initialState: {
   },
   view: {
     id: '',
-    productSchemaId: '',
-
-    price: {
+    distributorPrice: {
       currency: 'INR',
       amount: 0
     },
-    size: '',
+    sellerPrice: {
+      currency: 'INR',
+      amount: 0
+    },
+    size: [],
     createdAt: '',
     updatedAt: '',
     name: '',
-    image: '',
     inStock: false,
     versionId: 1
   }
 };
 
-const productSlice = createSlice({
-  name: 'products',
+const productSchemaSlice = createSlice({
+  name: 'productSchemas',
   initialState,
   reducers: {
-    setProducts: (_state, action) => {
+    setProductSchemas: (_state, action) => {
       return {
         ...current(_state),
         items: action.payload
       };
     },
-    setProduct: (_state, action) => {
+    setProductSchema: (_state, action) => {
       return produce(_state, (draft) => {
         draft.setup = action.payload;
       });
     },
-    setProductView: (_state, action) => {
+    setProductSchemaView: (_state, action) => {
       return {
         ...current(_state),
         view: action.payload
@@ -70,6 +73,6 @@ const productSlice = createSlice({
   }
 });
 
-export const { setProduct, setProducts, setProductView } = productSlice.actions;
+export const { setProductSchema, setProductSchemas, setProductSchemaView } = productSchemaSlice.actions;
 
-export const productReducer = productSlice.reducer;
+export const productSchemaReducer = productSchemaSlice.reducer;

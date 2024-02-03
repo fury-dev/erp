@@ -5,15 +5,15 @@ import utils = require("../../schema/mongo/utils");
 import productSchemaQuery = require("../query/productSchema");
 import processObject = require("../../utils/processObject");
 
-const addProduct = async (_: any, args: any, context: any) => {
+const addProductSchema = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
-    console.log(args.product);
+    console.log(args.productSchema);
     const lastProduct = await productSchemaModel.controller
       .find()
       .sort({ _id: -1 })
       .limit(1);
-    const data = processObject.preProcessCurrency(args.product, [
+    const data = processObject.preProcessCurrency(args.productSchema, [
       "sellerPrice",
       "distributorPrice",
     ]);
@@ -30,7 +30,7 @@ const addProduct = async (_: any, args: any, context: any) => {
       .save()
       .then((res) => {
         const data = res.toJSON();
-        console.log("Product  Saved");
+        console.log("productSchema  Saved");
 
         return {
           ...lodash.omit(data.versions[0], "_id"),
@@ -48,15 +48,15 @@ const addProduct = async (_: any, args: any, context: any) => {
     console.log(err);
   }
 };
-const updateProduct = async (_: any, args: any, context: any) => {
+const updateProductSchema = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  const { product } = args;
-  console.log("updating product", product);
+  const { productSchema } = args;
+  console.log("updating productSchema", productSchema);
 
   try {
     const data = await productSchemaModel.controller.findByIdAndUpdate(
-      product.id,
-      utils.updateMongo(product, false, true)
+      productSchema.id,
+      utils.updateMongo(productSchema, false, true)
     );
 
     return {
@@ -69,11 +69,15 @@ const updateProduct = async (_: any, args: any, context: any) => {
   }
 };
 
-const deleteProduct = async (_: any, args: any, context: any) => {
+const deleteProductSchema = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
     console.log("Deleting Products", args);
-    const records = await productSchemaQuery.products(null, args, context);
+    const records = await productSchemaQuery.productSchemas(
+      null,
+      args,
+      context
+    );
 
     return await records?.map(async (record) => {
       return await productSchemaModel.controller.findByIdAndUpdate(
@@ -86,4 +90,4 @@ const deleteProduct = async (_: any, args: any, context: any) => {
     return err;
   }
 };
-export { addProduct, deleteProduct, updateProduct };
+export { addProductSchema, deleteProductSchema, updateProductSchema };

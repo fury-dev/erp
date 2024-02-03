@@ -5,19 +5,22 @@ import mongoConnect = require("./src/utils/MongoConnect");
 import authHelper = require("./src/auth");
 import graphql = require("graphql");
 import dotenv = require("dotenv");
+
+//Queries
 import orderQuery = require("./src/controller/query/order");
 import userQuery = require("./src/controller/query/user");
 import chartQuery = require("./src/controller/query/chart");
-
 import productQuery = require("./src/controller/query/product");
 import getVersionItem = require("./src/controller/query/getVersionItem");
-
 import expenseQuery = require("./src/controller/query/expense");
+import productSchemaQuery = require("./src/controller/query/productSchema");
+
+//Mutations
 import expenseMutation = require("./src/controller/mutation/expense");
 import productMutation = require("./src/controller/mutation/product");
 import userMutation = require("./src/controller/mutation/user");
-
 import orderMutation = require("./src/controller/mutation/order");
+import productSchemaMutation = require("./src/controller/mutation/productSchema");
 
 const resolvers = {
   Query: {
@@ -27,12 +30,14 @@ const resolvers = {
     ...userQuery,
     ...chartQuery,
     ...getVersionItem,
+    ...productSchemaQuery,
   },
   Mutation: {
     ...productMutation,
     ...orderMutation,
     ...expenseMutation,
     ...userMutation,
+    ...productSchemaMutation,
   },
 };
 dotenv.configDotenv();

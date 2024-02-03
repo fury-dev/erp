@@ -1,38 +1,30 @@
 import { DialogBox } from '../../../components/Dialog/DialogBox';
 import { Box, Button, Checkbox, FormControlLabel, Grid, IconButton } from '@mui/material';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import { FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { MdCancel, MdDeleteOutline } from 'react-icons/md';
-import { LegacyRef, useRef, useState } from 'react';
+import { MdCancel } from 'react-icons/md';
+import { LegacyRef, useEffect, useRef, useState } from 'react';
 import AnimateButton from '../../../ui-component/extended/AnimateButton';
 import { useProduct } from './hooks/useProduct';
-import { Product } from '../../../types/items/product';
-import { FormInputMoney } from '../../../components/Form';
+import { Product, ProductSchema } from '../../../types/items/product';
+import { FormInputMoney, FormSelect } from '../../../components/Form';
 import { Price } from '../../../types';
 import { useDialogContext } from '../../../context/DialogContext';
+import { useApiService } from '../../../service';
 
-const validation = Yup.object().shape({
-  name: Yup.string().required()
-});
 export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClose: () => void; product?: Product }) => {
   const theme = useTheme();
-  const [size, setSize] = useState('');
   const [showImage, setShowImage] = useState<boolean>(false);
+  const {
+    list: {
+      updateMask,
+      data: { productSchemas }
+    }
+  } = useApiService<ProductSchema>('productSchema');
   const { submitData } = useProduct();
   const { setOpen } = useDialogContext();
   const fileRef = useRef<LegacyRef<HTMLInputElement>>(null);
-  const handleSaveSize = (
-    _event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
-    setFieldValue: (arg0: string, arg1: any[]) => void,
-    values: Product
-  ) => {
-    if (!values.size?.includes(size) && size) {
-      setFieldValue('size', [...(values?.size || []), size]);
-      setSize('');
-    }
-  };
   const handleImage = async (
     event: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: (arg0: string, arg1: any) => void,
@@ -67,21 +59,24 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
     };
     return image.src;
   };
+
+  useEffect(() => {
+    updateMask(`id
+    name
+    sizes`);
+  }, [updateMask]);
   return (
     <DialogBox title="Product" open={open} onClose={() => setOpen(false)} width="600px">
       <Formik<Product>
         initialValues={{
           name: 'testName',
-          image: undefined,
-          distributorPrice: {
+          image: '',
+          productSchemaId: undefined,
+          price: {
             amount: 70,
             currency: 'INR'
           },
-          sellerPrice: {
-            amount: 70,
-            currency: 'INR'
-          },
-          size: ['L'],
+          size: '',
           inStock: true,
           id: '',
           versionId: 1,
@@ -178,78 +173,42 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
               </Grid>
               <Grid item xs={6} marginTop={'15px'}>
                 <FormInputMoney<Product>
-                  title="Distributor Price"
+                  title="Price"
                   errors={errors}
                   touched={touched}
                   handleChange={handleChange}
-                  pricefield="distributorPrice.amount"
-                  currencyField="distributorPrice.currency"
-                  value={values.distributorPrice as Price}
-                />
-              </Grid>
-              <Grid item xs={6} marginTop={'15px'}>
-                <FormInputMoney<Product>
-                  title="Seller Price"
-                  errors={errors}
-                  touched={touched}
-                  handleChange={handleChange}
-                  pricefield="sellerPrice.amount"
-                  currencyField="sellerPrice.currency"
-                  value={values.sellerPrice as Price}
+                  pricefield="price.amount"
+                  currencyField="price.currency"
+                  value={values.price as Price}
                 />
               </Grid>
               <Grid item xs={6}>
-                <FormControl
-                  error={Boolean(touched.sellerPrice && errors.sellerPrice)}
-                  //@ts-ignore
-                  sx={{ ...theme.typography.customInput, marginTop: '10px' }}
-                >
-                  <InputLabel htmlFor="outlined-adornment-name-login">Size</InputLabel>
-                  <OutlinedInput
-                    id="outlined-adornment-seller-price-product"
-                    type="text"
-                    value={size}
-                    onChange={(e) => setSize(e.currentTarget.value)}
-                    name="Size"
-                    onBlur={(e) => values && handleSaveSize(e, setFieldValue, values!)}
-                    onClick={(e) => values && handleSaveSize(e, setFieldValue, values!)}
-                    label="Size"
-                    inputProps={{}}
-                    fullWidth
-                  />
-                  <Box display="flex" flexDirection={'row'} flexWrap="wrap">
-                    {(values.size || []).length > 0 &&
-                      values.size?.map((value) => (
-                        <Box
-                          sx={{
-                            borderStyle: 'solid',
-                            borderWidth: '0.5px',
-                            borderRadius: '30px',
-                            maxWidth: 'fit-content',
-                            padding: '5px',
-                            height: '35px',
-                            marginTop: '5px'
-                          }}
-                          display="flex"
-                          flexDirection="row"
-                          alignItems="center"
-                          justifyContent="space-between"
-                        >
-                          <label>{value}</label>
-                          <IconButton
-                            onClick={() => {
-                              setFieldValue(
-                                'size',
-                                values.size?.filter((x) => x !== value)
-                              );
-                            }}
-                          >
-                            <MdDeleteOutline />
-                          </IconButton>
-                        </Box>
-                      ))}
-                  </Box>
-                </FormControl>
+                <FormSelect<Product>
+                  title="Product Schema"
+                  name="productSchemaId"
+                  errors={errors}
+                  touched={touched}
+                  handleChange={handleChange}
+                  options={productSchemas.map((value) => ({
+                    label: value.name,
+                    value: value.id
+                  }))}
+                  value={values.size}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <FormSelect<Product>
+                  title="Size"
+                  name="size"
+                  errors={errors}
+                  touched={touched}
+                  handleChange={handleChange}
+                  options={(productSchemas.find((value) => value.id === values.productSchemaId)?.size || []).map((value) => ({
+                    label: value,
+                    value
+                  }))}
+                  value={values.size}
+                />
               </Grid>
               <Grid item xs={4} display="flex" alignItems="center">
                 <FormControlLabel

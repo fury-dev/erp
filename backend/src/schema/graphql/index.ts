@@ -4,12 +4,10 @@ type Price{
     currency:String
     amount:Float
 }
-
-type  Product{
+type  ProductSchema{
     id:ID!
-    productId:Int
+    productSchemaId:Int
     name: String
-    image:String
     versionId:Int
     distributorPrice:Price!
     sellerPrice:Price!
@@ -19,6 +17,22 @@ type  Product{
     updatedAt:String!
     
 }
+type  Product{
+    id:ID!
+    productId:Int
+    name: String
+    image:String
+    versionId:Int
+    Price:Price!
+    productSchemaId:String
+    productSchema:ProductSchema
+    size:String
+    inStock: Boolean
+    createdAt:String!
+    updatedAt:String!
+    
+}
+
 
 
 type User{
@@ -94,6 +108,8 @@ type Query{
     orders(filter:ListFilter):[Order]
     # orderSelection(id:[ID!]):[Order]
     expenses(filter:ListFilter):[Expense]
+    productSchemas(filter:ListFilter):[ProductSchema]
+
     # expenseSelection(id:[ID!]):[Expense]
     products(filter:ListFilter):[Product]
     userValidation(token:String):User
@@ -116,6 +132,9 @@ type Mutation{
     registerUser(user:UserRegisterValue!):String
     loginUser(user:UserLoginValue!):String
     loginWithGoogle(credentials:String!):String
+    addProductSchema(product:ProductSchemaValue!):ProductSchema
+    updateProductSchema(product:ProductSchemaValue!):ProductSchema
+    deleteProductSchema(id:[ID!]):[ProductSchema]
 
 }
 
@@ -130,12 +149,22 @@ input ExpenseValue{
     versionId:Int
 
 }
-input ProductValue {
+input ProductSchemaValue {
     id:ID
     image:String
     distributorPrice:PriceValue
     sellerPrice:PriceValue
     size:[String]
+    inStock: Boolean!
+    name:String!
+    versionId:Int
+
+}
+input ProductValue {
+    id:ID
+    image:String
+    price:PriceValue
+    size:String
     inStock: Boolean!
     name:String!
     versionId:Int

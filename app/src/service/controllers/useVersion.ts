@@ -102,7 +102,7 @@ export const useVersion = <T extends TItems>(item: ITEMS) => {
     }
     query = (mask: any = defaultMask) => `
     query VerionedItem($id:ID,$all:Boolean) {
-      getVersionItem($id:$id,all:$all){ ${mask}}
+      getVersionItem(id:$id,all:$all){ ${mask}}
     }
   `;
     return query;

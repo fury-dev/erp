@@ -41,7 +41,7 @@ const RecentOrders = ({ isLoading }: { isLoading: Boolean }) => {
 
   const {
     list: { data, updateMask, updateQuery }
-  } = useApiService('order');
+  } = useApiService<Order>('order');
   const orders: Order[] = data?.orders || [];
   const currency = useSelector((state: RootState) => state.customization.currency);
   const currencySymbol = _currencySymbol[currency];
