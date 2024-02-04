@@ -1,5 +1,5 @@
-import productModel = require("../schema/mongo/product");
-import productSchemaModel = require("../schema/mongo/productSchema");
+import productModel = require("../../schema/mongo/product");
+import productSchemaModel = require("../../schema/mongo/productSchema");
 import lodash = require("lodash");
 import fs = require("fs");
 
