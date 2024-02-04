@@ -17,11 +17,9 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
   const theme = useTheme();
   const [showImage, setShowImage] = useState<boolean>(false);
   const {
-    list: {
-      updateMask,
-      data: { productSchemas }
-    }
+    list: { updateMask, data }
   } = useApiService<ProductSchema>('productSchema');
+  const productSchemas = data?.productSchemas || [];
   const { submitData } = useProduct();
   const { setOpen } = useDialogContext();
   const fileRef = useRef<LegacyRef<HTMLInputElement>>(null);
@@ -141,6 +139,27 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                 </FormControl>
               </Grid>
               <Grid item xs={6}>
+                <FormSelect<Product>
+                  title="Product Schema"
+                  name="productSchemaId"
+                  errors={errors}
+                  touched={touched}
+                  handleChange={(e: { target: { value: string } }) => {
+                    if (e) {
+                      setFieldValue('price', productSchemas.find((value) => e.target.value === value.id)?.sellerPrice || {});
+                    }
+                    handleChange(e);
+                  }}
+                  options={productSchemas.map((value) => ({
+                    label: value.name,
+                    value: value.id
+                  }))}
+                  value={values.productSchemaId}
+                  setFieldValue={setFieldValue}
+                  defaultSelect
+                />
+              </Grid>
+              <Grid item xs={6}>
                 <InputLabel htmlFor="outlined-adornment-name-login">Product Image</InputLabel>
 
                 <Box flexDirection="row" display="flex" alignItems="center">
@@ -171,31 +190,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                   )}
                 </Box>
               </Grid>
-              <Grid item xs={6} marginTop={'15px'}>
-                <FormInputMoney<Product>
-                  title="Price"
-                  errors={errors}
-                  touched={touched}
-                  handleChange={handleChange}
-                  pricefield="price.amount"
-                  currencyField="price.currency"
-                  value={values.price as Price}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <FormSelect<Product>
-                  title="Product Schema"
-                  name="productSchemaId"
-                  errors={errors}
-                  touched={touched}
-                  handleChange={handleChange}
-                  options={productSchemas.map((value) => ({
-                    label: value.name,
-                    value: value.id
-                  }))}
-                  value={values.size}
-                />
-              </Grid>
+
               <Grid item xs={6}>
                 <FormSelect<Product>
                   title="Size"
@@ -208,6 +203,18 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                     value
                   }))}
                   value={values.size}
+                  defaultSelect
+                />
+              </Grid>
+              <Grid item xs={6} marginTop={'15px'}>
+                <FormInputMoney<Product>
+                  title="Price"
+                  errors={errors}
+                  touched={touched}
+                  handleChange={handleChange}
+                  pricefield="price.amount"
+                  currencyField="price.currency"
+                  value={values.price as Price}
                 />
               </Grid>
               <Grid item xs={4} display="flex" alignItems="center">

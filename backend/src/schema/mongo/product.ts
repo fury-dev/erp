@@ -7,7 +7,7 @@ const Schema = new mongoose.Schema({
     type: Number,
     unique: true,
   },
-  schema: {
+  productSchemaId: {
     type: ObjectId,
     required: [true, "Product required"],
   },
@@ -18,7 +18,6 @@ const Schema = new mongoose.Schema({
         default: 1,
       },
       quantity: Number,
-
       size: String,
       inStock: Boolean,
       image: String,

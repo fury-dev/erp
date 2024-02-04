@@ -6,8 +6,21 @@ import { TQueryParams } from '../../service/controllers';
 interface IFormSelect<T> extends IFormField<T> {
   options?: (string | { label: string; value: string })[];
   apiAction?: (params: TQueryParams | any) => void;
+  defaultSelect?: boolean;
 }
-export const FormSelect = <T,>({ handleChange, touched, errors, title, value, name, options = [], sx, apiAction }: IFormSelect<T>) => {
+export const FormSelect = <T,>({
+  handleChange,
+  touched,
+  errors,
+  title,
+  value,
+  name,
+  options = [],
+  sx,
+  apiAction,
+  setFieldValue,
+  defaultSelect = false
+}: IFormSelect<T>) => {
   const theme = useTheme();
   useEffect(() => {
     if (apiAction) {
@@ -16,14 +29,11 @@ export const FormSelect = <T,>({ handleChange, touched, errors, title, value, na
   }, []);
 
   useEffect(() => {
-    if (!value && options.length > 0) {
-      handleChange({
-        target: {
-          value: typeof options[0] === 'string' ? options[0] : options[0].value
-        }
-      });
+    console.log(name, typeof options[0] === 'string' ? options[0] : options[0]?.value);
+    if (!value && options.length > 0 && setFieldValue && typeof name === 'string' && defaultSelect) {
+      setFieldValue(name, typeof options[0] === 'string' ? options[0] : options[0].value);
     }
-  }, [value]);
+  }, [value, defaultSelect, name, options]);
   return (
     <FormControl
       error={Boolean(touched[name as keyof T] && errors[name as keyof T])}

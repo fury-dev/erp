@@ -23,7 +23,7 @@ type  Product{
     name: String
     image:String
     versionId:Int
-    Price:Price!
+    price:Price!
     productSchemaId:String
     productSchema:ProductSchema
     size:String
@@ -132,8 +132,8 @@ type Mutation{
     registerUser(user:UserRegisterValue!):String
     loginUser(user:UserLoginValue!):String
     loginWithGoogle(credentials:String!):String
-    addProductSchema(product:ProductSchemaValue!):ProductSchema
-    updateProductSchema(product:ProductSchemaValue!):ProductSchema
+    addProductSchema(productSchema:ProductSchemaValue!):ProductSchema
+    updateProductSchema(productSchema:ProductSchemaValue!):ProductSchema
     deleteProductSchema(id:[ID!]):[ProductSchema]
 
 }
@@ -164,6 +164,8 @@ input ProductValue {
     id:ID
     image:String
     price:PriceValue
+    productSchemaId:String!
+
     size:String
     inStock: Boolean!
     name:String!

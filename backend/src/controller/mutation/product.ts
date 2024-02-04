@@ -13,10 +13,7 @@ const addProduct = async (_: any, args: any, context: any) => {
       .find()
       .sort({ _id: -1 })
       .limit(1);
-    const data = processObject.preProcessCurrency(args.product, [
-      "sellerPrice",
-      "distributorPrice",
-    ]);
+    const data: any = processObject.preProcessCurrency(args.product, ["price"]);
 
     let productId = 124594;
     if (lastProduct.length === 1 && lastProduct[0]?.productId) {
@@ -24,7 +21,8 @@ const addProduct = async (_: any, args: any, context: any) => {
     }
     const product = new productModel.controller({
       productId,
-      ...utils.updateMongo(data),
+      productSchemaId: data?.productSchemaId,
+      ...lodash.omit(utils.updateMongo(data), "productSchemaId"),
     });
     return await product
       .save()

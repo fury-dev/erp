@@ -35,7 +35,7 @@ export const ProductSchemaSetup = ({
       setSize('');
     }
   };
-
+  console.log(productSchema);
   return (
     <DialogBox title="ProductSchema" open={open} onClose={() => setOpen(false)} width="600px">
       <Formik<ProductSchema>
@@ -73,10 +73,10 @@ export const ProductSchemaSetup = ({
               height: '100%'
             }}
           >
-            <Grid container xs={12}>
-              <Grid item xs={6}>
+            <Grid container xs={12} columnGap={2}>
+              <Grid item xs={12}>
                 {/* @ts-ignore */}
-                <FormControl error={Boolean(touched.name && errors.name)} sx={{ ...theme.typography.customInput }}>
+                <FormControl fullWidth error={Boolean(touched.name && errors.name)} sx={{ ...theme.typography.customInput }}>
                   <InputLabel htmlFor="outlined-adornment-name-login">ProductSchema Name</InputLabel>
                   <OutlinedInput
                     id="outlined-adornment-name-productSchema"
@@ -87,6 +87,7 @@ export const ProductSchemaSetup = ({
                     onChange={handleChange}
                     label="ProductSchema Name"
                     inputProps={{}}
+                    fullWidth
                   />
                   {touched.name && errors.name && (
                     <FormHelperText error id="standard-weight-helper-text-name-login">
@@ -96,7 +97,7 @@ export const ProductSchemaSetup = ({
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6} marginTop={'15px'}>
+              <Grid item xs={5} marginTop={'15px'}>
                 <FormInputMoney<ProductSchema>
                   title="Distributor Price"
                   errors={errors}
@@ -107,7 +108,7 @@ export const ProductSchemaSetup = ({
                   value={values.distributorPrice as Price}
                 />
               </Grid>
-              <Grid item xs={6} marginTop={'15px'}>
+              <Grid item xs={5} marginTop={'15px'}>
                 <FormInputMoney<ProductSchema>
                   title="Seller Price"
                   errors={errors}

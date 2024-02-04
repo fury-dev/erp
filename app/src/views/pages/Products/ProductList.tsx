@@ -41,33 +41,20 @@ const ProductList = () => {
             width: 100
           },
           {
-            field: 'distributorPrice',
-            headerName: 'Distributor Price',
+            field: 'price',
+            headerName: 'Price',
             width: 170,
             getValue: (params: any) => `
             ${
-              params.distributorPrice.currency !== currency
-                ? convertFromINR(params.distributorPrice.amount, currency).toFixed(2)
-                : params.distributorPrice.amount
+              params.price.currency !== currency ? convertFromINR(params.price.amount, currency).toFixed(2) : params.price.amount
             } ${currencySymbol}`
           },
-          {
-            field: 'sellerPrice',
-            headerName: 'Seller Price',
-            width: 130,
-            numeric: true,
-            getValue: (params: any) => `
-            ${
-              params.sellerPrice.currency !== currency
-                ? convertFromINR(params.sellerPrice.amount, currency).toFixed(2)
-                : params.sellerPrice.amount
-            } ${currencySymbol}`
-          },
+
           {
             field: 'size',
             headerName: 'Size',
             width: 70,
-            getValue: (params) => `${(params.size || [])?.length > 0 ? params.size?.join(',') : ''}`
+            getValue: (params) => `${params.size}`
           },
           {
             field: 'inStock',

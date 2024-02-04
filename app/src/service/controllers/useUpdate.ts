@@ -6,7 +6,7 @@ export const useUpdate = (item: ITEMS) => {
   if (item === 'productSchema') {
     query = gql`
       mutation Product($item: ProductSchemaValue!) {
-        addProductSchema(product: $item) {
+        updateProductSchema(productSchema: $item) {
           id
           name
           versionId

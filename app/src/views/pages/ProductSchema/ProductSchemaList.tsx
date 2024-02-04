@@ -99,7 +99,7 @@ const ProductSchemaList = () => {
               {
                 title: 'Add',
                 rest: {
-                  onClick: () => {
+                  onClick: useCallback(() => {
                     setComponent(
                       <ProductSchemaSetup
                         open={true}
@@ -110,7 +110,7 @@ const ProductSchemaList = () => {
                     );
 
                     setOpen(true);
-                  }
+                  }, [productSchemas])
                 }
               },
 
@@ -137,18 +137,21 @@ const ProductSchemaList = () => {
               rest: {
                 onClick: useCallback(
                   (e: any) => {
-                    setComponent(
-                      <ProductSchemaSetup
-                        productSchema={productSchemas.find((value) => value.id === e.currentTarget.id) as ProductSchema}
-                        open={true}
-                        onClose={() => {
-                          setComponent(false);
-                        }}
-                      />
-                    );
-                    setOpen(true);
+                    const productSchema = productSchemas.find((value) => value.id === e.currentTarget.id);
+                    if (productSchema) {
+                      setComponent(
+                        <ProductSchemaSetup
+                          productSchema={productSchema}
+                          open={true}
+                          onClose={() => {
+                            setComponent(false);
+                          }}
+                        />
+                      );
+                      setOpen(true);
+                    }
                   },
-                  [selected]
+                  [productSchemas]
                 ),
                 color: 'primary'
               },
@@ -157,7 +160,7 @@ const ProductSchemaList = () => {
           ]
         }}
         startPolling={apiAction}
-        title={'Product'}
+        title="Product Schema"
       />
     </div>
   );

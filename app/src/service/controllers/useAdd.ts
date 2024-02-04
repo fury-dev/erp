@@ -6,7 +6,7 @@ export const useAdd = <T extends TItems>(item: ITEMS) => {
   if (item === 'productSchema') {
     query = gql`
       mutation Product($item: ProductSchemaValue!) {
-        addProductSchema(product: $item) {
+        addProductSchema(productSchema: $item) {
           id
           name
           versionId
@@ -33,6 +33,7 @@ export const useAdd = <T extends TItems>(item: ITEMS) => {
           name
           image
           versionId
+          productSchemaId
           price {
             amount
             currency

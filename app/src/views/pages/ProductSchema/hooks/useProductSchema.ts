@@ -17,7 +17,6 @@ export const useProductSchema = () => {
   const productSchema = useSelector((state: RootState) => state.productSchema.items);
   const [items, setItems] = useState(productSchema?.value);
   const { selected } = useMultiSelect();
-  console.log(data);
 
   const submitData = useCallback(
     (data: ProductSchema) => {
