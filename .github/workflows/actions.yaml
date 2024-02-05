@@ -1,0 +1,25 @@
+name: CMS Github Actions
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+  workflow_dispatch:
+
+jobs:
+  fix-lint-app:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x]
+    steps:
+      - name: Go to app
+        run: cd app
+        shell: bash
+      - name: Install dependency
+        run: npm i
+        shell: bash
+      - name: Run Linter
+        run: npm run-lint
+        shell: bash
