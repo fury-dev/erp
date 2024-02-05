@@ -14,9 +14,8 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
-      - name: Go to app
-        run: ls
-        shell: bash
+      - name: Check out repository
+        uses: actions/checkout@v2
       - name: Go to app
         run: cd app
         shell: bash
