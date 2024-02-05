@@ -22,8 +22,8 @@ jobs:
       - name: Install dependency
         run: npm i
         shell: bash
-      - name: Check Scripts
-        run: npm run
+      - name: NPM CI
+        run: npm ci
         shell: bash
       - name: Print npm configuration
         run: npm config list
