@@ -26,15 +26,6 @@ jobs:
       - name: NPM CI
         run: npm ci
         shell: bash
-      - name: Print npm configuration
-        run: npm config list
-        shell: bash
-      - name: Print npm configuration 2
-        run: npm config ls -l
-        shell: bash
-      - name: npm run
-        run: cat ./app/package.json
-        shell: bash
       - name: Cache npm dependencies
         uses: actions/cache@v2
         with:
@@ -42,10 +33,7 @@ jobs:
             ~/.npm
             ./node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      - name: npm run
+      - name: Run Linter
         run: npm run lint
         shell: bash
         working-directory: ./app
-      - name: Print npm debug log
-        run: cat /home/runner/.npm/_logs/2024-02-05T13_24_50_474Z-debug-0.log
-        shell: bash
