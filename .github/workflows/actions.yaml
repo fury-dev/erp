@@ -35,7 +35,7 @@ jobs:
         run: npm run
         shell: bash
       - name: npm run
-        run: npm run lint
+        run: npm run dev
         shell: bash
       - name: Print npm debug log
         run: cat /home/runner/.npm/_logs/2024-02-05T13_24_50_474Z-debug-0.log
