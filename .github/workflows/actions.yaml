@@ -37,3 +37,30 @@ jobs:
         run: npm run lint
         shell: bash
         working-directory: ./app
+
+  fix-lint-backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      # - name: Check out repository
+      #   uses: actions/checkout@v2
+      - name: Install dependency
+        run: npm i
+        shell: bash
+        working-directory: ./backend
+      - name: NPM CI
+        run: npm ci
+        shell: bash
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.npm
+            ./node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      - name: Run Linter
+        run: npm run lint
+        shell: bash
+        working-directory: ./backend
