@@ -1,0 +1,19 @@
+name: CMS Issue workflow
+
+on:
+  issues:
+    types: [opened]
+jobs:
+  comment-with-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "dump github context"
+        run: echo '${{toJSON(github.event)}}' | jq
+        shell: bash
+      - name: Create Comment
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          issue-number: ${{(github.event.issue.number)}}
+          body: |
+            Developer will be assigned to resolve the issue
+          reactions: "+1"
