@@ -28,6 +28,12 @@ jobs:
       - name: Print npm configuration
         run: npm config list
         shell: bash
+      - name: Print npm configuration 2
+        run: npm config ls -l
+        shell: bash
+      - name: npm run
+        run: npm run
+        shell: bash
       - name: Run Linter
         run: npm run lint
         shell: bash
