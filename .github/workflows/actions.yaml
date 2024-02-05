@@ -19,6 +19,7 @@ jobs:
       - name: Go to app
         run: cd app
         shell: bash
+        working-directory: ./app
       - name: Install dependency
         run: npm i
         shell: bash
