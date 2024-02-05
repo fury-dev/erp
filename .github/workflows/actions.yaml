@@ -28,9 +28,9 @@ jobs:
       - name: Print npm configuration
         run: npm config list
         shell: bash
-      - name: Print npm debug log
-        run: cat /home/runner/.npm/_logs/2024-02-05T13_24_50_474Z-debug-0.log
-        shell: bash
       - name: Run Linter
         run: npm run lint
+        shell: bash
+      - name: Print npm debug log
+        run: cat /home/runner/.npm/_logs/2024-02-05T13_24_50_474Z-debug-0.log
         shell: bash
