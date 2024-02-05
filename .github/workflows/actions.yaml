@@ -42,7 +42,7 @@ jobs:
             ./node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
       - name: npm run
-        run: npm run lint
+        run: /usr/bin/npm run lint
         shell: bash
       - name: Print npm debug log
         run: cat /home/runner/.npm/_logs/2024-02-05T13_24_50_474Z-debug-0.log
