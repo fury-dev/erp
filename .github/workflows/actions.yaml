@@ -19,10 +19,10 @@ jobs:
       - name: Go to app
         run: cd app
         shell: bash
-        working-directory: ./app
       - name: Install dependency
         run: npm i
         shell: bash
+        working-directory: ./app
       - name: NPM CI
         run: npm ci
         shell: bash
@@ -45,6 +45,7 @@ jobs:
       - name: npm run
         run: npm run lint
         shell: bash
+        working-directory: ./app
       - name: Print npm debug log
         run: cat /home/runner/.npm/_logs/2024-02-05T13_24_50_474Z-debug-0.log
         shell: bash
