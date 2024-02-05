@@ -32,7 +32,7 @@ jobs:
         run: npm config ls -l
         shell: bash
       - name: npm run
-        run: npm run
+        run: cat package.json
         shell: bash
       - name: Cache npm dependencies
         uses: actions/cache@v2
@@ -42,7 +42,7 @@ jobs:
             ./node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
       - name: npm run
-        run: /usr/bin/npm run lint
+        run: npm run lint
         shell: bash
       - name: Print npm debug log
         run: cat /home/runner/.npm/_logs/2024-02-05T13_24_50_474Z-debug-0.log
