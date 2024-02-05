@@ -1,4 +1,4 @@
-# CMS Web App Readme [![CMS Github Actions](https://github.com/fury-dev/erp/actions/workflows/actions.yaml/badge.svg?branch=master)](https://github.com/fury-dev/erp/actions/workflows/actions.yaml)
+# CMS Web App Readme [![Workflow status](https://github.com/fury-dev/erp/actions/workflows/actions.yaml/badge.svg?branch=master)](https://github.com/fury-dev/erp/actions/workflows/actions.yaml)
 
 Welcome to the CMS (Content Management System) Web App! This application is designed to manage orders, product information, and expenses efficiently. It's built using cutting-edge technologies such as React Vite, Node.js, GraphQL, Styled Components, OAuth, and MongoDB.
 
