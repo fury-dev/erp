@@ -46,6 +46,9 @@ jobs:
     steps:
       # - name: Check out repository
       #   uses: actions/checkout@v2
+      - name: Go to backend
+        run: cd backend
+        shell: bash
       - name: Install dependency
         run: npm i
         shell: bash
