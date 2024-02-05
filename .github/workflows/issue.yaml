@@ -7,7 +7,7 @@ jobs:
   comment-with-actions:
     runs-on: ubuntu-latest
     steps:
-      - name: "dump github context"
+      - name: Comment on issue.
         run: echo '${{toJSON(github.event)}}' | jq
         shell: bash
       - name: Create Comment
@@ -15,5 +15,21 @@ jobs:
         with:
           issue-number: ${{(github.event.issue.number)}}
           body: |
-            Developer will be assigned to resolve the issue
+            Developer will be assigned to resolve the issue.
+            If no developer responds please contact on [test@test.com](mailto:test@test.com)
           reactions: "+1"
+#   comment-with-api:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Create comment with Api
+#         run: |
+#           gh api -X POST \
+#           http://api.github.com/repo/${ORGANIZATION}/${REPO}/${ISSUE_NUMBER}/comments /
+#           -f body='Developer will be assigned to resolve the issue.
+#           If no developer responds please contact on [test@test.com](mailto:test@test.com)
+#           '
+#         env:
+#           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+#           ORGANIZATION: ${{github.event.organization.login}}
+#           REPO: ${{github.event.repository.name}}
+#           ISSUE_NUMBER: ${{(github.event.issue.number)}}
