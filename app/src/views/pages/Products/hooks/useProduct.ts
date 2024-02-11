@@ -11,8 +11,8 @@ export const useProduct = () => {
     add,
     update,
     remove: { deleteRequest },
-    list: { refetch, data, loading, fetchMore, startPolling, updateQuery, stopPolling }
-  } = useApiService('product');
+    list: { data, loading, fetchMore, startPolling, updateQuery, stopPolling }
+  } = useApiService<Product>('product');
   const dispatch = useDispatch();
   const products = useSelector((state: RootState) => state.product.items);
   const [items, setItems] = useState(products?.value);
@@ -42,12 +42,9 @@ export const useProduct = () => {
       setItems(compact(data.products));
     }
   }, [data]);
-  const apiAction = useCallback(
-    async (...rest: any) => {
-      startPolling(10000);
-    },
-    [data, startPolling]
-  );
+  const apiAction = useCallback(async () => {
+    startPolling(10000);
+  }, [data, startPolling]);
 
   return {
     submitData,

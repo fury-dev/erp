@@ -63,12 +63,16 @@ export const OrderView = () => {
           }}
         >
           <ItemText header="Product Name" text={item?.product?.name} />
-          <ItemText header="Size" text={(item?.size || []).join(',')} />
+          <ItemText header="Size" text={item?.product?.size} />
+          <ItemText header="price" text={`${convertFromINR(item?.product?.price.amount || 0, currency).toFixed(2)} ${symbol}`} />
           <ItemText
             header="Distributor price"
-            text={`${convertFromINR(item?.distributorPrice.amount || 0, currency).toFixed(2)} ${symbol}`}
+            text={`${convertFromINR(item?.product?.productSchema?.distributorPrice.amount || 0, currency).toFixed(2)} ${symbol}`}
           />
-          <ItemText header="Seller price" text={`${convertFromINR(item?.sellerPrice.amount || 0, currency).toFixed(2)} ${symbol}`} />
+          <ItemText
+            header="Seller price"
+            text={`${convertFromINR(item?.product?.productSchema?.sellerPrice.amount || 0, currency).toFixed(2)} ${symbol}`}
+          />
           <ItemText header="Version" text={item?.versionId.toString()} />
         </Box>
       </Grid>

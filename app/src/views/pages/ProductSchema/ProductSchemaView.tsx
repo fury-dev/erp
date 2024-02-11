@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { convertFromINR, currencySymbol } from '../../../data/Product/currency';
 import { ViewSkeleton } from '../../../ui-component/cards/Skeleton/ViewSkeleton';
-import GenericChart from '../../../components/Chart';
 import { IoMdImage } from 'react-icons/io';
 import { ElevatedBox } from '../../../components/StyledComponents/ElevatedBox';
 
@@ -62,21 +61,7 @@ export const ProductSchemaView = () => {
         </Box>
       </Grid>
       <Grid item xs={12}>
-        <GenericChart<'product'>
-          item="product"
-          filter={{
-            item: 'order',
-            group: 'status',
-            id: [id],
-            queryPath: 'productId'
-          }}
-          items={[
-            {
-              label: 'Product',
-              value: 'product'
-            }
-          ]}
-        />
+        {/* List of all products created using schema */}
       </Grid>
     </Grid>
   );

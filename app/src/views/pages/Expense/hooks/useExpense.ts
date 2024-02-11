@@ -12,7 +12,7 @@ export const useExpense = () => {
     update,
     remove: { deleteRequest },
     list: { data, loading, fetchMore, startPolling, updateQuery, stopPolling }
-  } = useApiService('expense');
+  } = useApiService<Expense>('expense');
   const dispatch = useDispatch();
   const expense = useSelector((state: RootState) => state.expense.items);
   const [items, setItems] = useState(expense.value);

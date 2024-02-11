@@ -1,7 +1,7 @@
 import { DialogBox } from '../../../components/Dialog/DialogBox';
 import { Box, Button, FormLabel, Grid } from '@mui/material';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
+// import * as Yup from 'yup';
 import { FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import AnimateButton from '../../../ui-component/extended/AnimateButton';
@@ -11,13 +11,12 @@ import { FormDateTime, FormInputMoney, FormSelect } from '../../../components/Fo
 import { Price } from '../../../types';
 import { useMemo, useState } from 'react';
 import { useProduct } from '../Products/hooks/useProduct';
-import { Product } from '../../../types/items/product';
 import { useLocationApi } from '../../../hooks/useLocationApi';
 import GoogleMapReact from 'google-map-react';
 
-const _validation = Yup.object().shape({
-  name: Yup.string().required()
-});
+// const _validation = Yup.object().shape({
+//   name: Yup.string().required()
+// });
 
 const orderStatus: Order['status'][] = ['DELIVERED', 'OUT_FOR_DELIVERY', 'PENDING', 'SHIPPED'];
 const orderType: Order['orderType'][] = ['CASH_ON_DELIVERY', 'PREPAID'];
@@ -185,7 +184,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                   apiAction={updateQuery}
                   options={useMemo(
                     () =>
-                      (data?.products || []).map((value: Product) => ({
+                      (data?.products || []).map((value) => ({
                         value: value.id,
                         label: value.name
                       })),

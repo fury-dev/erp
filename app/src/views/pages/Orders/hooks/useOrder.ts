@@ -12,7 +12,7 @@ export const useOrder = () => {
     update,
     remove: { deleteRequest },
     list: { data, loading, fetchMore, startPolling, updateQuery, stopPolling }
-  } = useApiService('order');
+  } = useApiService<Order>('order');
   const dispatch = useDispatch();
   const orders = useSelector((state: RootState) => state.order.items);
   const [items, setItems] = useState(orders.value);
