@@ -16,7 +16,7 @@ export type TChartData = {
 };
 
 export const useChart = () => {
-  let query = gql`
+  const query = gql`
     query Chart($filter: Filter) {
       chartData(filter: $filter) {
         name

@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { TItems } from '../types';
-import assert from 'assert';
 
 type TMultiSelectContext = {
   selected: TItems[];

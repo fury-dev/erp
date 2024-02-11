@@ -14,7 +14,7 @@ export const userRegister = () => {
 
   const navigate = useNavigate();
 
-  let value = {
+  const value = {
     email: 'test',
     password: 'test',
     username: 'test'

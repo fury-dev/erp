@@ -16,7 +16,7 @@ import Chart from 'react-apexcharts';
 import { sum } from 'lodash';
 import { useApiService } from '../../service';
 import { gridSpacing } from '../../store/constant';
-import { ITEMS, TItems } from '../../types';
+import { ITEMS } from '../../types';
 import MainCard from '../../ui-component/cards/MainCard';
 import SkeletonTotalGrowthBarChart from '../../ui-component/cards/Skeleton/TotalGrowthBarChart';
 import { barChartData } from './data';

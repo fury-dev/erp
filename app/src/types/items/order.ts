@@ -3,8 +3,8 @@ import { Product } from './product';
 
 export type Order = {
   id: string;
-  versionId: Number;
-  orderId?: Number;
+  versionId: number;
+  orderId?: number;
   customerName: string;
   orderDate: string;
   orderType: 'CASH_ON_DELIVERY' | 'PREPAID';
@@ -17,11 +17,11 @@ export type Order = {
   createdAt?: string;
   updatedAt?: string;
   location?: {
-    address: String;
-    pincode: Number;
-    city: String;
-    state: String;
-    country: String;
+    address: string;
+    pincode: number;
+    city: string;
+    state: string;
+    country: string;
   };
   geoLocation?: GeolocationPosition | null;
 };

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npx nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint --ext .ts,.tsx src/ --fix"
+    "lint": "eslint --ext .ts,.tsx src/",
+    "fix-lint": "eslint --ext --fix.ts,.tsx src/ "
   },
   "keywords": [],
   "author": "",

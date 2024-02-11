@@ -7,7 +7,7 @@ export type ProductSchema = {
   distributorPrice: Price;
   sellerPrice: Price;
   size?: string[];
-  productSchemaId?: Number;
+  productSchemaId?: number;
   inStock: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -21,7 +21,7 @@ export type Product = {
   productSchemaId?: string;
   productSchema?: ProductSchema;
   price: Price;
-  productId?: Number;
+  productId?: number;
   size: string;
   quantity?: string;
   inStock: boolean;

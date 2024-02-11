@@ -19,7 +19,7 @@ import { RootState } from '../../../store';
 import { convertFromINR, currencySymbol as _currencySymbol } from '../../../data/Product/currency';
 import { useNavigate } from 'react-router-dom';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-const RecentOrders = ({ isLoading }: { isLoading: Boolean }) => {
+const RecentOrders = ({ isLoading }: { isLoading: boolean }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [time, setTime] = useState<TQueryParams['dateBy']>('ALL_TIME');

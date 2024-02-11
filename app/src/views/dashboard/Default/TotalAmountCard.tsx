@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -45,7 +44,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 interface ITotalAmountCard {
   isLoading: boolean;
   amount: string;
-  title: String;
+  title: string;
 }
 const TotalAmountCard = ({ isLoading, title, amount }: ITotalAmountCard) => {
   const theme = useTheme();

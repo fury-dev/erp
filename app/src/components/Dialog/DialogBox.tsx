@@ -1,6 +1,6 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { Box, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 
 export interface IDialogBox {
   title: string;

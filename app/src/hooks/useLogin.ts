@@ -12,7 +12,7 @@ export const useLogin = () => {
   const { setUser } = useAuthContext();
   const navigate = useNavigate();
 
-  let value = {
+  const value = {
     email: 'test',
     password: 'test'
   };

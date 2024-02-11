@@ -9,7 +9,9 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "plugin:react-refresh/recommended"
+
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -19,14 +21,14 @@
       "jsx": true
     }
   },
-  "plugins": ["eslint-plugin-unused-imports"],
+  "plugins": ["eslint-plugin-unused-imports","react-refresh"],
   "settings": {
     "react": {
       "version": "detect"
     }
   },
   "rules": {
-    "react/react-in-jsx-scope": "warn",
+    "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "warn",
     "react/jsx-uses-react": "warn",
@@ -37,9 +39,11 @@
     "unused-imports/no-unused-imports": "warn",
     "@typescript-eslint/no-empty-function":"warn",
     "no-unsafe-optional-chaining":"warn",
-    "@typescript-eslint/ban-ts-comment":"warn",
+    "@typescript-eslint/ban-ts-comment":"off",
     "no-useless-escape":"warn",
-    "react-refresh/only-export-components": ["warn", { "allowConstantExport": true }]
+    "react-refresh/only-export-components": ["warn", { "allowConstantExport": true }],
+    "react/display-name":"off"
+    
     
   }
 }
