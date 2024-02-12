@@ -70,7 +70,7 @@ const updateProduct = async (_: any, args: any, context: any) => {
 const deleteProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
-    console.log("Deleting Products", args);
+    console.log("Deleting Products using args:", args);
     const records = await productQuery.products(null, args, context);
 
     return await records?.map(async (record) => {
