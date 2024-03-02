@@ -19,11 +19,7 @@ jobs:
       - name: Go to app
         run: cd app
         shell: bash
-      - name: Install dependency
-        run: npm i
-        shell: bash
-        working-directory: ./app
-      - name: NPM CI
+      - name: NPM clean install
         run: npm ci
         shell: bash
         working-directory: ./app
@@ -50,11 +46,7 @@ jobs:
       - name: Go to backend
         run: cd backend
         shell: bash
-      - name: Install dependency
-        run: npm i
-        shell: bash
-        working-directory: ./backend
-      - name: NPM CI
+      - name: NPM clean install
         run: npm ci
         shell: bash
         working-directory: ./app
