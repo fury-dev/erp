@@ -26,6 +26,7 @@ jobs:
       - name: NPM CI
         run: npm ci
         shell: bash
+        working-directory: ./app
       - name: Cache npm dependencies
         uses: actions/cache@v2
         with:
@@ -56,6 +57,7 @@ jobs:
       - name: NPM CI
         run: npm ci
         shell: bash
+        working-directory: ./app
       - name: Cache npm dependencies
         uses: actions/cache@v2
         with:
