@@ -1,5 +1,5 @@
-import mongoose = require("mongoose");
-import common = require("./common");
+import mongoose from "mongoose";
+import common from "./common";
 
 const schema = new mongoose.Schema({
   deleted: Boolean,
@@ -34,4 +34,4 @@ const schema = new mongoose.Schema({
 });
 
 const controller = mongoose.model("expense", schema);
-export { controller, schema };
+export default { controller, schema };

@@ -1,6 +1,6 @@
-import orderModel = require("../../schema/mongo/order");
-import utils = require("../../schema/mongo/utils");
-import generateQuery = require("../../utils/generateQuery");
+import { unpackMessage } from "../../schema/mongo/utils/index";
+import orderModel from "../../schema/mongo/order";
+import generateQuery from "../../utils/generateQuery";
 
 const orders = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
@@ -26,7 +26,7 @@ const orders = async (_: any, args: any, context: any) => {
       }
     );
 
-    const preprocess = utils.unpackMessage(response, "product");
+    const preprocess = unpackMessage(response, "product");
     console.log("List Orders", preprocess.length);
 
     return preprocess;
@@ -68,4 +68,4 @@ const orderSelection = (
   }
 };
 
-export { orders };
+export default { orders };

@@ -1,5 +1,5 @@
-import mongoose = require("mongoose");
-import common = require("./common");
+import mongoose from "mongoose";
+import common from "./common";
 
 const Schema = new mongoose.Schema({
   deleted: Boolean,
@@ -27,4 +27,4 @@ const Schema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 const controller = mongoose.model("productSchema", Schema);
-export { controller };
+export default { controller };

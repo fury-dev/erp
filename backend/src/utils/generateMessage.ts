@@ -9,4 +9,4 @@ const generateMessage = (
     error,
   };
 };
-export { generateMessage };
+export default { generateMessage };

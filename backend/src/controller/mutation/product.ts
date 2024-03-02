@@ -1,9 +1,9 @@
-import productModel = require("../../schema/mongo/product");
-import lodash = require("lodash");
-import generateTimestamp = require("../../utils/generateTimestamp");
-import utils = require("../../schema/mongo/utils");
-import productQuery = require("../query/product");
-import processObject = require("../../utils/processObject");
+import productModel from "../../schema/mongo/product";
+import lodash from "lodash";
+import generateTimestamp from "../../utils/generateTimestamp";
+import productQuery from "../query/product";
+import processObject from "../../utils/processObject";
+import { updateMongo } from "../../schema/mongo/utils/index";
 
 const addProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
@@ -22,7 +22,7 @@ const addProduct = async (_: any, args: any, context: any) => {
     const product = new productModel.controller({
       productId,
       productSchemaId: data?.productSchemaId,
-      ...lodash.omit(utils.updateMongo(data), "productSchemaId"),
+      ...lodash.omit(updateMongo(data), "productSchemaId"),
     });
     return await product
       .save()
@@ -54,7 +54,7 @@ const updateProduct = async (_: any, args: any, context: any) => {
   try {
     const data = await productModel.controller.findByIdAndUpdate(
       product.id,
-      utils.updateMongo(product, false, true)
+      updateMongo(product, false, true)
     );
 
     return {
@@ -73,10 +73,10 @@ const deleteProduct = async (_: any, args: any, context: any) => {
     console.log("Deleting Products using args:", args);
     const records = await productQuery.products(null, args, context);
 
-    return await records?.map(async (record) => {
+    return await records?.map(async (record: any) => {
       return await productModel.controller.findByIdAndUpdate(
         args.id,
-        utils.updateMongo(record, true, true)
+        updateMongo(record, true, true)
       );
     });
   } catch (err) {
@@ -84,4 +84,4 @@ const deleteProduct = async (_: any, args: any, context: any) => {
     return err;
   }
 };
-export { addProduct, deleteProduct, updateProduct };
+export default { addProduct, deleteProduct, updateProduct };

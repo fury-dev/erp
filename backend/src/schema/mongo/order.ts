@@ -1,5 +1,5 @@
-import mongoose = require("mongoose");
-import common = require("./common");
+import mongoose from "mongoose";
+import common from "./common";
 const ObjectId = mongoose.Schema.ObjectId;
 
 const schema = new mongoose.Schema({
@@ -37,4 +37,4 @@ const schema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 const controller = mongoose.model("order", schema);
-export { controller, schema };
+export default { controller, schema };

@@ -1,9 +1,9 @@
-import productSchemaModel = require("../../schema/mongo/productSchema");
-import lodash = require("lodash");
-import generateTimestamp = require("../../utils/generateTimestamp");
-import utils = require("../../schema/mongo/utils");
-import productSchemaQuery = require("../query/productSchema");
-import processObject = require("../../utils/processObject");
+import productSchemaModel from "../../schema/mongo/productSchema";
+import lodash from "lodash";
+import generateTimestamp from "../../utils/generateTimestamp";
+import productSchemaQuery from "../query/productSchema";
+import processObject from "../../utils/processObject";
+import { updateMongo } from "../../schema/mongo/utils/index";
 
 const addProductSchema = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
@@ -24,7 +24,7 @@ const addProductSchema = async (_: any, args: any, context: any) => {
     }
     const product = new productSchemaModel.controller({
       productSchemaId,
-      ...utils.updateMongo(data),
+      ...updateMongo(data),
     });
     return await product
       .save()
@@ -56,7 +56,7 @@ const updateProductSchema = async (_: any, args: any, context: any) => {
   try {
     const data = await productSchemaModel.controller.findByIdAndUpdate(
       productSchema.id,
-      utils.updateMongo(productSchema, false, true)
+      updateMongo(productSchema, false, true)
     );
 
     return {
@@ -82,7 +82,7 @@ const deleteProductSchema = async (_: any, args: any, context: any) => {
     return await records?.map(async (record) => {
       return await productSchemaModel.controller.findByIdAndUpdate(
         args.id,
-        utils.updateMongo(record, true, true)
+        updateMongo(record, true, true)
       );
     });
   } catch (err) {
@@ -90,4 +90,4 @@ const deleteProductSchema = async (_: any, args: any, context: any) => {
     return err;
   }
 };
-export { addProductSchema, deleteProductSchema, updateProductSchema };
+export default { addProductSchema, deleteProductSchema, updateProductSchema };

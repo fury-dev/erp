@@ -1,10 +1,9 @@
-import orderModel = require("../../schema/mongo/order");
-import utils = require("../../schema/mongo/utils");
-import expenseModel = require("../../schema/mongo/expense");
-import productModel = require("../../schema/mongo/product");
-import mongoose = require("mongoose");
-import moment = require("moment");
-import filter = require("../../utils/filter");
+import orderModel from "../../schema/mongo/order";
+import expenseModel from "../../schema/mongo/expense";
+import productModel from "../../schema/mongo/product";
+import mongoose from "mongoose";
+import moment from "moment";
+import filter, { TDateby } from "../../utils/filter";
 type TChart = {
   status: string;
   total: number;
@@ -15,7 +14,7 @@ type TChart = {
 
 export type ITEMS = "order" | "expense" | "product";
 
-const fill: Record<filter.TDateby, number> = {
+const fill: Record<TDateby, number> = {
   ALL_TIME: 1,
   DAY: 24,
   WEEK: 7,
@@ -24,7 +23,7 @@ const fill: Record<filter.TDateby, number> = {
 };
 const preprocessTimeSeries = (
   data: TChart[],
-  dateBy: filter.TDateby,
+  dateBy: TDateby,
   itemType: ITEMS
 ) => {
   const dataByStatus: Record<string, TChart[]> = {};
@@ -190,4 +189,4 @@ const chartData = async (_: any, args: any, context: any) => {
   }
 };
 
-export { chartData };
+export default { chartData };

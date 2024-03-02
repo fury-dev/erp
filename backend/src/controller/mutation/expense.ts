@@ -1,8 +1,8 @@
-import expenseModel = require("../../schema/mongo/expense");
-import utils = require("../../schema/mongo/utils");
-import lodash = require("lodash");
-import expenseQuery = require("../query/expense");
-import processObject = require("../../utils/processObject");
+import expenseModel from "../../schema/mongo/expense";
+import lodash from "lodash";
+import expenseQuery from "../query/expense";
+import processObject from "../../utils/processObject";
+import { updateMongo } from "../../schema/mongo/utils/index";
 const addExpense = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   const lastExpense = await expenseModel.controller
@@ -37,7 +37,7 @@ const addExpense = async (_: any, args: any, context: any) => {
 
   const expense = new expenseModel.controller({
     expenseId,
-    ...utils.updateMongo(data),
+    ...updateMongo(data),
   });
   return await expense.save().catch((err: any) => {
     if (err) console.log(err);
@@ -57,7 +57,7 @@ const updateExpense = async (_: any, args: any, context: any) => {
   try {
     const data = await expenseModel.controller.findByIdAndUpdate(
       expense.id,
-      utils.updateMongo(expense, false, true)
+      updateMongo(expense, false, true)
     );
 
     return {
@@ -77,10 +77,10 @@ const deleteExpense = async (_: any, args: any, context: any) => {
     const records = await expenseQuery.expenses(null, args, context);
     console.log("Deleting Expense", records);
 
-    return await records?.map(async (record) => {
+    return await records?.map(async (record: any) => {
       return await expenseModel.controller.findByIdAndUpdate(
         args.id,
-        utils.updateMongo(record, true, true)
+        updateMongo(record, true, true)
       );
     });
   } catch (err) {
@@ -88,4 +88,4 @@ const deleteExpense = async (_: any, args: any, context: any) => {
     return err;
   }
 };
-export { addExpense, deleteExpense, updateExpense };
+export default { addExpense, deleteExpense, updateExpense };

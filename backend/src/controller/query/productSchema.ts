@@ -1,8 +1,7 @@
-import productSchemaModel = require("../../schema/mongo/productSchema");
-import utils = require("../../schema/mongo/utils");
-import mongodb = require("mongodb");
-import generateQuery = require("../../utils/generateQuery");
-const ObjectId = mongodb.ObjectId;
+import productSchemaModel from "../../schema/mongo/productSchema";
+import generateQuery from "../../utils/generateQuery";
+import { unpackMessage } from "../../schema/mongo/utils/index";
+import { ObjectId, BSON } from "mongodb";
 
 const productSchemas = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
@@ -21,8 +20,8 @@ const productSchemas = async (_: any, args: any, context: any) => {
             value:
               | string
               | number
-              | mongodb.BSON.ObjectId
-              | mongodb.BSON.ObjectIdLike
+              | BSON.ObjectId
+              | BSON.ObjectIdLike
               | Uint8Array
               | undefined
           ) => new ObjectId(value)
@@ -49,7 +48,7 @@ const productSchemas = async (_: any, args: any, context: any) => {
     { productSchemaId: 1 }
   );
 
-  const preprocess = utils.unpackMessage(response);
+  const preprocess = unpackMessage(response);
   console.log("List ProductSchemas", preprocess.length);
 
   return preprocess;
@@ -73,4 +72,4 @@ const productSchemaSelection = (
     return {};
   }
 };
-export { productSchemas };
+export default { productSchemas };

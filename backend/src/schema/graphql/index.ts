@@ -1,4 +1,4 @@
-const GraphqlSchema = `#graphql
+export const GraphqlSchema = `#graphql
 
 type Price{
     currency:String
@@ -212,5 +212,3 @@ input PriceValue{
 
 
 `;
-
-export { GraphqlSchema };

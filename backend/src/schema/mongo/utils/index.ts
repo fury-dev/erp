@@ -1,7 +1,7 @@
-import lodash = require("lodash");
-import generateTimestamp = require("../../../utils/generateTimestamp");
+import lodash from "lodash";
+import generateTimestamp from "../../../utils/generateTimestamp";
 
-const updateMongo = (
+export const updateMongo = (
   item: any,
   deleted: boolean = false,
   isUpdate: boolean = false
@@ -31,8 +31,6 @@ const updateMongo = (
         updatedAt: generateTimestamp.generateTimestamp(),
       };
 
-export { updateMongo };
-
 export const unpackMessage = (item: any[], mask?: string, index?: number) => {
   return item.map((value) => {
     const response = lodash.omit(
@@ -58,3 +56,4 @@ export const unpackMessage = (item: any[], mask?: string, index?: number) => {
     };
   });
 };
+export default { updateMongo, unpackMessage };

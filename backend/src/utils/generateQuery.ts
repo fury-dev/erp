@@ -1,7 +1,6 @@
-import mongoose = require("mongoose");
-import mongodb = require("mongodb");
-const ObjectId = mongodb.ObjectId;
-import filter = require("./filter");
+import mongoose from "mongoose";
+import { ObjectId, BSON } from "mongodb";
+import filter, { TDateby } from "./filter";
 
 const generateQuery = (
   controller: mongoose.Model<any>,
@@ -15,7 +14,7 @@ const generateQuery = (
   const filters: {
     deleted: number;
     id: string[];
-    dateBy: filter.TDateby;
+    dateBy: TDateby;
     search: string;
     limit: number;
   } = args.filter;
@@ -34,8 +33,8 @@ const generateQuery = (
             value:
               | string
               | number
-              | mongodb.BSON.ObjectId
-              | mongodb.BSON.ObjectIdLike
+              | BSON.ObjectId
+              | BSON.ObjectIdLike
               | Uint8Array
               | undefined
           ) => new ObjectId(value)
@@ -100,4 +99,4 @@ const generateQuery = (
       : []),
   ]);
 };
-export { generateQuery };
+export default { generateQuery };

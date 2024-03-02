@@ -1,11 +1,12 @@
-import mongoConnect = require("../utils/MongoConnect");
+import { initializeMongo } from "../utils/MongoConnect";
+
 const main = async () => {
   console.log(process.argv);
   const file = process.argv[2];
   if (!file) {
     throw new Error("File is required");
   }
-  await mongoConnect.initializeMongo(process.argv[3]);
+  await initializeMongo(process.argv[3]);
   console.log("Mongo connected");
   try {
     const module = require(file);

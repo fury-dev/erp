@@ -1,6 +1,6 @@
-import expenseModel = require("../../schema/mongo/expense");
-import utils = require("../../schema/mongo/utils");
-import generateQuery = require("../../utils/generateQuery");
+import { unpackMessage } from "../../schema/mongo/utils/index";
+import expenseModel from "../../schema/mongo/expense";
+import generateQuery from "../../utils/generateQuery";
 
 const expenses = async (_: any, args: any, context: any) => {
   const response = await generateQuery.generateQuery(
@@ -13,7 +13,7 @@ const expenses = async (_: any, args: any, context: any) => {
     }
   );
 
-  const preprocess = utils.unpackMessage(response);
+  const preprocess = unpackMessage(response);
   console.log("List Expense", preprocess.length);
 
   return preprocess;
@@ -35,4 +35,4 @@ const expenseSelection = (
   }
 };
 
-export { expenses };
+export default { expenses };

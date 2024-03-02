@@ -1,4 +1,4 @@
-import mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 var validateName = (name: string) => {
   var re = /[^A-Za-z_ ]+/;
@@ -29,4 +29,4 @@ const User = new mongoose.Schema({
   },
 });
 const controller = mongoose.model("Users", User);
-export { controller, User };
+export default { controller, User };

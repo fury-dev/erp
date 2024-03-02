@@ -1,4 +1,4 @@
-import mongoose = require("mongoose");
+import mongoose from "mongoose";
 const ObjectId = mongoose.Schema.ObjectId;
 
 const Schema = new mongoose.Schema({
@@ -29,4 +29,4 @@ const Schema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 const controller = mongoose.model("product", Schema);
-export { controller };
+export default { controller };

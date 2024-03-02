@@ -1,5 +1,5 @@
-import moment = require("moment");
+import moment from "moment";
 
 const generateTimestamp = () => new Date();
 
-export { generateTimestamp };
+export default { generateTimestamp };

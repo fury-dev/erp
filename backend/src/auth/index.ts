@@ -1,18 +1,18 @@
-import jwt = require("jsonwebtoken");
-import userModel = require("../schema/mongo/user");
+import jwt from "jsonwebtoken";
+import userModel from "../schema/mongo/user";
 
-const createToken = (value: string): string => {
+export const createToken = (value: string): string => {
   return jwt.sign({ value }, process.env.SECRET_KEY || "Stack", {
     expiresIn: process.env.TOKEN_LIFESPAN,
   });
 };
 
-const validateToken = async (value: string): Promise<any> => {
+export const validateToken = async (value: string): Promise<any> => {
   const id = await jwt.verify(value, process.env.SECRET_KEY || "Stack");
   if (id) return id;
   return false;
 };
-const isAuthenicatedUser = async (token: string): Promise<boolean> => {
+export const isAuthenicatedUser = async (token: string): Promise<boolean> => {
   try {
     const id = await validateToken(token);
     if (!id) return id as boolean;
@@ -22,5 +22,3 @@ const isAuthenicatedUser = async (token: string): Promise<boolean> => {
     return false;
   }
 };
-
-export { createToken, validateToken, isAuthenicatedUser };

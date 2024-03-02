@@ -1,11 +1,11 @@
-import orderModel = require("../../schema/mongo/order");
-import utils = require("../../schema/mongo/utils");
-import expenseModel = require("../../schema/mongo/expense");
-import productModel = require("../../schema/mongo/productSchema");
-import processObjects = require("../../utils/processObject");
-import generateQuery = require("../../utils/generateQuery");
+import orderModel from "../../schema/mongo/order";
+import expenseModel from "../../schema/mongo/expense";
+import productModel from "../../schema/mongo/productSchema";
+import processObjects from "../../utils/processObject";
+import generateQuery from "../../utils/generateQuery";
+import { unpackMessage } from "../../schema/mongo/utils/index";
 
-const getVersionItem = async (_: any, args: any) => {
+export async function getVersionItem(_: any, args: any) {
   let controller;
   const { id, item, version } = processObjects.processId(args.id);
   switch (item) {
@@ -33,8 +33,7 @@ const getVersionItem = async (_: any, args: any) => {
 
   return {
     versions: response[0].versions.map((_value: any, index: number) =>
-      utils.unpackMessage(response, undefined, index)
+      unpackMessage(response, undefined, index)
     ),
   };
-};
-export { getVersionItem };
+}
