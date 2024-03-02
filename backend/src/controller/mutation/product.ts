@@ -1,6 +1,5 @@
 import productModel from "../../schema/mongo/product";
 import lodash from "lodash";
-import generateTimestamp from "../../utils/generateTimestamp";
 import productQuery from "../query/product";
 import processObject from "../../utils/processObject";
 import { updateMongo } from "../../schema/mongo/utils/index";

@@ -124,11 +124,11 @@ const GenericChart = <T extends ITEMS>({
     if (!loading) {
       ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
     }
-  }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, loading, grey500, series]);
+  }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, loading, grey500, series, columns, value]);
 
   useEffect(() => {
     updateQuery({ ...filter, dateBy: value });
-  }, [filter]);
+  }, [filter, updateQuery, value]);
   return (
     <>
       {loading ? (
@@ -180,6 +180,7 @@ const GenericChart = <T extends ITEMS>({
               </Grid>
             </Grid>
             <Grid item xs={12}>
+              {/* @ts-ignore */}
               <Chart {...barChartData} series={series as ApexAxisChartSeries} />
             </Grid>
           </Grid>

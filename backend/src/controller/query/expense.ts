@@ -2,7 +2,7 @@ import { unpackMessage } from "../../schema/mongo/utils/index";
 import expenseModel from "../../schema/mongo/expense";
 import generateQuery from "../../utils/generateQuery";
 
-const expenses = async (_: any, args: any, context: any) => {
+const expenses = async (_: any, args: any, _context: any) => {
   const response = await generateQuery.generateQuery(
     expenseModel.controller,
     args,
@@ -35,4 +35,4 @@ const expenseSelection = (
   }
 };
 
-export default { expenses };
+export default { expenses, expenseSelection };

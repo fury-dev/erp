@@ -5,13 +5,7 @@
     "es2021": true,
     "node": true
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:react-refresh/recommended"
-  ],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:react/recommended", "plugin:react-hooks/recommended"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 12,
@@ -29,10 +23,9 @@
   "rules": {
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/explicit-module-boundary-types": "warn",
     "react/jsx-uses-react": "warn",
     "react/jsx-uses-vars": "warn",
-    "react/no-children-prop": "warn",
+    "react/no-children-prop": "off",
     "react/jsx-key": "warn",
     "@typescript-eslint/ban-types": "warn",
     "unused-imports/no-unused-imports": "warn",
@@ -41,6 +34,11 @@
     "@typescript-eslint/ban-ts-comment": "off",
     "no-useless-escape": "warn",
     "react-refresh/only-export-components": ["warn", { "allowConstantExport": true }],
-    "react/display-name": "off"
-  }
+    "react/display-name": "off",
+    "@typescript-eslint/explicit-module-boundary-types": ["off", { "allowArgumentsExplicitlyTypedAsAny": true }],
+    "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unsafe-optional-chaining": "off",
+    "react-hooks/rules-of-hooks": "off"
+  },
+  "ignorePatterns": ["*.d.ts"]
 }

@@ -1,21 +1,6 @@
 import { Box, Grid, Skeleton } from '@mui/material';
-export const mapSkeletonItemText = (n: number) => {
-  return new Array(6).fill(n).map(() => (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        height: '50px',
-        justifyContent: 'space-between',
-        width: '170px'
-      }}
-    >
-      <Skeleton width={'50px'} height={'20px'} />
-      <Skeleton width={'50px'} height={'20px'} />
-    </Box>
-  ));
-};
+import { mapSkeletonItemText } from './components/Skeleton';
+
 export const ViewSkeleton = () => {
   return (
     <Grid container>

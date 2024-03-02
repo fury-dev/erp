@@ -8,7 +8,6 @@ import { useExpense } from './hooks/useExpense';
 import { Order } from '../../../types/items/order';
 import { FormInputMoney, FormSelect } from '../../../components/Form';
 import { Price } from '../../../types';
-import { useProduct } from '../Products/hooks/useProduct';
 import { Expense } from '../../../types/items/expense';
 
 const expenseTypeOptions: Expense['expenseType'][] = ['DELIVERY_CHARGES', 'ORDER', 'OTHERS', 'PERSONAL'];
@@ -17,7 +16,6 @@ const operationTypeOptions: Expense['operationType'][] = ['CREDIT', 'DEBIT'];
 export const ExpenseSetup = ({ open, onClose, expense }: { open: boolean; onClose: () => void; expense?: Expense }) => {
   const theme = useTheme();
   const { submitData } = useExpense();
-  const {} = useProduct();
 
   return (
     <DialogBox title="Order" open={open} onClose={onClose} width="600px">
@@ -46,7 +44,7 @@ export const ExpenseSetup = ({ open, onClose, expense }: { open: boolean; onClos
           note: '',
           ...(expense || {})
         }}
-        onSubmit={async (values, {}) => {
+        onSubmit={async (values) => {
           try {
             if (values) await submitData(values as Expense);
             onClose();

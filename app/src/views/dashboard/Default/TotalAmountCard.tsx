@@ -1,4 +1,3 @@
-
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
 import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
@@ -9,10 +8,9 @@ import TotalIncomeCard from '../../../ui-component/cards/Skeleton/TotalIncomeCar
 
 // assets
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
-import { useApiService } from '../../../service';
 
 // styles
-const CardWrapper = styled(MainCard)(({ theme }) => ({
+const CardWrapper = styled(MainCard)(({ theme }: { theme: Record<any, any> }) => ({
   backgroundColor: theme.palette.primary.dark,
   color: theme.palette.primary.light,
   overflow: 'hidden',
@@ -47,10 +45,7 @@ interface ITotalAmountCard {
   title: string;
 }
 const TotalAmountCard = ({ isLoading, title, amount }: ITotalAmountCard) => {
-  const theme = useTheme();
-  const {
-    chart: {}
-  } = useApiService('expense');
+  const theme: any = useTheme();
 
   return (
     <>

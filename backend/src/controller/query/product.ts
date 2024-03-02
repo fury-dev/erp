@@ -69,4 +69,4 @@ const productSelection = (
     return {};
   }
 };
-export default { products };
+export default { products, productSelection };

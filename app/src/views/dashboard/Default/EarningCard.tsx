@@ -71,7 +71,7 @@ const EarningCard = ({ isLoading }: { isLoading: boolean }) => {
     updateQuery({
       dateBy: 'YEAR'
     });
-  }, []);
+  }, [updateQuery]);
   const earnings = useMemo(
     () =>
       sum(
@@ -87,7 +87,7 @@ const EarningCard = ({ isLoading }: { isLoading: boolean }) => {
           )
         )
       ),
-    [currency]
+    [currency, data?.orders]
   );
   return (
     <>

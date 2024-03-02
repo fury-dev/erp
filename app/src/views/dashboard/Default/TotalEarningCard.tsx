@@ -15,7 +15,7 @@ interface ITotalEarningCard {
 export const TotalEarningCard = ({ isLoading }: ITotalEarningCard) => {
   const {
     list: { data, updateQuery, updateMask }
-  } = useApiService('expense');
+  } = useApiService<Expense>('expense');
   const currency = useSelector((state: RootState) => state.customization.currency);
   const currencySymbol = _currencySymbol[currency];
   useEffect(() => {
@@ -26,7 +26,7 @@ export const TotalEarningCard = ({ isLoading }: ITotalEarningCard) => {
     updateMask(`operationType
     amount
     `);
-  }, []);
+  }, [updateMask, updateQuery]);
   const expense: Expense[] = useMemo(() => data?.expenses || [], [data]);
   const getCurrency = useCallback(
     (mode: Expense['operationType']) =>
@@ -34,7 +34,7 @@ export const TotalEarningCard = ({ isLoading }: ITotalEarningCard) => {
         sum(expense.filter((value: Expense) => value.operationType === mode).map((value) => value.amount.amount)),
         currency
       ).toFixed(2)} ${currencySymbol}`,
-    [expense, currency]
+    [expense, currency, currencySymbol]
   );
   console.log(expense, data);
   return (

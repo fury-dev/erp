@@ -25,7 +25,7 @@ export const useFind = <T extends TItems>(_item: ITEMS) => {
         }
         return item;
       });
-  }, [error, data]);
+  }, [error, data, _item, dispatch]);
 
   return {
     ...rest,

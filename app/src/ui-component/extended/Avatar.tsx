@@ -18,7 +18,7 @@ const Avatar = ({
 }: {
   className?: string;
   color?: string;
-  outline?: Boolean;
+  outline?: boolean;
   size?: string;
   sx?: CSSProperties;
   children: React.ReactNode;

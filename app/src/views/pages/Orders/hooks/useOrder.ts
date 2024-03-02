@@ -4,8 +4,8 @@ import { Order } from '../../../../types/items/order';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOrders } from '../../../../store/reducers';
 import { RootState } from '../../../../store';
-import { useMultiSelect } from '../../../../context/MuliSelectContext';
 import lodash from 'lodash';
+import { useMultiSelect } from '../../../../context/useMultiSelect';
 export const useOrder = () => {
   const {
     add,
@@ -43,12 +43,12 @@ export const useOrder = () => {
       );
       setItems(data.orders);
     }
-  }, [data]);
+  }, [data, dispatch]);
   const apiAction = useCallback(
     async (..._rest: any) => {
       startPolling(10000);
     },
-    [data, startPolling]
+    [startPolling]
   );
 
   return {

@@ -134,19 +134,25 @@ export const useVersion = <T extends TItems>(item: ITEMS) => {
     if (data?.getVersionItem && data?.getVersionItem?.versions.length > 0) {
       setVersions(data?.getVersionItem?.versions);
     }
-  }, [data]);
+  }, [data, error]);
 
-  const updateQuery = useCallback(async (id: string, version: string = '', all: boolean = false) => {
-    await refetch({
-      id: `${id}:${item}:${version}`,
-      all
-    });
-  }, []);
+  const updateQuery = useCallback(
+    async (id: string, version: string = '', all: boolean = false) => {
+      await refetch({
+        id: `${id}:${item}:${version}`,
+        all
+      });
+    },
+    [item, refetch]
+  );
 
-  const updateMask = useCallback(async (mask: string) => {
-    _updateGraphQuery(() => gql(baseQuery(mask)));
-    await refetch();
-  }, []);
+  const updateMask = useCallback(
+    async (mask: string) => {
+      _updateGraphQuery(() => gql(baseQuery(mask)));
+      await refetch();
+    },
+    [_updateGraphQuery, baseQuery, refetch]
+  );
   return {
     loading,
     refetch,

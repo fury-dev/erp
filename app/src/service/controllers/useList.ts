@@ -198,7 +198,7 @@ export const useList = <T extends TItems>(item: ITEMS) => {
 
   useEffect(() => {
     console.log(data, error, 'response');
-  }, [data]);
+  }, [data, error]);
 
   const updateQuery = useCallback(
     async ({ deleted = 0, id = [], search = null, dateBy = 'ALL_TIME', limit = -1 }: TQueryParams, poll: boolean = true) => {
@@ -214,14 +214,17 @@ export const useList = <T extends TItems>(item: ITEMS) => {
       });
       if (poll) startPolling(POLLING_INTERVAL);
     },
-    []
+    [refetch, startPolling, stopPolling]
   );
 
-  const updateMask = useCallback(async (mask: string) => {
-    _updateGraphQuery(() => gql(baseQuery(mask)));
-    stopPolling();
-    await refetch();
-  }, []);
+  const updateMask = useCallback(
+    async (mask: string) => {
+      _updateGraphQuery(() => gql(baseQuery(mask)));
+      stopPolling();
+      await refetch();
+    },
+    [_updateGraphQuery, baseQuery, refetch, stopPolling]
+  );
   return {
     loading,
     refetch,

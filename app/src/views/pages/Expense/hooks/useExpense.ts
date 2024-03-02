@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setExpenses } from '../../../../store/reducers';
 import { RootState } from '../../../../store';
-import { useMultiSelect } from '../../../../context/MuliSelectContext';
 import lodash from 'lodash';
 import { Expense } from '../../../../types/items/expense';
+import { useMultiSelect } from '../../../../context/useMultiSelect';
 export const useExpense = () => {
   const {
     add,
@@ -41,12 +41,12 @@ export const useExpense = () => {
       );
       setItems(data.expenses);
     }
-  }, [data]);
+  }, [data, dispatch]);
   const apiAction = useCallback(
     async (..._rest: any) => {
       startPolling(10000);
     },
-    [data, startPolling]
+    [startPolling]
   );
 
   return {

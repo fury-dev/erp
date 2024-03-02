@@ -27,21 +27,24 @@ export const useGoogleLogin = () => {
       console.log(res);
       const response = JSON.parse(res?.loginWithGoogle);
       if (response?.success?.auth?.token) {
-        const { auth, user } = response?.success;
+        const { auth, user } = response.success;
 
         setUser(user);
         localStorage.setItem('authToken', JSON.stringify(auth));
         navigate('/home');
       }
     }
-  }, [res]);
-  const loginWithGoogle = useCallback(async (credentials: string) => {
-    loginUser({
-      variables: {
-        credentials
-      }
-    });
-  }, []);
+  }, [navigate, res, setUser]);
+  const loginWithGoogle = useCallback(
+    async (credentials: string) => {
+      loginUser({
+        variables: {
+          credentials
+        }
+      });
+    },
+    [loginUser]
+  );
 
   return {
     loginWithGoogle

@@ -10,8 +10,8 @@ import { useProduct } from './hooks/useProduct';
 import { Product, ProductSchema } from '../../../types/items/product';
 import { FormInputMoney, FormSelect } from '../../../components/Form';
 import { Price } from '../../../types';
-import { useDialogContext } from '../../../context/DialogContext';
 import { useApiService } from '../../../service';
+import { useDialogContext } from '../../../context/useDialogContext';
 
 export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClose: () => void; product?: Product }) => {
   const theme = useTheme();
@@ -81,7 +81,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
           ...(product || {})
         }}
         // validate={validation}
-        onSubmit={async (values, {}) => {
+        onSubmit={async (values) => {
           try {
             if (values) await submitData(values as Product);
             onClose();

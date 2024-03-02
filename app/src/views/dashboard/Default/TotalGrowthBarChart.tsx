@@ -135,7 +135,7 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
     if (!isLoading) {
       ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
     }
-  }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500, series]);
+  }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500, series, value]);
 
   useEffect(() => {
     updateQuery({
@@ -143,7 +143,7 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
       item: item,
       group: 'status'
     });
-  }, [value, item]);
+  }, [value, item, updateQuery]);
   console.log(columns[value], series);
   return (
     <>

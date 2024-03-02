@@ -7,7 +7,7 @@ import fs from "fs";
 const productToProductSchemaMigration = async () => {
   const data = (await productModel.controller.find({})).map((value) => {
     let id = value.productId;
-    let item = lodash.omit(
+    const item = lodash.omit(
       lodash.omit(lodash.omit(value.toJSON(), "productId"), "id"),
       "_id"
     );

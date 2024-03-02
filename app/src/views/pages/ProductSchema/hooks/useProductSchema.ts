@@ -4,8 +4,8 @@ import { ProductSchema } from '../../../../types/items/product';
 import { useDispatch, useSelector } from 'react-redux';
 import { setProducts } from '../../../../store/reducers';
 import { RootState } from '../../../../store';
-import { useMultiSelect } from '../../../../context/MuliSelectContext';
 import lodash, { compact } from 'lodash';
+import { useMultiSelect } from '../../../../context/useMultiSelect';
 export const useProductSchema = () => {
   const {
     add,
@@ -41,12 +41,12 @@ export const useProductSchema = () => {
       );
       setItems(compact(data.productSchemas));
     }
-  }, [data]);
+  }, [data, dispatch]);
   const apiAction = useCallback(
     async (..._rest: any) => {
       startPolling(10000);
     },
-    [data, startPolling]
+    [startPolling]
   );
 
   return {

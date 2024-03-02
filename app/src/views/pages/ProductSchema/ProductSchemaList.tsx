@@ -7,11 +7,11 @@ import moment from 'moment';
 import { FaEdit } from 'react-icons/fa';
 import { ProductSchema } from '../../../types/items/product';
 import { useCallback } from 'react';
-import { useDialogContext } from '../../../context/DialogContext';
 import { convertFromINR, currencySymbol as _currencySymbol } from '../../../data/Product/currency';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { useNavigate } from 'react-router-dom';
+import { useDialogContext } from '../../../context/useDialogContext';
 
 const ProductSchemaList = () => {
   const {
@@ -110,7 +110,7 @@ const ProductSchemaList = () => {
                     );
 
                     setOpen(true);
-                  }, [productSchemas])
+                  }, [setComponent, setOpen])
                 }
               },
 
@@ -151,7 +151,7 @@ const ProductSchemaList = () => {
                       setOpen(true);
                     }
                   },
-                  [productSchemas]
+                  [productSchemas, setComponent, setOpen]
                 ),
                 color: 'primary'
               },

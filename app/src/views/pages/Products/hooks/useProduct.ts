@@ -4,8 +4,8 @@ import { Product } from '../../../../types/items/product';
 import { useDispatch, useSelector } from 'react-redux';
 import { setProducts } from '../../../../store/reducers';
 import { RootState } from '../../../../store';
-import { useMultiSelect } from '../../../../context/MuliSelectContext';
 import lodash, { compact } from 'lodash';
+import { useMultiSelect } from '../../../../context/useMultiSelect';
 export const useProduct = () => {
   const {
     add,
@@ -41,10 +41,10 @@ export const useProduct = () => {
       );
       setItems(compact(data.products));
     }
-  }, [data]);
+  }, [data, dispatch]);
   const apiAction = useCallback(async () => {
     startPolling(10000);
-  }, [data, startPolling]);
+  }, [startPolling]);
 
   return {
     submitData,

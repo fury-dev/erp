@@ -30,10 +30,43 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
   } = useProduct();
   const [showMap, setShowMap] = useState<boolean>(false);
 
-  const { cities, countries, state, getCities, getCountries, getStates } = useLocationApi();
+  const { cities: citiesData, countries: countriesData, state: stateData, getCities, getCountries, getStates } = useLocationApi();
   const defaultProps = {
     zoom: 11
   };
+  const products = useMemo(
+    () =>
+      (data?.products || []).map((value) => ({
+        value: value.id,
+        label: value.name
+      })),
+    [data?.products]
+  );
+  const countries = useMemo(
+    () =>
+      (countriesData || []).map((value) => ({
+        value: value.name,
+        label: value.name
+      })),
+    [countriesData]
+  );
+  const cities = useMemo(
+    () =>
+      (citiesData || []).map((value) => ({
+        value: value.name,
+        label: value.name
+      })),
+    [citiesData]
+  );
+
+  const state = useMemo(
+    () =>
+      (stateData || []).map((value) => ({
+        value: value.name,
+        label: value.name
+      })),
+    [stateData]
+  );
   return (
     <DialogBox title="Order" open={open} onClose={onClose} width="600px">
       <Formik<Order>
@@ -54,7 +87,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
           geoLocation: null,
           ...(order || {})
         }}
-        onSubmit={async (values, {}) => {
+        onSubmit={async (values) => {
           try {
             if (values.status === 'DELIVERED') {
               values.deliveryDate = new Date().toISOString();
@@ -182,14 +215,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                   touched={touched}
                   handleChange={handleChange}
                   apiAction={updateQuery}
-                  options={useMemo(
-                    () =>
-                      (data?.products || []).map((value) => ({
-                        value: value.id,
-                        label: value.name
-                      })),
-                    [data]
-                  )}
+                  options={products}
                   value={values.productId}
                 />
               </Grid>
@@ -239,17 +265,10 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     touched={touched}
                     handleChange={(e: React.ChangeEvent<any>) => {
                       handleChange(e);
-                      getStates(countries.find((value) => value.name === e.target.value)['iso2']);
+                      getStates(countriesData.find((value) => value.name === e.target.value)!['iso2']!);
                     }}
                     apiAction={getCountries}
-                    options={useMemo(
-                      () =>
-                        (countries || []).map((value) => ({
-                          value: value.name,
-                          label: value.name
-                        })),
-                      [countries]
-                    )}
+                    options={countries}
                     value={values.location?.country}
                     sx={{
                       width: '100%'
@@ -266,19 +285,12 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                       handleChange(e);
 
                       getCities(
-                        state.find((value) => value.name === e.target.value)['iso2'],
-                        countries.find((item) => item.name === values.location?.country)['iso2']
+                        stateData.find((value) => value.name === e.target.value)['iso2'],
+                        countriesData.find((item) => item.name === values.location?.country)['iso2']
                       );
                     }}
                     apiAction={getStates}
-                    options={useMemo(
-                      () =>
-                        (state || []).map((value) => ({
-                          value: value.name,
-                          label: value.name
-                        })),
-                      [state]
-                    )}
+                    options={state}
                     value={values.location?.state}
                     sx={{
                       width: '100%'
@@ -293,14 +305,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     touched={touched}
                     handleChange={handleChange}
                     apiAction={getCities}
-                    options={useMemo(
-                      () =>
-                        (cities || []).map((value) => ({
-                          value: value.name,
-                          label: value.name
-                        })),
-                      [cities]
-                    )}
+                    options={cities}
                     value={values.location?.city}
                   />
                 </Grid>

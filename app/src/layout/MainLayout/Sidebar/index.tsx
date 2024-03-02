@@ -26,7 +26,7 @@ const StyledPerfectScrollbar = styled(PerfectScrollbar)`
     background-color: #f5f5f5;
   }
 `;
-const Sidebar = ({ drawerOpen = false, drawerToggle = () => {}, window }: ISidebar) => {
+const Sidebar = ({ drawerOpen = false, drawerToggle = () => 0, window }: ISidebar) => {
   const theme = useTheme();
   const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
 

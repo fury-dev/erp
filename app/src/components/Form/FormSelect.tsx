@@ -26,14 +26,14 @@ export const FormSelect = <T,>({
     if (apiAction) {
       apiAction({});
     }
-  }, []);
+  }, [apiAction]);
 
   useEffect(() => {
     console.log(name, typeof options[0] === 'string' ? options[0] : options[0]?.value);
     if (!value && options.length > 0 && setFieldValue && typeof name === 'string' && defaultSelect) {
       setFieldValue(name, typeof options[0] === 'string' ? options[0] : options[0].value);
     }
-  }, [value, defaultSelect, name, options]);
+  }, [value, defaultSelect, name, options, setFieldValue]);
   return (
     <FormControl
       error={Boolean(touched[name as keyof T] && errors[name as keyof T])}
@@ -54,11 +54,19 @@ export const FormSelect = <T,>({
           ...sx
         }}
       >
-        {options.map((value) => {
+        {options.map((value, key) => {
           if (typeof value === 'string') {
-            return <MenuItem value={value}>{value}</MenuItem>;
+            return (
+              <MenuItem key={key.toString()} value={value}>
+                {value}
+              </MenuItem>
+            );
           } else {
-            return <MenuItem value={value.value}>{value.label}</MenuItem>;
+            return (
+              <MenuItem key={key.toString()} value={value.value}>
+                {value.label}
+              </MenuItem>
+            );
           }
         })}
       </Select>

@@ -57,13 +57,16 @@ export const useChart = () => {
     if (data?.chartData) setSeries(data.chartData);
   }, [data]);
 
-  const updateQuery = useCallback(async (filter: TChartFilter, polling?: boolean) => {
-    stopPolling();
-    await refetch({
-      filter
-    });
-    if (polling) startPolling(POLLING_INTERVAL);
-  }, []);
+  const updateQuery = useCallback(
+    async (filter: TChartFilter, polling?: boolean) => {
+      stopPolling();
+      await refetch({
+        filter
+      });
+      if (polling) startPolling(POLLING_INTERVAL);
+    },
+    [refetch, startPolling, stopPolling]
+  );
   return {
     loading,
     refetch,

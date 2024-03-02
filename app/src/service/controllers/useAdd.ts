@@ -1,7 +1,7 @@
 import { ITEMS, TItems } from '../../types/items';
 import { gql, useMutation } from '@apollo/client';
 
-export const useAdd = <T extends TItems>(item: ITEMS) => {
+export const useAdd = <_T extends TItems>(item: ITEMS) => {
   let query = null;
   if (item === 'productSchema') {
     query = gql`

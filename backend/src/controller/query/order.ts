@@ -68,4 +68,4 @@ const orderSelection = (
   }
 };
 
-export default { orders };
+export default { orders, orderSelection };

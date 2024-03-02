@@ -28,3 +28,4 @@ const convertToINR = (value: number, currency: TCurrency) => {
 const convertFromINR = (value: number, currency: TCurrency) => {
   return value * toExchangeRate[currency];
 };
+export { convertFromINR, convertToINR };

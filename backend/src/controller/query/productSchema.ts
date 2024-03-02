@@ -72,4 +72,4 @@ const productSchemaSelection = (
     return {};
   }
 };
-export default { productSchemas };
+export default { productSchemas, productSchemaSelection };

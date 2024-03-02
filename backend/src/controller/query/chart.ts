@@ -9,7 +9,7 @@ type TChart = {
   total: number;
   timeFrame: string | number;
   value: any;
-  createdAt: String;
+  createdAt: string;
 };
 
 export type ITEMS = "order" | "expense" | "product";
@@ -70,7 +70,7 @@ const preprocessTimeSeries = (
           moment(dataByStatus[value][0].createdAt, "YYYY-MM-DD").daysInMonth()
         : fill[dateBy]
     ).fill(0);
-    let data = itemType === "order" || itemType === "expense" ? 0 : [0, 0];
+    const data = itemType === "order" || itemType === "expense" ? 0 : [0, 0];
     time.data.forEach((item) => {
       xdata[(item.timeFrame as number) - 1] = item.total;
     });
@@ -84,8 +84,8 @@ const preprocessTimeSeries = (
   });
   return timeSeries;
 };
-const chartData = async (_: any, args: any, context: any) => {
-  let createSeries = args.filter.group;
+const chartData = async (_: any, args: any, _context: any) => {
+  const createSeries = args.filter.group;
   console.log(args.filter, "filter");
 
   let controller: mongoose.Model<any> = orderModel.controller;

@@ -63,7 +63,7 @@ const RecentOrders = ({ isLoading }: { isLoading: boolean }) => {
       name
     }
     status`);
-  }, []);
+  }, [time, updateMask, updateQuery]);
 
   const statusColor: Record<Order['status'], string> = {
     DELIVERED: theme.palette.success.light,

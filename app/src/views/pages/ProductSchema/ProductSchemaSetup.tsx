@@ -10,7 +10,7 @@ import { useProductSchema } from './hooks/useProductSchema';
 import { ProductSchema } from '../../../types/items/product';
 import { FormInputMoney } from '../../../components/Form';
 import { Price } from '../../../types';
-import { useDialogContext } from '../../../context/DialogContext';
+import { useDialogContext } from '../../../context/useDialogContext';
 
 export const ProductSchemaSetup = ({
   open,
@@ -56,7 +56,7 @@ export const ProductSchemaSetup = ({
           ...(productSchema || {})
         }}
         // validate={validation}
-        onSubmit={async (values, {}) => {
+        onSubmit={async (values) => {
           try {
             if (values) await submitData(values as ProductSchema);
             onClose();
@@ -140,8 +140,9 @@ export const ProductSchemaSetup = ({
                   />
                   <Box display="flex" flexDirection={'row'} flexWrap="wrap">
                     {(values.size || []).length > 0 &&
-                      values.size?.map((value) => (
+                      values.size?.map((value, index) => (
                         <Box
+                          key={index.toString()}
                           sx={{
                             borderStyle: 'solid',
                             borderWidth: '0.5px',

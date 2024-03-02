@@ -2,7 +2,6 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import { GraphqlSchema } from "./schema/graphql";
 import { initializeMongo } from "./utils/MongoConnect";
-import graphql from "graphql";
 import { configDotenv } from "dotenv";
 import { isAuthenicatedUser } from "./auth/index";
 

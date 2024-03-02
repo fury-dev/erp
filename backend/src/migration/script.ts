@@ -9,7 +9,8 @@ const main = async () => {
   await initializeMongo(process.argv[3]);
   console.log("Mongo connected");
   try {
-    const module = require(file);
+    //@ts-nocheck
+    const module = await import(file);
     console.log("module imported");
     console.log("running module");
     console.log(module, file);

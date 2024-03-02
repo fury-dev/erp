@@ -26,7 +26,7 @@ const addExpense = async (_: any, args: any, context: any) => {
   let expenseId = 124594;
   if (lastExpense.length === 1 && lastExpense[0]?.expenseId) {
     expenseId = lastExpense[0]?.expenseId + 1;
-    const lastExpenseVersion =
+    const _lastExpenseVersion =
       lastExpense[0]?.versions[lastExpense[0].versions.length];
     // data["pnl"].amount -= lastExpense[0]
     //   ? (lastExpenseVersion?.cashInHand?.amount || 0) +

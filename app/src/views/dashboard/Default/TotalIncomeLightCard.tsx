@@ -39,10 +39,10 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
   }
 }));
 
-const TotalIncomeLightCard = ({ isLoading }) => {
-  const theme = useTheme();
+const TotalIncomeLightCard = ({ isLoading }: { isLoading: boolean }) => {
+  const theme: any = useTheme();
   const {
-    chart: { updateQuery, series }
+    chart: { updateQuery }
   } = useApiService('expense');
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const TotalIncomeLightCard = ({ isLoading }) => {
       item: 'expense',
       group: 'operationType'
     });
-  }, []);
+  }, [updateQuery]);
   return (
     <>
       {isLoading ? (
