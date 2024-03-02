@@ -131,3 +131,4 @@ dist
 backend/oauth2.keys.json
 backend/src/migration/example.json
 backend/src/migration/example.txt
+backend/lib/*
