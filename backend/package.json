@@ -7,8 +7,8 @@
   "scripts": {
     "start": "npx nodemon",
     "test": "jest",
-    "lint": "eslint --ext .ts,.tsx src/",
-    "fix-lint": "eslint --ext --fix.ts,.tsx src/ ",
+    "lint": "eslint --ext .ts src/",
+    "fix-lint": "eslint --ext --fix.ts src/ ",
     "build": "swc src --out-dir dist/src",
     "build:ci": "tsc && npm run build",
     "start:dev": "concurrently \"npm run build:ci\" \"npx nodemon\""
