@@ -23,7 +23,7 @@ export type Product = {
   price: Price;
   productId?: number;
   size: string;
-  quantity?: string;
+  quantity?: number;
   inStock: boolean;
   createdAt?: string;
   updatedAt?: string;

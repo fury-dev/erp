@@ -19,7 +19,8 @@ export const FormSelect = <T,>({
   sx,
   apiAction,
   setFieldValue,
-  defaultSelect = false
+  defaultSelect = false,
+  required = false
 }: IFormSelect<T>) => {
   const theme = useTheme();
   useEffect(() => {
@@ -43,6 +44,7 @@ export const FormSelect = <T,>({
       <InputLabel htmlFor="outlined-adornment-name-login">{title}</InputLabel>
 
       <Select
+        required={required}
         id="outlined-adornment-currency-order"
         onBlur={handleChange}
         label={title}

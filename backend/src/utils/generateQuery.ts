@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { ObjectId, BSON } from "mongodb";
-import filter, { TDateby } from "./filter";
+import { TFilter } from "../types/utils";
+import { createMongoFilter } from "./filter";
 
 const generateQuery = (
   controller: mongoose.Model<any>,
@@ -10,58 +10,8 @@ const generateQuery = (
   project: mongoose.PipelineStage.Project["$project"] = {},
   version: number = -1
 ) => {
-  const match: any[] = [];
-  const filters: {
-    deleted: number;
-    id: string[];
-    dateBy: TDateby;
-    search: string;
-    limit: number;
-  } = args.filter;
-  if (filters && filters.deleted > 0) {
-    match.push({
-      deleted: {
-        $eq: filters.deleted === 2,
-      },
-    });
-  }
-  if ((filters?.id || []).length > 0) {
-    match.push({
-      _id: {
-        $in: filters.id.map(
-          (
-            value:
-              | string
-              | number
-              | BSON.ObjectId
-              | BSON.ObjectIdLike
-              | Uint8Array
-              | undefined
-          ) => new ObjectId(value)
-        ),
-      },
-    });
-  }
-  if (filters?.dateBy) {
-    const { timeSpan } = filter.filterTimeQuery(filters.dateBy);
-    if (timeSpan) {
-      match.push({
-        createdAt: { $gte: timeSpan[0], $lte: timeSpan[1] },
-      });
-    }
-  }
-  if ((filters?.search || "").length > 0) {
-    match.push({
-      versions: {
-        $elemMatch: {
-          [searchElement]: {
-            $regex: new RegExp(filters.search, "i"),
-          },
-        },
-      },
-    });
-  }
-
+  const filter: TFilter = args.filter;
+  const match = createMongoFilter(filter, searchElement);
   return controller.aggregate([
     ...(match.length > 1
       ? [
@@ -90,10 +40,10 @@ const generateQuery = (
       },
     },
 
-    ...((filters?.limit || -1) !== -1
+    ...((filter?.limit || -1) !== -1
       ? [
           {
-            $limit: filters.limit,
+            $limit: filter.limit,
           },
         ]
       : []),

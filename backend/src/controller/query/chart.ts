@@ -3,7 +3,8 @@ import expenseModel from "../../schema/mongo/expense";
 import productModel from "../../schema/mongo/product";
 import mongoose from "mongoose";
 import moment from "moment";
-import filter, { TDateby } from "../../utils/filter";
+import filter from "../../utils/filter";
+import { TDateby } from "../../types/utils";
 type TChart = {
   status: string;
   total: number;

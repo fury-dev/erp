@@ -22,8 +22,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App() {
-  //@ts-ignore
-  const customization = useSelector((state) => state.customization);
+  const customization = useSelector((state: any) => state?.customization);
   console.log((import.meta as any).env);
   return (
     <GoogleOAuthProvider clientId={(import.meta as any).env?.VITE_GOOGLE_OAUTH_API}>

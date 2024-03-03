@@ -102,9 +102,10 @@ const ProductSchemaList = () => {
                   onClick: useCallback(() => {
                     setComponent(
                       <ProductSchemaSetup
-                        open={true}
                         onClose={() => {
-                          // setComponent(false);
+                          console.log('CLOSING');
+                          setComponent(false);
+                          setOpen(true);
                         }}
                       />
                     );
@@ -142,9 +143,9 @@ const ProductSchemaList = () => {
                       setComponent(
                         <ProductSchemaSetup
                           productSchema={productSchema}
-                          open={true}
                           onClose={() => {
                             setComponent(false);
+                            setOpen(false);
                           }}
                         />
                       );

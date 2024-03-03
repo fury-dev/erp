@@ -12,6 +12,7 @@ import { FormInputMoney, FormSelect } from '../../../components/Form';
 import { Price } from '../../../types';
 import { useApiService } from '../../../service';
 import { useDialogContext } from '../../../context/useDialogContext';
+import { omit } from 'lodash';
 
 export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClose: () => void; product?: Product }) => {
   const theme = useTheme();
@@ -23,6 +24,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
   const { submitData } = useProduct();
   const { setOpen } = useDialogContext();
   const fileRef = useRef<LegacyRef<HTMLInputElement>>(null);
+
   const handleImage = async (
     event: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: (arg0: string, arg1: any) => void,
@@ -67,23 +69,30 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
     <DialogBox title="Product" open={open} onClose={() => setOpen(false)} width="600px">
       <Formik<Product>
         initialValues={{
-          name: 'testName',
-          image: '',
-          productSchemaId: undefined,
-          price: {
-            amount: 70,
-            currency: 'INR'
-          },
-          size: '',
-          inStock: true,
-          id: '',
-          versionId: 1,
-          ...(product || {})
+          ...(product
+            ? {
+                productSchemaId: product!.productSchema!.id,
+                ...omit(product, 'productSchema')
+              }
+            : {
+                name: 'testName',
+                image: '',
+                productSchemaId: undefined,
+                price: {
+                  amount: 70,
+                  currency: 'INR'
+                },
+                size: '',
+                inStock: true,
+                id: '',
+                versionId: 1,
+                quantity: 1
+              })
         }}
         // validate={validation}
         onSubmit={async (values) => {
           try {
-            if (values) await submitData(values as Product);
+            await submitData(values as Product);
             onClose();
           } catch (err) {
             console.error(err);
@@ -116,8 +125,8 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                 <img src={values.image || ''} />
               </Box>
             </DialogBox>
-            <Grid container xs={12}>
-              <Grid item xs={6}>
+            <Grid container xs={12} gap={0.7} rowGap={2}>
+              <Grid item xs={7.5}>
                 {/* @ts-ignore */}
                 <FormControl error={Boolean(touched.name && errors.name)} sx={{ ...theme.typography.customInput }}>
                   <InputLabel htmlFor="outlined-adornment-name-login">Product Name</InputLabel>
@@ -138,7 +147,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                   )}
                 </FormControl>
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={4}>
                 <FormSelect<Product>
                   title="Product Schema"
                   name="productSchemaId"
@@ -159,8 +168,15 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                   defaultSelect
                 />
               </Grid>
-              <Grid item xs={6}>
-                <InputLabel htmlFor="outlined-adornment-name-login">Product Image</InputLabel>
+              <Grid item xs={12}>
+                <InputLabel
+                  sx={{
+                    textAlign: 'center'
+                  }}
+                  htmlFor="outlined-adornment-name-login"
+                >
+                  Product Image
+                </InputLabel>
 
                 <Box flexDirection="row" display="flex" alignItems="center">
                   <input
@@ -180,6 +196,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                     color="secondary"
                     //@ts-ignore
                     onClick={() => fileRef.current?.click()}
+                    fullWidth
                   >
                     Upload
                   </Button>
@@ -191,7 +208,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                 </Box>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item xs={3}>
                 <FormSelect<Product>
                   title="Size"
                   name="size"
@@ -206,6 +223,27 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                   defaultSelect
                 />
               </Grid>
+              <Grid item xs={3} gap={2}>
+                {/* @ts-ignore */}
+                <FormControl error={Boolean(touched.name && errors.name)} sx={{ ...theme.typography.customInput }}>
+                  <InputLabel htmlFor="outlined-adornment-name-login">Quantity</InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-name-product"
+                    type="number"
+                    value={values.quantity}
+                    name="quantity"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    label="Quantity"
+                    inputProps={{}}
+                  />
+                  {touched.name && errors.name && (
+                    <FormHelperText error id="standard-weight-helper-text-name-login">
+                      {errors.name}
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
               <Grid item xs={6} marginTop={'15px'}>
                 <FormInputMoney<Product>
                   title="Price"
@@ -217,7 +255,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                   value={values.price as Price}
                 />
               </Grid>
-              <Grid item xs={4} display="flex" alignItems="center">
+              <Grid item xs={4} display="flex" alignItems="center" justifyItems="center">
                 <FormControlLabel
                   name="inStock"
                   onChange={(e) => {
@@ -226,7 +264,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
                     handleChange(e);
                   }}
                   value={values.inStock ? 'checked' : false}
-                  control={<Checkbox name="inStock" value={values.inStock ? 'checked' : false} />}
+                  control={<Checkbox name="inStock" checked={values.inStock} />}
                   label="In Stock"
                 />
               </Grid>

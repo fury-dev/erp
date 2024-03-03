@@ -5,7 +5,7 @@ export const useAdd = <_T extends TItems>(item: ITEMS) => {
   let query = null;
   if (item === 'productSchema') {
     query = gql`
-      mutation Product($item: ProductSchemaValue!) {
+      mutation ProductSchema($item: ProductSchemaValue!) {
         addProductSchema(productSchema: $item) {
           id
           name
@@ -108,8 +108,8 @@ export const useAdd = <_T extends TItems>(item: ITEMS) => {
     }
   });
 
-  const submitData = (data: any) => {
-    addData({
+  const submitData = async (data: any) => {
+    await addData({
       variables: {
         item: data
       }

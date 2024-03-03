@@ -27,6 +27,7 @@ type  Product{
     productSchemaId:String
     productSchema:ProductSchema
     size:String
+    quantity:Int
     inStock: Boolean
     createdAt:String!
     updatedAt:String!
@@ -90,6 +91,7 @@ input Filter{
     group:String
     id:[String] 
     queryPath:String
+    dynamicQuery:String # stringfyied JSON {and:[{},{}], or:[{},{}]}
 }   
 
 input ListFilter{
@@ -98,6 +100,8 @@ input ListFilter{
     search:String 
     dateBy:String
     limit:Int
+    dynamicQuery:String # stringfyied JSON {and:[{},{}], or:[{},{}]}
+
 }
 union VersionItem = Product | Expense | Order
 
@@ -165,11 +169,11 @@ input ProductValue {
     image:String
     price:PriceValue
     productSchemaId:String!
-
     size:String
     inStock: Boolean!
     name:String!
     versionId:Int
+    quantity:Int
 
 }
 input OrderValue{

@@ -7,7 +7,7 @@ export interface HeadCell<T extends TItems> {
   disablePadding?: boolean;
   label?: string;
   numeric?: boolean;
-  getValue?: (params: T) => string;
+  getValue?: (params: T) => string | undefined;
   buttons?: IButtons[];
   field: keyof T;
 }

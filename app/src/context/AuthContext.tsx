@@ -39,7 +39,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const userValidation = useCallback(async () => {
-    console.log('fetch');
     await refetch();
   }, [refetch]);
 

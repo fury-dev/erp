@@ -6,7 +6,7 @@ import { useProduct } from './hooks/useProduct';
 import moment from 'moment';
 import { FaEdit } from 'react-icons/fa';
 import { Product } from '../../../types/items/product';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { convertFromINR, currencySymbol as _currencySymbol } from '../../../data/Product/currency';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
@@ -23,7 +23,7 @@ const ProductList = () => {
 
   const { setComponent, setOpen } = useDialogContext();
   const currency = useSelector((state: RootState) => state.customization.currency);
-  const currencySymbol = _currencySymbol[currency];
+  const currencySymbol = useMemo(() => _currencySymbol[currency], [currency]);
   const navigate = useNavigate();
   return (
     <div style={{ height: '100%', width: '100' }}>
@@ -44,9 +44,9 @@ const ProductList = () => {
             field: 'price',
             headerName: 'Price',
             width: 170,
-            getValue: (params: any) => `
+            getValue: (item: any) => `
             ${
-              params.price.currency !== currency ? convertFromINR(params.price.amount, currency).toFixed(2) : params.price.amount
+              item.price.currency !== currency ? convertFromINR(item.price.amount, currency).toFixed(2) : item.price.amount
             } ${currencySymbol}`
           },
 
@@ -54,26 +54,26 @@ const ProductList = () => {
             field: 'size',
             headerName: 'Size',
             width: 70,
-            getValue: (params) => `${params.size}`
+            getValue: (item) => `${item.size}`
           },
           {
             field: 'inStock',
             headerName: 'In Stock',
             width: 150,
-            getValue: (params) => `${params.inStock ? 'Yes' : 'No'}`
+            getValue: (item) => `${item.inStock ? 'Yes' : 'No'}`
           },
 
           {
             field: 'createdAt',
             headerName: 'Created',
             width: 150,
-            getValue: (params) => moment(parseInt(params?.createdAt || '0')).format('DD-MM-YYYY:HH:MM')
+            getValue: (item) => moment(parseInt(item?.createdAt || '0')).format('DD-MM-YYYY:HH:MM')
           },
           {
             field: 'updatedAt',
             headerName: 'Modified',
             width: 150,
-            getValue: (params) => moment(parseInt(params?.updatedAt || '0')).format('DD-MM-YYYY:HH:MM')
+            getValue: (item) => moment(parseInt(item?.updatedAt || '0')).format('DD-MM-YYYY:HH:MM')
           }
         ])}
         rows={products || []}
@@ -91,7 +91,8 @@ const ProductList = () => {
                       <ProductSetup
                         open={true}
                         onClose={() => {
-                          // setComponent(false);
+                          setComponent(false);
+                          setOpen(true);
                         }}
                       />
                     );
@@ -130,6 +131,7 @@ const ProductList = () => {
                         open={true}
                         onClose={() => {
                           setComponent(false);
+                          setOpen(true);
                         }}
                       />
                     );

@@ -12,6 +12,7 @@ import { ViewSkeleton } from '../../../ui-component/cards/Skeleton/ViewSkeleton'
 import GenericChart from '../../../components/Chart';
 import { IoMdImage } from 'react-icons/io';
 import { ElevatedBox } from '../../../components/StyledComponents/ElevatedBox';
+import { ItemLink } from '../../../ui-component/Typography/ItemLink';
 
 export const ProductView = () => {
   const location = useLocation();
@@ -63,12 +64,9 @@ export const ProductView = () => {
           }}
         >
           <ItemText header="Product Name" text={item?.name} />
-          <ItemText header="Size" text={(item?.size || []).join(',')} />
-          <ItemText
-            header="Distributor price"
-            text={`${convertFromINR(item?.distributorPrice.amount || 0, currency).toFixed(2)} ${symbol}`}
-          />
-          <ItemText header="Seller price" text={`${convertFromINR(item?.sellerPrice.amount || 0, currency).toFixed(2)} ${symbol}`} />
+          <ItemText header="Size" text={item?.size} />
+          <ItemText header="Distributor price" text={`${convertFromINR(item?.price.amount || 0, currency).toFixed(2)} ${symbol}`} />
+          <ItemLink header="ProductSchema" text={item?.productSchema?.name} itemType="productSchema" link={item?.productSchema?.id} />
           <ItemText header="Version" text={item?.versionId.toString()} />
         </Box>
       </Grid>

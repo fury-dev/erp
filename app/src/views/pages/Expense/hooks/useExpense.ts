@@ -19,13 +19,13 @@ export const useExpense = () => {
   const { selected } = useMultiSelect();
 
   const submitData = useCallback(
-    (data: Expense) => {
+    async (data: Expense) => {
       if (data?.id) {
         console.log('update', data);
-        update.submitData(lodash.omit(lodash.omit(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'), 'expenseId'), 'pnl'));
+        await update.submitData(lodash.omit(lodash.omit(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'), 'expenseId'), 'pnl'));
       } else {
         console.log(data);
-        add.submitData(lodash.omit(data, 'pnl'));
+        await add.submitData(lodash.omit(data, 'pnl'));
       }
     },
     [update, add]

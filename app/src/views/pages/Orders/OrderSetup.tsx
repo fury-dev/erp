@@ -13,6 +13,7 @@ import { useMemo, useState } from 'react';
 import { useProduct } from '../Products/hooks/useProduct';
 import { useLocationApi } from '../../../hooks/useLocationApi';
 import GoogleMapReact from 'google-map-react';
+import { omit } from 'lodash';
 
 // const _validation = Yup.object().shape({
 //   name: Yup.string().required()
@@ -26,6 +27,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
   const theme = useTheme();
   const { submitData } = useOrder();
   const {
+    products: productList,
     list: { data, updateQuery }
   } = useProduct();
   const [showMap, setShowMap] = useState<boolean>(false);
@@ -36,11 +38,11 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
   };
   const products = useMemo(
     () =>
-      (data?.products || []).map((value) => ({
+      (productList || []).map((value) => ({
         value: value.id,
         label: value.name
       })),
-    [data?.products]
+    [productList]
   );
   const countries = useMemo(
     () =>
@@ -92,7 +94,13 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
             if (values.status === 'DELIVERED') {
               values.deliveryDate = new Date().toISOString();
             }
-            if (values) await submitData(values as Order);
+            if (values)
+              await submitData({
+                ...omit(values, 'geoLocation'),
+                amount: (values.amount?.amount === 0 && values.productId
+                  ? productList.find((value) => value.id === values.productId)?.price
+                  : values.amount) as Price
+              } as Order);
             onClose();
           } catch (err) {
             console.error(err);
@@ -163,7 +171,9 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                   name="orderDate"
                   errors={errors}
                   touched={touched}
-                  handleChange={handleChange}
+                  handleChange={(value) => {
+                    setFieldValue('orderDate', value?.toISOString());
+                  }}
                   value={values.orderDate}
                 />
               </Grid>
@@ -204,7 +214,11 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                   handleChange={handleChange}
                   pricefield="amount.amount"
                   currencyField="amount.currency"
-                  value={values.amount as Price}
+                  value={
+                    (values.amount?.amount === 0 && values.productId
+                      ? productList.find((value) => value.id === values.productId)?.price
+                      : values.amount) as Price
+                  }
                 />
               </Grid>
               <Grid item xs={4} display="flex" alignItems="center">
@@ -265,7 +279,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     touched={touched}
                     handleChange={(e: React.ChangeEvent<any>) => {
                       handleChange(e);
-                      getStates(countriesData.find((value) => value.name === e.target.value)!['iso2']!);
+                      getStates(countriesData.find((value) => value.name === e.target.value)?.['iso2']);
                     }}
                     apiAction={getCountries}
                     options={countries}
@@ -285,8 +299,8 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                       handleChange(e);
 
                       getCities(
-                        stateData.find((value) => value.name === e.target.value)['iso2'],
-                        countriesData.find((item) => item.name === values.location?.country)['iso2']
+                        stateData.find((value) => value.name === e.target.value)?.['iso2'],
+                        countriesData.find((item) => item.name === values.location?.country)?.['iso2']
                       );
                     }}
                     apiAction={getStates}

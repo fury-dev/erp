@@ -11,11 +11,17 @@ import { gridSpacing } from '../store/constant';
 // assets
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone';
 
-import imageBackground from '../assets/images/maintenance/img-error-bg.svg';
-import imageDarkBackground from '../assets/images/maintenance/img-error-bg-dark.svg';
-import imageBlue from '../assets/images/maintenance/img-error-blue.svg';
-import imageText from '../assets/images/maintenance/img-error-text.svg';
-import imagePurple from '../assets/images/maintenance/img-error-purple.svg';
+//@ts-expect-error
+import imageBackground from '../assets/images/error/img-error-bg.svg';
+//@ts-expect-error
+
+import imageDarkBackground from '../assets/images/error/img-error-bg-dark.svg';
+//@ts-expect-error
+
+import imageBlue from '../assets/images/error/img-error-blue.svg';
+//@ts-expect-error
+
+import imagePurple from '../assets/images/error/img-error-purple.svg';
 
 // styles
 const CardMediaWrapper = styled('div')({
@@ -37,14 +43,6 @@ const ErrorCard = styled(Card)({
   justifyContent: 'center'
 });
 
-const CardMediaBlock = styled('img')({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: '100%',
-  animation: '3s bounce ease-in-out infinite'
-});
-
 const CardMediaBlue = styled('img')({
   position: 'absolute',
   top: 0,
@@ -61,8 +59,6 @@ const CardMediaPurple = styled('img')({
   animation: '12s wings ease-in-out infinite'
 });
 
-// ==============================|| ERROR PAGE ||============================== //
-
 const ErrorPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -78,9 +74,8 @@ const ErrorPage = () => {
                 image={theme.palette.mode === 'dark' ? imageDarkBackground : imageBackground}
                 title="Slider5 image"
               />
-              <CardMediaBlock src={imageText} title="Slider 1 image" />
-              <CardMediaBlue src={imageBlue} title="Slider 2 image" />
-              <CardMediaPurple src={imagePurple} title="Slider 3 image" />
+              <CardMediaBlue src={imageBlue} title="Slider 1 image" />
+              <CardMediaPurple src={imagePurple} title="Slider 2 image" />
             </CardMediaWrapper>
           </Grid>
           <Grid item xs={12}>
@@ -100,15 +95,12 @@ const ErrorPage = () => {
                       <Button
                         variant="contained"
                         size="large"
-                        // component={Link}
-                        // to='/'
                         onClick={() => {
                           navigate(-1);
                         }}
                       >
                         <HomeTwoToneIcon sx={{ fontSize: '1.3rem', mr: 0.75 }} /> Home
                       </Button>
-                      {/* <Link to='/'>BACK TO HOME</Link> */}
                     </>
                   </AnimateButton>
                 </Grid>

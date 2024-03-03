@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useEffect, useMemo, useState } from 'react';
+import React, { ReactNode, createContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
 const FilteredDiv = styled.div`
   filter: blur(5px);
@@ -26,12 +26,6 @@ export const DialogContextProvider = ({ children }: { children: React.ReactNode 
     }),
     [component, open]
   );
-  useEffect(() => {
-    console.log(component);
-  }, [component]);
-  useEffect(() => {
-    console.log(open);
-  }, [open]);
   return (
     <DialogContext.Provider value={values}>
       {component && open ? (

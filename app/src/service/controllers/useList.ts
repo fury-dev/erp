@@ -9,6 +9,7 @@ export type TQueryParams = {
   search?: string | null;
   dateBy?: TChartFilter['dateBy'];
   limit?: number;
+  dynamicQuery?: Record<string, any>; //mongo base query for find operations
 };
 export const useList = <T extends TItems>(item: ITEMS) => {
   const updateQueryStructure = (): ((mask?: string) => string) => {
@@ -61,14 +62,14 @@ export const useList = <T extends TItems>(item: ITEMS) => {
           }
           size
           inStock
-          createdAt
-          updatedAt
+       
         }
         price {
           amount
           currency
         }
         size
+        quantity
         inStock
         createdAt
         updatedAt
@@ -115,8 +116,6 @@ export const useList = <T extends TItems>(item: ITEMS) => {
             }
             size
             inStock
-            createdAt
-            updatedAt
           }
           price {
             amount
@@ -197,11 +196,14 @@ export const useList = <T extends TItems>(item: ITEMS) => {
   }, [error]);
 
   useEffect(() => {
-    console.log(data, error, 'response');
+    console.log(data, error);
   }, [data, error]);
 
   const updateQuery = useCallback(
-    async ({ deleted = 0, id = [], search = null, dateBy = 'ALL_TIME', limit = -1 }: TQueryParams, poll: boolean = true) => {
+    async (
+      { deleted = 0, id = [], search = null, dateBy = 'ALL_TIME', limit = -1, dynamicQuery = undefined }: TQueryParams,
+      poll: boolean = true
+    ) => {
       stopPolling();
       await refetch({
         filter: {
@@ -209,7 +211,8 @@ export const useList = <T extends TItems>(item: ITEMS) => {
           deleted,
           search,
           dateBy,
-          limit
+          limit,
+          ...(dynamicQuery ? { dynamicQuery: JSON.stringify(dynamicQuery) } : {})
         }
       });
       if (poll) startPolling(POLLING_INTERVAL);
