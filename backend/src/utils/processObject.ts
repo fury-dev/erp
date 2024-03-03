@@ -1,4 +1,3 @@
-import config = require("../config.json");
 const fromExchangeRate = {
   USD: 83.1,
   STER: 105.86,
@@ -10,6 +9,11 @@ const toExchangeRate = {
   USD: 0.0120336943441637,
   STER: 0.0094464386926129,
   INR: 1,
+};
+const config = {
+  database: {
+    currency: "INR",
+  },
 };
 
 type TAmount = {
@@ -43,4 +47,15 @@ const preProcessCurrency = (data: object, mask: string[]) => {
   return data;
 };
 
-export { preProcessCurrency };
+const processId = (id: string) => {
+  const values = id.split(":");
+  if (values.length === 1) {
+    throw new Error("Invalid Id");
+  }
+  return {
+    id: values[0],
+    item: values[1],
+    version: values.length > 2 ? parseInt(values[2]) : -1,
+  };
+};
+export default { preProcessCurrency, processId };

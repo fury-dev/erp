@@ -1,21 +1,18 @@
-import productModel = require("../../schema/mongo/product");
-import lodash = require("lodash");
-import generateTimestamp = require("../../utils/generateTimestamp");
-import utils = require("../../schema/mongo/utils");
-import productQuery = require("../query/product");
-import processObject = require("../../utils/processObject");
+import productModel from "../../schema/mongo/product";
+import lodash from "lodash";
+import productQuery from "../query/product";
+import processObject from "../../utils/processObject";
+import { updateMongo } from "../../schema/mongo/utils/index";
 
 const addProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
+    console.log(args.product);
     const lastProduct = await productModel.controller
       .find()
       .sort({ _id: -1 })
       .limit(1);
-    const data = processObject.preProcessCurrency(args.product, [
-      "sellerPrice",
-      "distributorPrice",
-    ]);
+    const data: any = processObject.preProcessCurrency(args.product, ["price"]);
 
     let productId = 124594;
     if (lastProduct.length === 1 && lastProduct[0]?.productId) {
@@ -23,7 +20,8 @@ const addProduct = async (_: any, args: any, context: any) => {
     }
     const product = new productModel.controller({
       productId,
-      ...utils.updateMongo(data),
+      productSchemaId: data?.productSchemaId,
+      ...lodash.omit(updateMongo(data), "productSchemaId"),
     });
     return await product
       .save()
@@ -34,7 +32,7 @@ const addProduct = async (_: any, args: any, context: any) => {
         return {
           ...lodash.omit(data.versions[0], "_id"),
           updatedAt: data.updatedAt,
-          objectId: res.id,
+          id: res.id,
         };
       })
       .catch((err: any) => {
@@ -55,7 +53,7 @@ const updateProduct = async (_: any, args: any, context: any) => {
   try {
     const data = await productModel.controller.findByIdAndUpdate(
       product.id,
-      utils.updateMongo(product, false, true)
+      updateMongo(product, false, true)
     );
 
     return {
@@ -71,13 +69,13 @@ const updateProduct = async (_: any, args: any, context: any) => {
 const deleteProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
-    console.log("Deleting Products", args);
+    console.log("Deleting Products using args:", args);
     const records = await productQuery.products(null, args, context);
 
-    return await records?.map(async (record) => {
+    return await records?.map(async (record: any) => {
       return await productModel.controller.findByIdAndUpdate(
         args.id,
-        utils.updateMongo(record, true, true)
+        updateMongo(record, true, true)
       );
     });
   } catch (err) {
@@ -85,4 +83,4 @@ const deleteProduct = async (_: any, args: any, context: any) => {
     return err;
   }
 };
-export { addProduct, deleteProduct, updateProduct };
+export default { addProduct, deleteProduct, updateProduct };

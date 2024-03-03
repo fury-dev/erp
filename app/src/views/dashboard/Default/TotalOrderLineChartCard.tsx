@@ -21,7 +21,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useApiService } from '../../../service';
 import { sum } from 'lodash';
 
-const CardWrapper = styled(MainCard)(({ theme }) => ({
+const CardWrapper = styled(MainCard)(({ theme }: { theme: any }) => ({
   backgroundColor: theme.palette.primary.dark,
   color: '#fff',
   overflow: 'hidden',
@@ -65,15 +65,15 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ==============================|| DASHBOARD - TOTAL ORDER LINE CHART CARD ||============================== //
 
-const TotalOrderLineChartCard = ({ isLoading }) => {
-  const theme = useTheme();
+const TotalOrderLineChartCard = ({ isLoading }: { isLoading: boolean }) => {
+  const theme: any = useTheme();
 
   const {
     chart: { series, updateQuery }
   } = useApiService('order');
 
   const [timeValue, setTimeValue] = useState(false);
-  const handleChangeTime = (event, newValue) => {
+  const handleChangeTime = (_event: any, newValue: boolean | ((prevState: boolean) => boolean)) => {
     setTimeValue(newValue);
   };
 
@@ -82,7 +82,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
       dateBy: timeValue ? 'MONTH' : 'YEAR',
       item: 'order'
     });
-  }, [timeValue]);
+  }, [timeValue, updateQuery]);
 
   return (
     <>
@@ -165,6 +165,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                     </Grid>
                   </Grid>
                   <Grid item xs={6}>
+                    {/* @ts-expect-error */}
                     {timeValue ? <Chart {...ChartDataMonth} series={series} /> : <Chart {...ChartDataYear} series={series} />}
                   </Grid>
                 </Grid>

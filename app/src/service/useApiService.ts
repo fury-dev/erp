@@ -1,13 +1,14 @@
-import { useAdd, useChart, useDelete, useList, useUpdate } from './controllers';
-import { ITEMS } from '../types/items';
+import { useAdd, useChart, useDelete, useList, useUpdate, useVersion } from './controllers';
+import { ITEMS, TItems } from '../types/items';
 
-export const useApiService = (item: ITEMS) => {
-  const add = useAdd(item);
-  const list = useList(item);
+export const useApiService = <T extends TItems>(item: ITEMS) => {
+  const add = useAdd<T>(item);
+  const list = useList<T>(item);
   // const find = useFind(item);
   const update = useUpdate(item);
   const remove = useDelete(item);
   const chart = useChart();
+  const version = useVersion<T>(item);
 
   return {
     add,
@@ -15,6 +16,7 @@ export const useApiService = (item: ITEMS) => {
     // find,
     update,
     remove,
-    chart
+    chart,
+    version
   };
 };

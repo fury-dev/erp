@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { ITEMS } from '../../types/items';
+import { ITEMS, TItems } from '../../types/items';
 import { gql, useQuery } from '@apollo/client';
 import { TChartFilter } from '.';
 const POLLING_INTERVAL = 10000;
@@ -10,22 +10,61 @@ export type TQueryParams = {
   dateBy?: TChartFilter['dateBy'];
   limit?: number;
 };
-export const useList = (item: ITEMS) => {
+export const useList = <T extends TItems>(item: ITEMS) => {
   const updateQueryStructure = (): ((mask?: string) => string) => {
     let query = null;
     let defaultMask = '';
-    if (item === 'product') {
+    if (item === 'productSchema') {
+      defaultMask = `
+        id
+        name
+        versionId
+        productSchemaId
+        distributorPrice {
+          amount
+          currency
+        }
+        sellerPrice {
+          amount
+          currency
+        }
+        size
+        inStock
+        createdAt
+        updatedAt
+      `;
+      query = (mask: any = defaultMask) => `
+      query ProductSchema($filter:ListFilter) {
+        productSchemas(filter: $filter){ ${mask}}
+      }
+    `;
+    } else if (item === 'product') {
       defaultMask = `
         id
         name
         versionId
         productId
         image
-        distributorPrice {
-          amount
-          currency
+        productSchemaId
+        productSchema{
+          id
+          name
+          versionId
+          productSchemaId
+          distributorPrice {
+            amount
+            currency
+          }
+          sellerPrice {
+            amount
+            currency
+          }
+          size
+          inStock
+          createdAt
+          updatedAt
         }
-        sellerPrice {
+        price {
           amount
           currency
         }
@@ -59,11 +98,27 @@ export const useList = (item: ITEMS) => {
           versionId
           productId
           image
-          distributorPrice {
-            amount
-            currency
+
+          productSchemaId
+          productSchema{
+            id
+            name
+            versionId
+            productSchemaId
+            distributorPrice {
+              amount
+              currency
+            }
+            sellerPrice {
+              amount
+              currency
+            }
+            size
+            inStock
+            createdAt
+            updatedAt
           }
-          sellerPrice {
+          price {
             amount
             currency
           }
@@ -143,7 +198,7 @@ export const useList = (item: ITEMS) => {
 
   useEffect(() => {
     console.log(data, error, 'response');
-  }, [data]);
+  }, [data, error]);
 
   const updateQuery = useCallback(
     async ({ deleted = 0, id = [], search = null, dateBy = 'ALL_TIME', limit = -1 }: TQueryParams, poll: boolean = true) => {
@@ -159,20 +214,23 @@ export const useList = (item: ITEMS) => {
       });
       if (poll) startPolling(POLLING_INTERVAL);
     },
-    []
+    [refetch, startPolling, stopPolling]
   );
 
-  const updateMask = useCallback(async (mask: string) => {
-    _updateGraphQuery(() => gql(baseQuery(mask)));
-    stopPolling();
-    await refetch();
-  }, []);
+  const updateMask = useCallback(
+    async (mask: string) => {
+      _updateGraphQuery(() => gql(baseQuery(mask)));
+      stopPolling();
+      await refetch();
+    },
+    [_updateGraphQuery, baseQuery, refetch, stopPolling]
+  );
   return {
     loading,
     refetch,
     updateQuery,
     fetchMore,
-    data,
+    data: data as Record<string, T[]>,
     startPolling,
     stopPolling,
     updateMask,

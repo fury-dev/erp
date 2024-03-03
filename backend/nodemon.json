@@ -2,5 +2,6 @@
   "watch": ["*"],
   "ext": ".ts .js",
   "ignore": ["node_modules"],
-  "exec": "npx ts-node index.ts"
+  "exe1c": "npx swc --out-dir dist src",
+  "exec": "npx ts-node src/index.ts"
 }

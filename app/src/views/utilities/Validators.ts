@@ -1,5 +1,4 @@
-import { isValidObjectId } from 'mongoose';
-export const getIdFromUrl = (pathname: string) => {
+export const getIdFromUrl = (pathname: string): string => {
   const splitPath = pathname.split('/');
   const id = splitPath[splitPath.length - 1];
   //   if (isValidObjectId(id)) {

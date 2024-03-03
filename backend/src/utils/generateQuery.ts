@@ -1,20 +1,20 @@
-import mongoose = require("mongoose");
-import mongodb = require("mongodb");
-const ObjectId = mongodb.ObjectId;
-import filter = require("./filter");
+import mongoose from "mongoose";
+import { ObjectId, BSON } from "mongodb";
+import filter, { TDateby } from "./filter";
 
 const generateQuery = (
   controller: mongoose.Model<any>,
   args: any,
   piplines: mongoose.PipelineStage[] = [],
   searchElement: string = "name",
-  project: mongoose.PipelineStage.Project["$project"] = {}
+  project: mongoose.PipelineStage.Project["$project"] = {},
+  version: number = -1
 ) => {
   const match: any[] = [];
   const filters: {
     deleted: number;
     id: string[];
-    dateBy: filter.TDateby;
+    dateBy: TDateby;
     search: string;
     limit: number;
   } = args.filter;
@@ -33,8 +33,8 @@ const generateQuery = (
             value:
               | string
               | number
-              | mongodb.BSON.ObjectId
-              | mongodb.BSON.ObjectIdLike
+              | BSON.ObjectId
+              | BSON.ObjectIdLike
               | Uint8Array
               | undefined
           ) => new ObjectId(value)
@@ -82,7 +82,9 @@ const generateQuery = (
     {
       $project: {
         updatedAt: 1,
-        message: { $slice: ["$versions", -1] },
+        ...(version !== -2
+          ? { message: { $slice: ["$versions", version] } }
+          : {}),
         id: "$_id",
         ...project,
       },
@@ -97,4 +99,4 @@ const generateQuery = (
       : []),
   ]);
 };
-export { generateQuery };
+export default { generateQuery };

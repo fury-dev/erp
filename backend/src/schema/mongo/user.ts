@@ -1,11 +1,12 @@
-import mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-var validateName = (name: string) => {
-  var re = /[^A-Za-z_ ]+/;
+const validateName = (name: string) => {
+  const re = /[^A-Za-z_ ]+/;
   return !re.test(name);
 };
-var validateEmail = (email: string) => {
-  var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const validateEmail = (email: string) => {
+  //@ts-nocheck
+  const re = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/;
   return re.test(email);
 };
 const User = new mongoose.Schema({
@@ -29,4 +30,4 @@ const User = new mongoose.Schema({
   },
 });
 const controller = mongoose.model("Users", User);
-export { controller, User };
+export default { controller, User };

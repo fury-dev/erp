@@ -1,18 +1,16 @@
 import React, { useEffect } from 'react';
-import { Product } from '../../types/items/product';
-import { Order } from '../../types/items/order';
-import { Expense } from '../../types/items/expense';
+
 import { GridInitialStateCommunity } from '@mui/x-data-grid/models/gridStateCommunity';
 import { Paper, TableContainer, Table, TableBody, TableRow, TableCell, Checkbox, TablePagination, Box, Button } from '@mui/material';
 
 import { Loader } from '..';
-import { useMultiSelect } from '../../context/MuliSelectContext';
 import { TItems } from '../../types';
 import { TQueryParams } from '../../service/controllers';
 import { ListSkeleton } from '../../ui-component/cards/Skeleton/ListSkeleton';
 import { SortOrder, TableColumn } from './types';
 import { LayoutTableToolbar } from './components/LayoutTableToolbar';
 import { LayoutTableHead } from './components/LayoutTableHead';
+import { useMultiSelect } from '../../context/useMultiSelect';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -24,15 +22,15 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-interface IListView<T extends Product | Order | Expense> {
+interface IListView<T extends TItems> {
   rows: T[];
   columns: TableColumn<T>[];
   initialState?: GridInitialStateCommunity;
   loading?: boolean;
   checkboxSelection?: boolean;
   headerButtons?: React.ReactNode;
-  startPolling: Function;
-  stopPolling: Function;
+  startPolling: (...rest: any) => any;
+  stopPolling: (...rest: any) => any;
   pageSizeOptions?: number[];
   title: string;
   actionCell?: Omit<TableColumn<T>, 'field'> & {
@@ -60,7 +58,7 @@ export const ListView = <T extends TItems>({
     return () => {
       stopPolling();
     };
-  }, [startPolling]);
+  }, [startPolling, stopPolling]);
   const [order, setOrder] = React.useState<SortOrder>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof T>('updatedAt');
   const [page, setPage] = React.useState(0);
@@ -149,7 +147,7 @@ export const ListView = <T extends TItems>({
         <Paper sx={{ width: '100%', mb: 2 }}>
           <LayoutTableToolbar numSelected={selected.length} title={title} loading={loading} updateApiFilter={updateApiFilter} />
           <TableContainer>
-            <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={false ? 'small' : 'medium'}>
+            <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
               <LayoutTableHead
                 numSelected={selected.length}
                 //@ts-ignore
@@ -167,7 +165,12 @@ export const ListView = <T extends TItems>({
                   const labelId = `layout-table-checkbox-${index}`;
 
                   return (
-                    <TableRow tabIndex={-1} key={row.id} selected={isItemSelected} onClick={rowOnClick ? () => rowOnClick(row) : () => {}}>
+                    <TableRow
+                      tabIndex={-1}
+                      key={row.id}
+                      selected={isItemSelected}
+                      onClick={rowOnClick ? () => rowOnClick(row) : () => null}
+                    >
                       <TableCell padding="checkbox">
                         <Checkbox
                           color="primary"
@@ -191,7 +194,7 @@ export const ListView = <T extends TItems>({
                         </TableCell>
                       ))}
                       {actionCell && (
-                        <TableCell id={`actions`}>
+                        <TableCell id={`actions`} onClick={(e) => e.stopPropagation()}>
                           {actionCell?.buttons?.map((value, index) => (
                             <Button
                               key={`header-button-${index}`}
@@ -211,7 +214,9 @@ export const ListView = <T extends TItems>({
                 {emptyRows > 0 && (
                   <TableRow
                     style={{
-                      height: (false ? 33 : 53) * emptyRows
+                      //@ts-ignore
+                      // height: (false ? 33 : 53) * emptyRows
+                      height: 53 * emptyRows
                     }}
                   >
                     <TableCell colSpan={6} />

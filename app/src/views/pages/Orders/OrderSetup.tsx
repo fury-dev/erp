@@ -1,7 +1,7 @@
 import { DialogBox } from '../../../components/Dialog/DialogBox';
 import { Box, Button, FormLabel, Grid } from '@mui/material';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
+// import * as Yup from 'yup';
 import { FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import AnimateButton from '../../../ui-component/extended/AnimateButton';
@@ -9,17 +9,18 @@ import { useOrder } from './hooks/useOrder';
 import { Order } from '../../../types/items/order';
 import { FormDateTime, FormInputMoney, FormSelect } from '../../../components/Form';
 import { Price } from '../../../types';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useProduct } from '../Products/hooks/useProduct';
-import { Product } from '../../../types/items/product';
 import { useLocationApi } from '../../../hooks/useLocationApi';
+import GoogleMapReact from 'google-map-react';
 
-const validation = Yup.object().shape({
-  name: Yup.string().required()
-});
+// const _validation = Yup.object().shape({
+//   name: Yup.string().required()
+// });
 
 const orderStatus: Order['status'][] = ['DELIVERED', 'OUT_FOR_DELIVERY', 'PENDING', 'SHIPPED'];
 const orderType: Order['orderType'][] = ['CASH_ON_DELIVERY', 'PREPAID'];
+const AnyReactComponent = ({ text }: any) => <div>{text}</div>;
 
 export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: () => void; order?: Order }) => {
   const theme = useTheme();
@@ -27,9 +28,45 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
   const {
     list: { data, updateQuery }
   } = useProduct();
+  const [showMap, setShowMap] = useState<boolean>(false);
 
-  const { cities, countries, state, getCities, getCountries, getStates } = useLocationApi();
+  const { cities: citiesData, countries: countriesData, state: stateData, getCities, getCountries, getStates } = useLocationApi();
+  const defaultProps = {
+    zoom: 11
+  };
+  const products = useMemo(
+    () =>
+      (data?.products || []).map((value) => ({
+        value: value.id,
+        label: value.name
+      })),
+    [data?.products]
+  );
+  const countries = useMemo(
+    () =>
+      (countriesData || []).map((value) => ({
+        value: value.name,
+        label: value.name
+      })),
+    [countriesData]
+  );
+  const cities = useMemo(
+    () =>
+      (citiesData || []).map((value) => ({
+        value: value.name,
+        label: value.name
+      })),
+    [citiesData]
+  );
 
+  const state = useMemo(
+    () =>
+      (stateData || []).map((value) => ({
+        value: value.name,
+        label: value.name
+      })),
+    [stateData]
+  );
   return (
     <DialogBox title="Order" open={open} onClose={onClose} width="600px">
       <Formik<Order>
@@ -47,9 +84,10 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
           orderType: 'CASH_ON_DELIVERY',
           id: '',
           versionId: 1,
+          geoLocation: null,
           ...(order || {})
         }}
-        onSubmit={async (values, {}) => {
+        onSubmit={async (values) => {
           try {
             if (values.status === 'DELIVERED') {
               values.deliveryDate = new Date().toISOString();
@@ -66,9 +104,37 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
             noValidate
             onSubmit={handleSubmit}
             style={{
-              height: '100%'
+              height: '100%',
+              width: '100%'
             }}
           >
+            {showMap && (
+              <Box
+                style={{
+                  zIndex: 5555,
+                  width: '100%'
+                }}
+              >
+                <GoogleMapReact
+                  {...defaultProps}
+                  bootstrapURLKeys={{ key: '' }}
+                  style={{
+                    zIndex: 44,
+                    width: '100%'
+                  }}
+                >
+                  <AnyReactComponent
+                    //@ts-ignore
+                    style={{
+                      width: '100%'
+                    }}
+                    lat={values.geoLocation?.coords.latitude}
+                    lng={values.geoLocation?.coords.longitude}
+                    text="My Marker"
+                  />
+                </GoogleMapReact>
+              </Box>
+            )}
             <Grid container xs={12} spacing={2}>
               <Grid item xs={6}>
                 {/* @ts-ignore */}
@@ -149,14 +215,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                   touched={touched}
                   handleChange={handleChange}
                   apiAction={updateQuery}
-                  options={useMemo(
-                    () =>
-                      (data?.products || []).map((value: Product) => ({
-                        value: value.id,
-                        label: value.name
-                      })),
-                    [data]
-                  )}
+                  options={products}
                   value={values.productId}
                 />
               </Grid>
@@ -206,17 +265,10 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     touched={touched}
                     handleChange={(e: React.ChangeEvent<any>) => {
                       handleChange(e);
-                      getStates(countries.find((value) => value.name === e.target.value)['iso2']);
+                      getStates(countriesData.find((value) => value.name === e.target.value)!['iso2']!);
                     }}
                     apiAction={getCountries}
-                    options={useMemo(
-                      () =>
-                        (countries || []).map((value) => ({
-                          value: value.name,
-                          label: value.name
-                        })),
-                      [countries]
-                    )}
+                    options={countries}
                     value={values.location?.country}
                     sx={{
                       width: '100%'
@@ -231,26 +283,14 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     touched={touched}
                     handleChange={(e: React.ChangeEvent<any>) => {
                       handleChange(e);
-                      console.log(
-                        state.find((value) => value.name === e.target.value),
-                        countries.find((item) => item.name === values.location?.country),
-                        state,
-                        e.target.value
-                      );
+
                       getCities(
-                        state.find((value) => value.name === e.target.value)['iso2'],
-                        countries.find((item) => item.name === values.location?.country)['iso2']
+                        stateData.find((value) => value.name === e.target.value)['iso2'],
+                        countriesData.find((item) => item.name === values.location?.country)['iso2']
                       );
                     }}
                     apiAction={getStates}
-                    options={useMemo(
-                      () =>
-                        (state || []).map((value) => ({
-                          value: value.name,
-                          label: value.name
-                        })),
-                      [state]
-                    )}
+                    options={state}
                     value={values.location?.state}
                     sx={{
                       width: '100%'
@@ -265,14 +305,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     touched={touched}
                     handleChange={handleChange}
                     apiAction={getCities}
-                    options={useMemo(
-                      () =>
-                        (cities || []).map((value) => ({
-                          value: value.name,
-                          label: value.name
-                        })),
-                      [cities]
-                    )}
+                    options={cities}
                     value={values.location?.city}
                   />
                 </Grid>
@@ -299,9 +332,31 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
                     )}
                   </FormControl>
                 </Grid>
+                <Grid item xs={6}>
+                  <Box flexDirection="row" display="flex" alignItems="center">
+                    <Button
+                      disableElevation
+                      size="large"
+                      variant="contained"
+                      color="secondary"
+                      onClick={() =>
+                        navigator.geolocation.getCurrentPosition(
+                          (position) => {
+                            setFieldValue('geoLocation', position);
+                            setShowMap(true);
+                          },
+                          (error) => {
+                            console.error(error);
+                          }
+                        )
+                      }
+                    >
+                      Locate Me
+                    </Button>
+                  </Box>
+                </Grid>
               </Grid>
             </Grid>
-
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">

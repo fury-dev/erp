@@ -1,21 +1,20 @@
-import userModel = require("../../schema/mongo/user");
-import auth = require("../../auth");
-import password = require("../../utils/encryptPassword");
-import response = require("../../utils/generateMessage");
-import googleAuth = require("google-auth-library");
+import { createToken } from "../../auth/index";
+import userModel from "../../schema/mongo/user";
+import response from "../../utils/generateMessage";
+import { OAuth2Client } from "google-auth-library";
+import { checkIfHasMatches, hashPassword } from "../../utils/hashPassword";
 
 const cliendId = process.env.CLIENT_ID;
-const { OAuth2Client } = googleAuth;
 const registerUser = async (_: any, { user = null }: any) => {
   const userObj = new userModel.controller({
     ...user,
-    password: await password.encryptPassword(user.password),
+    password: await hashPassword(user.password),
   });
 
   try {
     const res = await userObj.save();
     console.log(res, "SSS");
-    const token = auth.createToken(res?.id);
+    const token = createToken(res?.id);
     return JSON.stringify(
       response.generateMessage(200, {
         message: "Signin successful",
@@ -48,7 +47,7 @@ const loginUser = async (_: any, { user = null }: any) => {
         })
       );
     }
-    const passwordCheck = await password.checkIfHasMatches(
+    const passwordCheck = await checkIfHasMatches(
       record.password || "",
       user.password
     );
@@ -59,7 +58,7 @@ const loginUser = async (_: any, { user = null }: any) => {
         })
       );
     }
-    const token = auth.createToken(record?.id);
+    const token = createToken(record?.id);
 
     return JSON.stringify(
       response.generateMessage(200, {
@@ -103,7 +102,7 @@ const loginWithGoogle = async (_: any, args: any) => {
         res = await user.save();
       }
 
-      const token = auth.createToken(res?.id);
+      const token = createToken(res?.id);
       return JSON.stringify(
         response.generateMessage(200, {
           message: "Signin successful",
@@ -121,4 +120,4 @@ const loginWithGoogle = async (_: any, args: any) => {
     return err;
   }
 };
-export { loginUser, registerUser, loginWithGoogle };
+export default { loginUser, registerUser, loginWithGoogle };

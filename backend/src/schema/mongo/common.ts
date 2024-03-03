@@ -8,4 +8,4 @@ const Price = {
     required: [true, "amount required"],
   },
 };
-export { Price };
+export default { Price };

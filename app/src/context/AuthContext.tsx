@@ -14,9 +14,12 @@ const AuthContext = createContext<IAuthContext | null>(null);
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
-  const setUser = (value: User | null) => {
-    dispatch(setAuthUser(value));
-  };
+  const setUser = useCallback(
+    (value: User | null) => {
+      dispatch(setAuthUser(value));
+    },
+    [dispatch]
+  );
   const authToken = localStorage.getItem('authToken');
   const { data, refetch, error } = useQuery(
     gql`
@@ -38,11 +41,11 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const userValidation = useCallback(async () => {
     console.log('fetch');
     await refetch();
-  }, [refetch, data, setUser, error]);
+  }, [refetch]);
 
   useEffect(() => {
     userValidation();
-  }, []);
+  }, [userValidation]);
 
   useEffect(() => {
     if (data) {
@@ -50,7 +53,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     } else if (error) {
       console.log(error);
     }
-  }, [data]);
+  }, [data, error, setUser]);
 
   return (
     <AuthContext.Provider
@@ -64,4 +67,5 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuthContext = () => useContext(AuthContext)!;

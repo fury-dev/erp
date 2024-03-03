@@ -2,6 +2,7 @@
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { MdOutlineSchema } from 'react-icons/md';
 
 const pages = {
   id: 'pages',
@@ -20,6 +21,22 @@ const pages = {
           title: 'List',
           type: 'item',
           url: 'products',
+          target: true
+        }
+      ]
+    },
+    {
+      id: 'productSchemaView',
+      title: 'Products Schema',
+      type: 'collapse',
+      icon: MdOutlineSchema,
+
+      children: [
+        {
+          id: 'productSchema',
+          title: 'List',
+          type: 'item',
+          url: 'productSchemas',
           target: true
         }
       ]

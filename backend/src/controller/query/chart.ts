@@ -1,21 +1,20 @@
-import orderModel = require("../../schema/mongo/order");
-import utils = require("../../schema/mongo/utils");
-import expenseModel = require("../../schema/mongo/expense");
-import productModel = require("../../schema/mongo/product");
-import mongoose = require("mongoose");
-import moment = require("moment");
-import filter = require("../../utils/filter");
+import orderModel from "../../schema/mongo/order";
+import expenseModel from "../../schema/mongo/expense";
+import productModel from "../../schema/mongo/product";
+import mongoose from "mongoose";
+import moment from "moment";
+import filter, { TDateby } from "../../utils/filter";
 type TChart = {
   status: string;
   total: number;
   timeFrame: string | number;
   value: any;
-  createdAt: String;
+  createdAt: string;
 };
 
 export type ITEMS = "order" | "expense" | "product";
 
-const fill: Record<filter.TDateby, number> = {
+const fill: Record<TDateby, number> = {
   ALL_TIME: 1,
   DAY: 24,
   WEEK: 7,
@@ -24,7 +23,7 @@ const fill: Record<filter.TDateby, number> = {
 };
 const preprocessTimeSeries = (
   data: TChart[],
-  dateBy: filter.TDateby,
+  dateBy: TDateby,
   itemType: ITEMS
 ) => {
   const dataByStatus: Record<string, TChart[]> = {};
@@ -71,7 +70,7 @@ const preprocessTimeSeries = (
           moment(dataByStatus[value][0].createdAt, "YYYY-MM-DD").daysInMonth()
         : fill[dateBy]
     ).fill(0);
-    let data = itemType === "order" || itemType === "expense" ? 0 : [0, 0];
+    const data = itemType === "order" || itemType === "expense" ? 0 : [0, 0];
     time.data.forEach((item) => {
       xdata[(item.timeFrame as number) - 1] = item.total;
     });
@@ -85,8 +84,8 @@ const preprocessTimeSeries = (
   });
   return timeSeries;
 };
-const chartData = async (_: any, args: any, context: any) => {
-  let createSeries = args.filter.group;
+const chartData = async (_: any, args: any, _context: any) => {
+  const createSeries = args.filter.group;
   console.log(args.filter, "filter");
 
   let controller: mongoose.Model<any> = orderModel.controller;
@@ -108,12 +107,11 @@ const chartData = async (_: any, args: any, context: any) => {
     };
   } else if (timeSpan)
     match = { createdAt: { $gte: timeSpan![0], $lte: timeSpan![1] } };
-  else if (args.id?.[0]) {
+  else if (args.id?.length > 0) {
     match = {
       [args?.query ? `$version.${args?.query}` : "id"]: { $in: args.id },
     };
   }
-  console.log(match, "x");
   try {
     const data: TChart[] = await controller.aggregate([
       ...(match
@@ -129,13 +127,30 @@ const chartData = async (_: any, args: any, context: any) => {
             $arrayElemAt: ["$versions", -1],
           },
           createdAt: 1,
+          year: {
+            $year: "$createdAt",
+          },
+          month: {
+            $month: "$createdAt",
+          },
         },
       },
       {
         $group: {
           _id: {
             ...(createSeries
-              ? { [createSeries]: "$versions." + createSeries }
+              ? {
+                  [createSeries]: "$versions." + createSeries,
+                  ...(args.filter.dateBy === "ALL_TIME"
+                    ? {
+                        year: "$year",
+                        month: "$month",
+                      }
+                    : {
+                        year: "$year",
+                        month: "$month",
+                      }),
+                }
               : {}),
             ...(timeFilter
               ? {
@@ -161,6 +176,7 @@ const chartData = async (_: any, args: any, context: any) => {
         },
       },
     ]);
+    console.log(data);
     const preprocess = preprocessTimeSeries(
       data,
       args.filter.dateBy,
@@ -173,4 +189,4 @@ const chartData = async (_: any, args: any, context: any) => {
   }
 };
 
-export { chartData };
+export default { chartData };

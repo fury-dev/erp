@@ -4,15 +4,15 @@ import { Order } from '../../../../types/items/order';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOrders } from '../../../../store/reducers';
 import { RootState } from '../../../../store';
-import { useMultiSelect } from '../../../../context/MuliSelectContext';
 import lodash from 'lodash';
+import { useMultiSelect } from '../../../../context/useMultiSelect';
 export const useOrder = () => {
   const {
     add,
     update,
     remove: { deleteRequest },
     list: { data, loading, fetchMore, startPolling, updateQuery, stopPolling }
-  } = useApiService('order');
+  } = useApiService<Order>('order');
   const dispatch = useDispatch();
   const orders = useSelector((state: RootState) => state.order.items);
   const [items, setItems] = useState(orders.value);
@@ -43,12 +43,12 @@ export const useOrder = () => {
       );
       setItems(data.orders);
     }
-  }, [data]);
+  }, [data, dispatch]);
   const apiAction = useCallback(
     async (..._rest: any) => {
       startPolling(10000);
     },
-    [data, startPolling]
+    [startPolling]
   );
 
   return {

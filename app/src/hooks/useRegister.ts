@@ -14,7 +14,7 @@ export const userRegister = () => {
 
   const navigate = useNavigate();
 
-  let value = {
+  const value = {
     email: 'test',
     password: 'test',
     username: 'test'
@@ -51,7 +51,7 @@ export const userRegister = () => {
     if (res) {
       const response = JSON.parse(res?.registerUser);
       if (response?.success?.auth?.token) {
-        const { auth, user } = response?.success;
+        const { auth, user } = response.success;
         setData(response?.success);
         setUser(user);
         await localStorage.setItem('authToken', JSON.stringify(auth));

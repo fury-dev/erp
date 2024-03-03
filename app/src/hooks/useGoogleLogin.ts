@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 
 export const useGoogleLogin = () => {
-  let value = {
+  const value = {
     credentials: 'test'
   };
   const navigate = useNavigate();
   const { setUser } = useAuthContext();
 
-  const [loginUser, { loading, error, data: res, client }] = useMutation(
+  const [loginUser, { data: res }] = useMutation(
     gql`
       mutation Login($credentials: String!) {
         loginWithGoogle(credentials: $credentials)
@@ -27,21 +27,24 @@ export const useGoogleLogin = () => {
       console.log(res);
       const response = JSON.parse(res?.loginWithGoogle);
       if (response?.success?.auth?.token) {
-        const { auth, user } = response?.success;
+        const { auth, user } = response.success;
 
         setUser(user);
         localStorage.setItem('authToken', JSON.stringify(auth));
         navigate('/home');
       }
     }
-  }, [res]);
-  const loginWithGoogle = useCallback(async (credentials: string) => {
-    loginUser({
-      variables: {
-        credentials
-      }
-    });
-  }, []);
+  }, [navigate, res, setUser]);
+  const loginWithGoogle = useCallback(
+    async (credentials: string) => {
+      loginUser({
+        variables: {
+          credentials
+        }
+      });
+    },
+    [loginUser]
+  );
 
   return {
     loginWithGoogle

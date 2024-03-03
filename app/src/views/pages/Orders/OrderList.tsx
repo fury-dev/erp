@@ -150,7 +150,7 @@ const OrderList = () => {
                       />
                     );
                   },
-                  [selected]
+                  [orders, setComponent]
                 ),
                 color: 'primary'
               },

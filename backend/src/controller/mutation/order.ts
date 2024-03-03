@@ -1,8 +1,8 @@
-import orderModel = require("../../schema/mongo/order");
-import utils = require("../../schema/mongo/utils");
-import lodash = require("lodash");
-import orderQuery = require("../query/order");
-import processObject = require("../../utils/processObject");
+import orderModel from "../../schema/mongo/order";
+import lodash from "lodash";
+import orderQuery from "../query/order";
+import processObject from "../../utils/processObject";
+import { updateMongo } from "../../schema/mongo/utils/index";
 
 const addOrder = async (_: any, args: any, context: any) => {
   console.log(context, args);
@@ -19,7 +19,7 @@ const addOrder = async (_: any, args: any, context: any) => {
   }
   const order = new orderModel.controller({
     orderId,
-    ...utils.updateMongo(data),
+    ...updateMongo(data),
   });
 
   return await order.save().catch((err: any) => {
@@ -39,7 +39,7 @@ const updateOrder = async (_: any, args: any, context: any) => {
   try {
     const data = await orderModel.controller.findByIdAndUpdate(
       order.id,
-      utils.updateMongo(order, false, true)
+      updateMongo(order, false, true)
     );
 
     return {
@@ -62,7 +62,7 @@ const deleteOrder = async (_: any, args: any, context: any) => {
     return await records?.map(async (record) => {
       return await orderModel.controller.findByIdAndUpdate(
         args.id,
-        utils.updateMongo(record, true, true)
+        updateMongo(record, true, true)
       );
     });
   } catch (err) {
@@ -70,4 +70,4 @@ const deleteOrder = async (_: any, args: any, context: any) => {
     return err;
   }
 };
-export { addOrder, updateOrder, deleteOrder };
+export default { addOrder, updateOrder, deleteOrder };

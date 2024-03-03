@@ -5,7 +5,6 @@ import { ReactNode, forwardRef } from 'react';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Card, CardContent, CardHeader, Divider, SxProps, Theme, Typography } from '@mui/material';
-
 // constant
 const headerSX = {
   '& .MuiCardHeader-action': { mr: 0 }
@@ -15,13 +14,13 @@ const headerSX = {
 
 type Elements = ReactNode | string | object;
 interface IMainCard {
-  border?: Boolean;
-  boxShadow?: Boolean;
+  border?: boolean;
+  boxShadow?: boolean;
   children: ReactNode[] | ReactNode;
-  content?: Boolean;
+  content?: boolean;
   contentClass?: string;
   contentSX?: object;
-  darkTitle?: Boolean;
+  darkTitle?: boolean;
   secondary?: ReactNode | string | object;
   shadow?: string;
   sx?: SxProps<Theme>;
@@ -48,7 +47,7 @@ const MainCard = forwardRef(
     const theme = useTheme();
 
     return (
-      //@ts-ignore
+      //@ts-expect-error
       <Card
         ref={ref}
         sx={{
@@ -65,7 +64,7 @@ const MainCard = forwardRef(
         {title && (
           <CardHeader
             sx={headerSX}
-            title={darkTitle ? <Typography variant="h3">{title as String}</Typography> : <>{title}</>}
+            title={darkTitle ? <Typography variant="h3">{title as string}</Typography> : <>{title}</>}
             action={secondary as ReactNode}
           />
         )}

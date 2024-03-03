@@ -16,7 +16,7 @@ export type TChartData = {
 };
 
 export const useChart = () => {
-  let query = gql`
+  const query = gql`
     query Chart($filter: Filter) {
       chartData(filter: $filter) {
         name
@@ -57,13 +57,16 @@ export const useChart = () => {
     if (data?.chartData) setSeries(data.chartData);
   }, [data]);
 
-  const updateQuery = useCallback(async (filter: TChartFilter) => {
-    stopPolling();
-    await refetch({
-      filter
-    });
-    startPolling(POLLING_INTERVAL);
-  }, []);
+  const updateQuery = useCallback(
+    async (filter: TChartFilter, polling?: boolean) => {
+      stopPolling();
+      await refetch({
+        filter
+      });
+      if (polling) startPolling(POLLING_INTERVAL);
+    },
+    [refetch, startPolling, stopPolling]
+  );
   return {
     loading,
     refetch,

@@ -1,13 +1,11 @@
-import userModel = require("../../schema/mongo/user");
-import auth = require("../../auth");
-import password = require("../../utils/encryptPassword");
-import keys = require("../../../oauth2.keys.json");
+import { validateToken } from "../../auth/index";
+import userModel from "../../schema/mongo/user";
 
 const userValidation = async (_: any, args: any) => {
   try {
     console.log(args);
     if (args.token) {
-      const id = await auth.validateToken(args.token);
+      const id = await validateToken(args.token);
 
       const record = await userModel.controller.findById(id.value, {
         _id: 0,
@@ -23,4 +21,4 @@ const userValidation = async (_: any, args: any) => {
   }
 };
 
-export { userValidation };
+export default { userValidation };

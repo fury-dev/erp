@@ -1,7 +1,7 @@
 const generateMessage = (
-  statusCode: Number,
-  success: Object | string | null,
-  error: Object | string | null = null
+  statusCode: number,
+  success: any = null,
+  error: any = null
 ) => {
   return {
     statusCode,
@@ -9,4 +9,4 @@ const generateMessage = (
     error,
   };
 };
-export { generateMessage };
+export default { generateMessage };

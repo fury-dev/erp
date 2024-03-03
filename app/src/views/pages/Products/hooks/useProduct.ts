@@ -4,18 +4,18 @@ import { Product } from '../../../../types/items/product';
 import { useDispatch, useSelector } from 'react-redux';
 import { setProducts } from '../../../../store/reducers';
 import { RootState } from '../../../../store';
-import { useMultiSelect } from '../../../../context/MuliSelectContext';
-import lodash from 'lodash';
+import lodash, { compact } from 'lodash';
+import { useMultiSelect } from '../../../../context/useMultiSelect';
 export const useProduct = () => {
   const {
     add,
     update,
     remove: { deleteRequest },
-    list: { refetch, data, loading, fetchMore, startPolling, updateQuery, stopPolling }
-  } = useApiService('product');
+    list: { data, loading, fetchMore, startPolling, updateQuery, stopPolling }
+  } = useApiService<Product>('product');
   const dispatch = useDispatch();
   const products = useSelector((state: RootState) => state.product.items);
-  const [items, setItems] = useState(products.value);
+  const [items, setItems] = useState(products?.value);
   const { selected } = useMultiSelect();
 
   const submitData = useCallback(
@@ -35,19 +35,16 @@ export const useProduct = () => {
     if (data?.products) {
       dispatch(
         setProducts({
-          value: data.products,
+          value: compact(data.products),
           page: 1
         })
       );
-      setItems(data.products);
+      setItems(compact(data.products));
     }
-  }, [data]);
-  const apiAction = useCallback(
-    async (...rest: any) => {
-      startPolling(10000);
-    },
-    [data, startPolling]
-  );
+  }, [data, dispatch]);
+  const apiAction = useCallback(async () => {
+    startPolling(10000);
+  }, [startPolling]);
 
   return {
     submitData,

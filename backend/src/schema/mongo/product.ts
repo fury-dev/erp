@@ -1,5 +1,5 @@
-import mongoose = require("mongoose");
-import common = require("./common");
+import mongoose from "mongoose";
+const ObjectId = mongoose.Schema.ObjectId;
 
 const Schema = new mongoose.Schema({
   deleted: Boolean,
@@ -7,18 +7,20 @@ const Schema = new mongoose.Schema({
     type: Number,
     unique: true,
   },
+  productSchemaId: {
+    type: ObjectId,
+    required: [true, "Product required"],
+  },
   versions: [
     {
-      name: String,
       versionId: {
         type: Number,
         default: 1,
       },
-      distributorPrice: common.Price,
-      sellerPrice: common.Price,
-      size: [String],
+      quantity: Number,
+      size: String,
       inStock: Boolean,
-      uri: String,
+      image: String,
       createdAt: { type: Date, default: Date.now },
       deleted: Boolean,
     },
@@ -27,4 +29,4 @@ const Schema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 const controller = mongoose.model("product", Schema);
-export { controller };
+export default { controller };

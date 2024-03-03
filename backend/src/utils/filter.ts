@@ -1,6 +1,6 @@
-import moment = require("moment");
+import moment from "moment";
 
-type TDateby = "MONTH" | "ALL_TIME" | "YEAR" | "DAY" | "WEEK";
+export type TDateby = "MONTH" | "ALL_TIME" | "YEAR" | "DAY" | "WEEK";
 
 const filterTimeQuery = (dateBy: TDateby) => {
   let timeSpan;
@@ -21,6 +21,8 @@ const filterTimeQuery = (dateBy: TDateby) => {
     timeFilter = "dayOfWeek";
 
     timeSpan = [moment(date).subtract("7", "days").toDate(), date];
+  } else {
+    timeFilter = "month";
   }
 
   return {
@@ -29,4 +31,4 @@ const filterTimeQuery = (dateBy: TDateby) => {
   };
 };
 
-export { filterTimeQuery, TDateby };
+export default { filterTimeQuery };

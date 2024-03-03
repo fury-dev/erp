@@ -12,7 +12,7 @@ export const useLogin = () => {
   const { setUser } = useAuthContext();
   const navigate = useNavigate();
 
-  let value = {
+  const value = {
     email: 'test',
     password: 'test'
   };
@@ -40,7 +40,7 @@ export const useLogin = () => {
       console.log(res);
       const response = JSON.parse(res?.loginUser);
       if (response?.success?.auth?.token) {
-        const { auth, user } = response?.success;
+        const { auth, user } = response.success;
         setData(response?.success);
 
         setUser(user);
@@ -50,14 +50,17 @@ export const useLogin = () => {
         setApiErrors(response?.error);
       }
     }
-  }, [res]);
-  const updateQuery = useCallback(async (value: Login) => {
-    await loginUser({
-      variables: {
-        user: value
-      }
-    });
-  }, []);
+  }, [navigate, res, setUser]);
+  const updateQuery = useCallback(
+    async (value: Login) => {
+      await loginUser({
+        variables: {
+          user: value
+        }
+      });
+    },
+    [loginUser]
+  );
 
   return {
     loading,

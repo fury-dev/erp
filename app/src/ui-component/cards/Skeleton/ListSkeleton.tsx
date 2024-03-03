@@ -1,6 +1,5 @@
 import { Box, Paper, Skeleton, TableContainer, TableCell, TableHead, TableRow, Table, TableBody, Grid } from '@mui/material';
 
-export const testData = {};
 export const ListSkeleton = () => (
   <div style={{ height: '100%', width: '100', backgroundColor: 'white' }}>
     <Box
@@ -35,8 +34,8 @@ export const ListSkeleton = () => (
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
             <TableHead>
               <TableRow>
-                {new Array(8).map((_value) => (
-                  <TableCell>
+                {new Array(8).map((_value, index) => (
+                  <TableCell key={index.toString()}>
                     <Skeleton variant="rectangular" width={50} height={20} />
                   </TableCell>
                 ))}

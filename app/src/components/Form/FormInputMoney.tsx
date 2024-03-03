@@ -30,7 +30,8 @@ export const FormInputMoney = <T,>({ handleChange, touched, errors, title, value
           //   label="Amount"
           style={{
             width: '90px',
-            borderRight: '0'
+            borderRight: '0',
+            marginRight: '2px'
           }}
         />
         <FormSelect<T>

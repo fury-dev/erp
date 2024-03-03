@@ -23,7 +23,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 
 // project imports
 import { gridSpacing } from '../../store/constant';
-import { SET_BORDER_RADIUS, SET_FONT_FAMILY } from '../../store/actions';
+import { SET_FONT_FAMILY } from '../../store/actions';
 import SubCard from '../../ui-component/cards/SubCard';
 import AnimateButton from '../../ui-component/extended/AnimateButton';
 import { saveBorderRadius, saveCurrency } from '../../store/reducers/customizationReducer';
@@ -31,7 +31,7 @@ import { RootState } from '../../store';
 import { TCurrency } from '../../types';
 
 // concat 'px'
-function valueText(value) {
+function valueText(value: any) {
   return `${value}px`;
 }
 
@@ -51,7 +51,7 @@ const Customization = () => {
 
   // state - border radius
   const [borderRadius, setBorderRadius] = useState(customization.borderRadius);
-  const handleBorderRadius = (event, newValue) => {
+  const handleBorderRadius = (_event: any, newValue: any) => {
     setBorderRadius(newValue);
   };
 

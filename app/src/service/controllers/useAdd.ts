@@ -1,9 +1,31 @@
-import { ITEMS } from '../../types/items';
+import { ITEMS, TItems } from '../../types/items';
 import { gql, useMutation } from '@apollo/client';
 
-export const useAdd = (item: ITEMS) => {
+export const useAdd = <_T extends TItems>(item: ITEMS) => {
   let query = null;
-  if (item === 'product') {
+  if (item === 'productSchema') {
+    query = gql`
+      mutation Product($item: ProductSchemaValue!) {
+        addProductSchema(productSchema: $item) {
+          id
+          name
+          versionId
+          distributorPrice {
+            amount
+            currency
+          }
+          sellerPrice {
+            amount
+            currency
+          }
+          size
+          inStock
+          createdAt
+          updatedAt
+        }
+      }
+    `;
+  } else if (item === 'product') {
     query = gql`
       mutation Product($item: ProductValue!) {
         addProduct(product: $item) {
@@ -11,11 +33,8 @@ export const useAdd = (item: ITEMS) => {
           name
           image
           versionId
-          distributorPrice {
-            amount
-            currency
-          }
-          sellerPrice {
+          productSchemaId
+          price {
             amount
             currency
           }

@@ -23,4 +23,4 @@ const client = new ApolloClient({
   })
 });
 
-export { client };
+export default { client };

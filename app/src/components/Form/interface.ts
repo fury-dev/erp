@@ -9,4 +9,5 @@ export interface IFormField<T> {
   title: string;
   errors: FormikErrors<T>;
   sx?: CSSProperties;
+  setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => Promise<void | FormikErrors<any>>;
 }

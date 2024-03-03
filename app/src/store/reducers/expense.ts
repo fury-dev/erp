@@ -8,6 +8,7 @@ const initialState: {
     value: Expense[];
   };
   view: Expense;
+  versions: Expense[];
 } = {
   setup: {
     id: '',
@@ -63,7 +64,8 @@ const initialState: {
   items: {
     page: 0,
     value: []
-  }
+  },
+  versions: []
 };
 
 const expenseSlice = createSlice({

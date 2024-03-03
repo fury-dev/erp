@@ -30,3 +30,43 @@ export default {
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+
+### Starters
+- Install dependencies
+``sh
+  npm i
+``
+- Start up the project
+``sh
+npm run dev
+``
+
+
+### Api configuration
+- Add in the .env file
+```
+VITE_API_ENDPOINT="backend_ip"
+
+VITE_LOCATION_API_KEY="location_api_key" from [link](https://countrystatecity.in/)
+
+VITE_GOOGLE_OAUTH_API="your_oauth_google_api" 
+```
+
+
+### Structure
+- src
+  - api
+  - components // generic components
+  - context
+  - routes
+  - hooks 
+  - views
+    - pages // all screens
+      - item folder
+        - components // item specific components
+        - hooks // item specific components
+        - item.tsx
+  - types 
+  - store // redux
+  - services // api hooks 

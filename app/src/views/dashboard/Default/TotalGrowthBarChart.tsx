@@ -20,6 +20,7 @@ import { useApiService } from '../../../service';
 import { TChartFilter } from '../../../service/controllers';
 import { ITEMS } from '../../../types';
 import { sum } from 'lodash';
+import { barChartData } from '../../../components/Chart/data';
 
 const monthCategory = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const weekCategory = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
@@ -134,7 +135,7 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
     if (!isLoading) {
       ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
     }
-  }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500, series]);
+  }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500, series, value]);
 
   useEffect(() => {
     updateQuery({
@@ -142,7 +143,8 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
       item: item,
       group: 'status'
     });
-  }, [value, item]);
+  }, [value, item, updateQuery]);
+  console.log(columns[value], series);
   return (
     <>
       {isLoading ? (
@@ -189,7 +191,7 @@ const TotalGrowthBarChart = ({ isLoading }: any) => {
             </Grid>
             <Grid item xs={12}>
               {/* @ts-ignore */}
-              <Chart {...chartData} series={series as ApexAxisChartSeries} />
+              <Chart {...barChartData} series={series as ApexAxisChartSeries} />
             </Grid>
           </Grid>
         </MainCard>

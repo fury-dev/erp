@@ -1,7 +1,9 @@
-import mongoose, { Mongoose } from "mongoose";
+import mongoose from "mongoose";
 
-export const initializeMongo = (): Promise<typeof mongoose> => {
-  const mongoUri = process.env?.MONGO_URI;
+export const initializeMongo = (uri?: string): Promise<typeof mongoose> => {
+  console.log("Init DB connection");
+
+  const mongoUri = process.env?.MONGO_URI || uri;
   if (!mongoUri) {
     throw new Error("Mongo uri not defined");
   }

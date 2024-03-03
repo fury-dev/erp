@@ -12,19 +12,16 @@ const initialState: {
   setup: {
     id: '',
     versionId: 1,
-    distributorPrice: {
+    productSchemaId: '',
+    price: {
       currency: 'INR',
       amount: 0
     },
-    sellerPrice: {
-      currency: 'INR',
-      amount: 0
-    },
-    size: [],
+    size: '',
     createdAt: '',
     updatedAt: '',
     name: '',
-    image: undefined,
+    image: '',
     inStock: false
   },
   items: {
@@ -33,15 +30,13 @@ const initialState: {
   },
   view: {
     id: '',
-    distributorPrice: {
+    productSchemaId: '',
+
+    price: {
       currency: 'INR',
       amount: 0
     },
-    sellerPrice: {
-      currency: 'INR',
-      amount: 0
-    },
-    size: [],
+    size: '',
     createdAt: '',
     updatedAt: '',
     name: '',

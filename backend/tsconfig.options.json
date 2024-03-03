@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "outDir": "./lib",
+    "lib": ["esnext"],
+    "baseUrl": "./",
+    "paths": {
+      "*": ["src/*"]
+    },
+    "declaration": true,
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts", "bin/*.ts", "src/config.tssrc/index.tsx.ts"],
+  "exclude": ["node_modules"],
+  "typeRoots": ["node_modules/@types", "src/types"]
+}

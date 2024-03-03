@@ -3,7 +3,29 @@ import { gql, useMutation } from '@apollo/client';
 
 export const useUpdate = (item: ITEMS) => {
   let query = null;
-  if (item === 'product') {
+  if (item === 'productSchema') {
+    query = gql`
+      mutation Product($item: ProductSchemaValue!) {
+        updateProductSchema(productSchema: $item) {
+          id
+          name
+          versionId
+          distributorPrice {
+            amount
+            currency
+          }
+          sellerPrice {
+            amount
+            currency
+          }
+          size
+          inStock
+          createdAt
+          updatedAt
+        }
+      }
+    `;
+  } else if (item === 'product') {
     query = gql`
       mutation Product($item: ProductValue!) {
         updateProduct(product: $item) {
@@ -11,11 +33,7 @@ export const useUpdate = (item: ITEMS) => {
           name
           image
           versionId
-          distributorPrice {
-            amount
-            currency
-          }
-          sellerPrice {
+          price {
             amount
             currency
           }

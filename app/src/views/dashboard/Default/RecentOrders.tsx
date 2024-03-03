@@ -19,7 +19,7 @@ import { RootState } from '../../../store';
 import { convertFromINR, currencySymbol as _currencySymbol } from '../../../data/Product/currency';
 import { useNavigate } from 'react-router-dom';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-const RecentOrders = ({ isLoading }: { isLoading: Boolean }) => {
+const RecentOrders = ({ isLoading }: { isLoading: boolean }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [time, setTime] = useState<TQueryParams['dateBy']>('ALL_TIME');
@@ -41,7 +41,7 @@ const RecentOrders = ({ isLoading }: { isLoading: Boolean }) => {
 
   const {
     list: { data, updateMask, updateQuery }
-  } = useApiService('order');
+  } = useApiService<Order>('order');
   const orders: Order[] = data?.orders || [];
   const currency = useSelector((state: RootState) => state.customization.currency);
   const currencySymbol = _currencySymbol[currency];
@@ -63,7 +63,7 @@ const RecentOrders = ({ isLoading }: { isLoading: Boolean }) => {
       name
     }
     status`);
-  }, []);
+  }, [time, updateMask, updateQuery]);
 
   const statusColor: Record<Order['status'], string> = {
     DELIVERED: theme.palette.success.light,

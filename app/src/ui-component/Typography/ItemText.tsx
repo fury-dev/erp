@@ -13,13 +13,12 @@ export const ItemText = ({ header, text = '-', horizontal = true }: IItemText) =
         display: 'flex',
         flexDirection: horizontal ? 'row' : 'column',
         ...(horizontal ? { alignItems: 'center' } : {}),
-        width: '170px'
+        width: '190px'
       }}
     >
       <FormLabel
         sx={{
-          width: '50%',
-          whiteSpace: 'nowrap'
+          width: '50%'
         }}
       >
         {header}
