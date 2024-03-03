@@ -28,7 +28,7 @@ export const OrderSetup = ({ open, onClose, order }: { open: boolean; onClose: (
   const { submitData } = useOrder();
   const {
     products: productList,
-    list: { data, updateQuery }
+    list: { updateQuery }
   } = useProduct();
   const [showMap, setShowMap] = useState<boolean>(false);
 

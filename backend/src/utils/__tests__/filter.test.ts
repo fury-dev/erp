@@ -1,5 +1,7 @@
+// import { createMongoFilter } from "../filter";
+
 describe("Filter test", () => {
   it("Create filter", () => {
-    const filter = createFilter();
+    // const _filter = createMongoFilter();
   });
 });

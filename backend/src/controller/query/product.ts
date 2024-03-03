@@ -1,6 +1,5 @@
 import productModel from "../../schema/mongo/product";
 import { unpackMessage } from "../../schema/mongo/utils/index";
-import { ObjectId, BSON } from "mongodb";
 import generateQuery from "../../utils/generateQuery";
 
 const products = async (_: any, args: any, context: any) => {
