@@ -18,6 +18,7 @@ const expenses = async (_: any, args: any, _context: any) => {
 
   return preprocess;
 };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const expenseSelection = (
   _: any,
   args: {
@@ -35,4 +36,4 @@ const expenseSelection = (
   }
 };
 
-export default { expenses, expenseSelection };
+export default { expenses };

@@ -50,6 +50,7 @@ const products = async (_: any, args: any, context: any) => {
 
   return preprocess;
 };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const productSelection = (
   _: any,
   args: {
@@ -69,4 +70,4 @@ const productSelection = (
     return {};
   }
 };
-export default { products, productSelection };
+export default { products };

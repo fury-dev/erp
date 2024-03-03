@@ -53,6 +53,7 @@ const productSchemas = async (_: any, args: any, context: any) => {
 
   return preprocess;
 };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const productSchemaSelection = (
   _: any,
   args: {
@@ -72,4 +73,4 @@ const productSchemaSelection = (
     return {};
   }
 };
-export default { productSchemas, productSchemaSelection };
+export default { productSchemas };
