@@ -99,24 +99,7 @@ export const useList = <T extends TItems>(item: ITEMS) => {
           versionId
           productId
           image
-
           productSchemaId
-          productSchema{
-            id
-            name
-            versionId
-            productSchemaId
-            distributorPrice {
-              amount
-              currency
-            }
-            sellerPrice {
-              amount
-              currency
-            }
-            size
-            inStock
-          }
           price {
             amount
             currency

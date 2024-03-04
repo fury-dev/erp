@@ -8,12 +8,12 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { convertFromINR, currencySymbol } from '../../../data/Product/currency';
 import { ViewSkeleton } from '../../../ui-component/cards/Skeleton/ViewSkeleton';
-import GenericChart from '../../../components/Chart';
 import { IoMdImage } from 'react-icons/io';
 import { ElevatedBox } from '../../../components/StyledComponents/ElevatedBox';
 import { Order } from '../../../types/items/order';
+import { ItemLink } from '../../../ui-component/Typography/ItemLink';
 
-export const OrderView = () => {
+const OrderView = () => {
   const location = useLocation();
   const customization = useSelector((state: RootState) => state.customization);
 
@@ -28,19 +28,15 @@ export const OrderView = () => {
   }, [updateQuery, id]);
 
   const currency = useSelector((state: RootState) => state.customization.currency);
+  console.log(item);
 
   const symbol = currencySymbol[currency];
   return loading ? (
     <ViewSkeleton />
   ) : (
     <Grid container gap={1}>
-      <Grid item xs={10}>
-        <ElevatedBox
-          display="flex"
-          flexDirection="row"
-          justifyContent="center"
-          sx={{ height: '100%', alignItems: 'center', borderRadius: `${customization.borderRadius}px` }}
-        >
+      <Grid item xs={9}>
+        <ElevatedBox sx={{ borderRadius: `${customization.borderRadius}px` }}>
           {item?.product?.image ? (
             <img
               src={item?.product?.image}
@@ -55,44 +51,43 @@ export const OrderView = () => {
           )}
         </ElevatedBox>
       </Grid>
-      <Grid item xs={1}>
+      <Grid item xs={2.5}>
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'column'
           }}
         >
-          <ItemText header="Product Name" text={item?.product?.name} />
-          <ItemText header="Size" text={item?.product?.size} />
-          <ItemText header="price" text={`${convertFromINR(item?.product?.price.amount || 0, currency).toFixed(2)} ${symbol}`} />
-          <ItemText
-            header="Distributor price"
-            text={`${convertFromINR(item?.product?.productSchema?.distributorPrice.amount || 0, currency).toFixed(2)} ${symbol}`}
-          />
-          <ItemText
-            header="Seller price"
-            text={`${convertFromINR(item?.product?.productSchema?.sellerPrice.amount || 0, currency).toFixed(2)} ${symbol}`}
-          />
+          {' '}
+          <ItemText header="Status" text={item?.status} />
+          <ItemText header="Price" text={`${convertFromINR(item?.amount.amount || 0, currency).toFixed(2)} ${symbol}`} />
           <ItemText header="Version" text={item?.versionId.toString()} />
+          <ItemLink header="Product" link={item?.product?.id} text={item?.product?.name} itemType="product" />
+          <ItemText header="Order Date" text={item?.orderDate} />
+          <ItemText header="Order Type" text={item?.orderType} />
+          <ItemText header="Paid" text={item?.paymentStatus ? 'Yes' : 'No'} />
         </Box>
       </Grid>
       <Grid item xs={12}>
-        <GenericChart<'product'>
-          item="product"
-          filter={{
-            item: 'order',
-            group: 'status',
-            id: [id],
-            queryPath: 'productId'
+        <ElevatedBox
+          display="flex"
+          flexDirection="column"
+          header="Order Details"
+          headerStyle={{
+            textAlign: 'left',
+            width: '100%'
           }}
-          items={[
-            {
-              label: 'Product',
-              value: 'product'
-            }
-          ]}
-        />
+        >
+          <ItemText header="Customer Name" text={item?.customerName} />
+          <ItemText header="Address" text={item?.location?.address} />
+          <ItemText header="City" text={item?.location?.city} />
+          <ItemText header="State" text={item?.location?.state} />
+
+          <ItemText header="Country" text={item?.location?.country} />
+          <ItemText header="Pincode" text={item?.location?.pincode} />
+        </ElevatedBox>
       </Grid>
     </Grid>
   );
 };
+export default OrderView;

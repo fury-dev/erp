@@ -10,6 +10,7 @@ import { useCallback } from 'react';
 import { useDialogContext } from '../../../context/useDialogContext';
 import { convertFromINR, currencySymbol as _currencySymbol } from '../../../data/Product/currency';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../../store';
 const OrderList = () => {
   const {
@@ -18,7 +19,7 @@ const OrderList = () => {
     selected,
     deleteRequest
   } = useOrder();
-
+  const navigate = useNavigate();
   const { setComponent } = useDialogContext();
   const currency = useSelector((state: RootState) => state.customization.currency);
   const currencySymbol = _currencySymbol[currency];
@@ -99,6 +100,7 @@ const OrderList = () => {
         ])}
         rows={orders || []}
         loading={loading}
+        rowOnClick={(item) => navigate('/home/order/' + item.id)}
         headerButtons={
           <HeaderButtons
             buttons={[

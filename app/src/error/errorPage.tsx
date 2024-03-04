@@ -82,7 +82,7 @@ const ErrorPage = () => {
             <ErrorWrapper>
               <Grid container spacing={gridSpacing}>
                 <Grid item xs={12}>
-                  <Typography variant="h1" component="div">
+                  <Typography variant="h2" component="div">
                     Something is wrong
                   </Typography>
                 </Grid>
