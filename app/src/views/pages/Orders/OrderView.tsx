@@ -12,13 +12,14 @@ import { IoMdImage } from 'react-icons/io';
 import { ElevatedBox } from '../../../components/StyledComponents/ElevatedBox';
 import { Order } from '../../../types/items/order';
 import { ItemLink } from '../../../ui-component/Typography/ItemLink';
+import { useTranslation } from 'react-i18next';
 
 const OrderView = () => {
   const location = useLocation();
   const customization = useSelector((state: RootState) => state.customization);
 
   const { item, updateQuery, loading } = useFind<Order>('order');
-
+  const { t } = useTranslation();
   const id = getIdFromUrl(location.pathname);
   useEffect(() => {
     updateQuery({
@@ -28,7 +29,6 @@ const OrderView = () => {
   }, [updateQuery, id]);
 
   const currency = useSelector((state: RootState) => state.customization.currency);
-  console.log(item);
 
   const symbol = currencySymbol[currency];
   return loading ? (
@@ -59,13 +59,13 @@ const OrderView = () => {
           }}
         >
           {' '}
-          <ItemText header="Status" text={item?.status} />
+          <ItemText header="Status" text={t(`order.status.${item?.status}`)} />
           <ItemText header="Price" text={`${convertFromINR(item?.amount.amount || 0, currency).toFixed(2)} ${symbol}`} />
           <ItemText header="Version" text={item?.versionId.toString()} />
           <ItemLink header="Product" link={item?.product?.id} text={item?.product?.name} itemType="product" />
           <ItemText header="Order Date" text={item?.orderDate} />
-          <ItemText header="Order Type" text={item?.orderType} />
-          <ItemText header="Paid" text={item?.paymentStatus ? 'Yes' : 'No'} />
+          <ItemText header="Order Type" text={t(`order.type.${item?.orderType}`)} />
+          <ItemText header="Paid" text={item?.paymentStatus ? t('general.yes') : t('general.no')} />
         </Box>
       </Grid>
       <Grid item xs={12}>

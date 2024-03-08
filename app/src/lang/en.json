@@ -1,0 +1,30 @@
+{
+  "order": {
+    "type": {
+      "CASH_ON_DELIVERY": "Cash On Delivery",
+      "PREPAID": " Prepaid"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "SHIPPED": "Shipped",
+      "OUT_FOR_DELIVERY": "Out For Delivery",
+      "DELIVERED": "Delivered"
+    }
+  },
+  "expense": {
+    "type": {
+      "PERSONAL": "Personal",
+      "ORDER": "Order",
+      "DELIVERY_CHARGES": "Delivery charges",
+      "OTHERS": "Others"
+    },
+    "operation": {
+      "CREDIT": "Credit",
+      "DEBIT": "debit"
+    }
+  },
+  "general": {
+    "yes": "Yes",
+    "no": "No"
+  }
+}

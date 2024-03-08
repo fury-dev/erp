@@ -20,7 +20,6 @@ import { MultiSelectContextProvider } from './context/MuliSelectContext';
 import { DialogContextProvider } from './context/DialogContext';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-
 function App() {
   const customization = useSelector((state: any) => state?.customization);
   console.log((import.meta as any).env);
