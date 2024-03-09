@@ -7,11 +7,7 @@ Welcome to the CMS (Content Management System) Web App! This application is desi
 1. [Features](#features)
 2. [Prerequisites](#prerequisites)
 3. [Getting Started](#getting-started)
-4. [Project Structure](#project-structure)
-5. [Configuration](#configuration)
-6. [Dependencies](#dependencies)
-7. [Contributing](#contributing)
-8. [License](#license)
+
 
 ## Features
 
@@ -32,6 +28,7 @@ Before you begin, ensure you have the following installed:
 
 - [Node.js](https://nodejs.org/) (version >= 14.0.0)
 - [MongoDB](https://www.mongodb.com/) (running locally or accessible)
+- [Template](https://github.com/codedthemes/berry-free-react-admin-template/tree/main)
 
 ## Getting Started
 
