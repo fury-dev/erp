@@ -3,7 +3,7 @@
 // action - state management
 import { createSlice } from '@reduxjs/toolkit';
 import config from '../../config';
-import { TCurrency } from '../../types';
+import { TAccent, TCurrency } from '../../types';
 
 export const initialState: {
   isOpen: string[];
@@ -12,13 +12,15 @@ export const initialState: {
   borderRadius: number;
   opened: boolean;
   currency: TCurrency;
+  accent: TAccent;
 } = {
   isOpen: [], // for active default menu
   defaultId: 'default',
   fontFamily: config.fontFamily,
   borderRadius: config.borderRadius,
   opened: true,
-  currency: (localStorage.getItem('currency') as TCurrency) || 'INR'
+  currency: (localStorage.getItem('currency') as TCurrency) || 'INR',
+  accent: (localStorage.getItem('accent') as TAccent) || 'LIGHT'
 };
 
 const customization = createSlice({
@@ -37,12 +39,16 @@ const customization = createSlice({
     saveBorderRadius: (state, action) => {
       state.borderRadius = action.payload.borderRadius;
     },
+    saveAccent: (state, action) => {
+      state.accent = action.payload;
+      localStorage.setItem('accent', action.payload);
+    },
     saveCurrency: (state, action) => {
       state.currency = action.payload;
       localStorage.setItem('currency', action.payload);
     }
   }
 });
-export const { saveBorderRadius, setFontFamily, setIsOpen, setMenu, saveCurrency } = customization.actions;
+export const { saveBorderRadius, setFontFamily, setIsOpen, setMenu, saveCurrency, saveAccent } = customization.actions;
 
 export const customizationReducer = customization.reducer;

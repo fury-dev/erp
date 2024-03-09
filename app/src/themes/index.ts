@@ -21,16 +21,17 @@ export const theme = (customization: RootState['customization']) => {
 
   const themeOption = {
     colors: color,
-    heading: color.grey900,
-    paper: color.paper,
-    backgroundDefault: color.paper,
-    background: color.primaryLight,
-    darkTextPrimary: color.grey700,
-    darkTextSecondary: color.grey500,
-    textDark: color.grey900,
-    menuSelected: color.secondaryDark,
-    menuSelectedBack: color.secondaryLight,
-    divider: color.grey200,
+    heading: customization.accent === 'LIGHT' ? color.grey900 : color.grey50,
+    paper: customization.accent === 'LIGHT' ? color.paper : color.darkPaper,
+    backgroundDefault: customization.accent === 'LIGHT' ? color.grey200 : color.darkBackground,
+    background: customization.accent === 'LIGHT' ? color.primaryLight : color.darkBackground,
+    darkTextPrimary: customization.accent == 'LIGHT' ? color.grey700 : color.darkTextPrimary,
+    darkTextSecondary: customization.accent === 'LIGHT' ? color.grey500 : color.darkTextSecondary,
+    textDark: customization.accent === 'LIGHT' ? color.grey900 : color.grey50,
+    menuSelected: customization.accent === 'LIGHT' ? color.secondaryDark : color.darkSecondaryDark,
+    menuSelectedBack: customization.accent === 'LIGHT' ? color.secondaryLight : color.darkSecondaryLight,
+    divider: customization.accent === 'LIGHT' ? color.grey200 : color.grey50,
+
     customization
   };
 

@@ -38,7 +38,6 @@ type  Product{
 
 type User{
     email:String
-    password:String
     username:String
 }
 type Expense{
@@ -133,12 +132,13 @@ type Mutation{
     addExpense(expense:ExpenseValue!):Expense
     updateExpense(expense:ExpenseValue!):Expense
     deleteExpense(id:[ID!]):[Expense]
-    registerUser(user:UserRegisterValue!):String
+    registerUser(user:useRegisterValue!):String
     loginUser(user:UserLoginValue!):String
     loginWithGoogle(credentials:String!):String
     addProductSchema(productSchema:ProductSchemaValue!):ProductSchema
     updateProductSchema(productSchema:ProductSchemaValue!):ProductSchema
     deleteProductSchema(id:[ID!]):[ProductSchema]
+    changePassword(data:PasswordValue):User
 
 }
 
@@ -203,10 +203,14 @@ input UserLoginValue{
     password:String!
 }
 
-input UserRegisterValue{
+input useRegisterValue{
     email:String!
     password:String!
     username:String
+}
+input PasswordValue{
+    email:String!
+    password:String!
 }
 
 input PriceValue{

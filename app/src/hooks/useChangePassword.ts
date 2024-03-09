@@ -2,12 +2,11 @@ import { gql, useMutation } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-export type Register = {
-  email: string;
-  password: string;
-  username: string;
+export type Password = {
+  newPassword: string;
+  newPasswordAgain: string;
 };
-export const useRegister = () => {
+export const useChangePassword = () => {
   const { setUser } = useAuthContext();
   const [data, setData] = useState<any>();
   const [apiErrors, setApiErrors] = useState<any>();
@@ -16,18 +15,19 @@ export const useRegister = () => {
 
   const value = {
     email: 'test',
-    password: 'test',
-    username: 'test'
+    password: 'test'
   };
   const [regitserUser, { loading, error, data: res }] = useMutation(
     gql`
-      mutation Register($user: UserRegisterValue!) {
-        registerUser(user: $user)
+      mutation ChangePassword($data: PasswordValue!) {
+        changePassword(data: $data) {
+          email
+        }
       }
     `,
     {
       variables: {
-        user: value
+        data: value
       }
     }
   );
@@ -36,27 +36,22 @@ export const useRegister = () => {
     if (error) console.error('API error', error, res);
   }, [error, res]);
 
-  const submitQuery = async (value: Register) => {
-    console.log(res, data, error, value);
-
+  const submitQuery = async (value: { password: string; email: string }) => {
     if (data) {
       setData(null);
     }
     await regitserUser({
       variables: {
-        user: value
+        data: value
       }
     });
-    console.log(res, data, error);
     if (res) {
       const response = JSON.parse(res?.registerUser);
       if (response?.success?.auth?.token) {
-        const { auth, user } = response.success;
         setData(response?.success);
-        setUser(user);
-        await localStorage.setItem('authToken', JSON.stringify(auth));
-        console.log('Route to dashboard');
-        navigate('/home');
+        setUser(null);
+        await localStorage.removeItem('authToken');
+        navigate('/');
       } else {
         setApiErrors(response?.error);
       }

@@ -2,6 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { ITEMS, TItems } from '../../types/items';
 import { gql, useQuery } from '@apollo/client';
 import { TChartFilter } from '.';
+import { updateQueryStructure } from '../../graphql/helpers/updateQueryMask';
 const POLLING_INTERVAL = 10000;
 export type TQueryParams = {
   id?: string[];
@@ -12,151 +13,151 @@ export type TQueryParams = {
   dynamicQuery?: Record<string, any>; //mongo base query for find operations
 };
 export const useList = <T extends TItems>(item: ITEMS) => {
-  const updateQueryStructure = (): ((mask?: string) => string) => {
-    let query = null;
-    let defaultMask = '';
-    if (item === 'productSchema') {
-      defaultMask = `
-        id
-        name
-        versionId
-        productSchemaId
-        distributorPrice {
-          amount
-          currency
-        }
-        sellerPrice {
-          amount
-          currency
-        }
-        size
-        inStock
-        createdAt
-        updatedAt
-      `;
-      query = (mask: any = defaultMask) => `
-      query ProductSchema($filter:ListFilter) {
-        productSchemas(filter: $filter){ ${mask}}
-      }
-    `;
-    } else if (item === 'product') {
-      defaultMask = `
-        id
-        name
-        versionId
-        productId
-        image
-        productSchemaId
-        productSchema{
-          id
-          name
-          versionId
-          productSchemaId
-          distributorPrice {
-            amount
-            currency
-          }
-          sellerPrice {
-            amount
-            currency
-          }
-          size
-          inStock
-       
-        }
-        price {
-          amount
-          currency
-        }
-        size
-        quantity
-        inStock
-        createdAt
-        updatedAt
-      `;
-      query = (mask: any = defaultMask) => `
-        query Product($filter:ListFilter) {
-          products(filter: $filter){ ${mask}}
-        }
-      `;
-    } else if (item === 'order') {
-      defaultMask = `
-        id
-        versionId
-        customerName
-        orderId
-        orderDate
-        orderType
-        amount {
-          amount
-          currency
-        }
-        productId
-        status
-        product {
-          id
-          name
-          versionId
-          productId
-          image
-          productSchemaId
-          price {
-            amount
-            currency
-          }
-          size
-          inStock
-        }
-        location {
-          address
-          pincode
-          city
-          state
-          country
-        }
-        paymentStatus
-        deliveryDate
-        createdAt
-        updatedAt
-      `;
-      query = (mask: any = defaultMask) => `
-        query Order($filter:ListFilter) {
-          orders(filter: $filter){${mask}}
-        }
-      `;
-    } else {
-      defaultMask = `
-        id
-        expenseType
-        versionId
-        expenseId
-        amount {
-          amount
-          currency
-        }
-        cashInBank {
-          amount
-          currency
-        }
-        cashInHand {
-          amount
-          currency
-        }
-        note
-        operationType
-        createdAt
-        updatedAt
-      `;
-      query = (mask: any = defaultMask) => `
-        query Expense($filter:ListFilter) {
-          expenses(filter: $filter){${mask}}
-        }
-      `;
-    }
-    return query;
-  };
+  // const updateQueryStructure = (): ((mask?: string) => string) => {
+  //   let query = null;
+  //   let defaultMask = '';
+  //   if (item === 'productSchema') {
+  //     defaultMask = `
+  //       id
+  //       name
+  //       versionId
+  //       productSchemaId
+  //       distributorPrice {
+  //         amount
+  //         currency
+  //       }
+  //       sellerPrice {
+  //         amount
+  //         currency
+  //       }
+  //       size
+  //       inStock
+  //       createdAt
+  //       updatedAt
+  //     `;
+  //     query = (mask: any = defaultMask) => `
+  //     query ProductSchema($filter:ListFilter) {
+  //       productSchemas(filter: $filter){ ${mask}}
+  //     }
+  //   `;
+  //   } else if (item === 'product') {
+  //     defaultMask = `
+  //       id
+  //       name
+  //       versionId
+  //       productId
+  //       image
+  //       productSchemaId
+  //       productSchema{
+  //         id
+  //         name
+  //         versionId
+  //         productSchemaId
+  //         distributorPrice {
+  //           amount
+  //           currency
+  //         }
+  //         sellerPrice {
+  //           amount
+  //           currency
+  //         }
+  //         size
+  //         inStock
 
-  const baseQuery = updateQueryStructure();
+  //       }
+  //       price {
+  //         amount
+  //         currency
+  //       }
+  //       size
+  //       quantity
+  //       inStock
+  //       createdAt
+  //       updatedAt
+  //     `;
+  //     query = (mask: any = defaultMask) => `
+  //       query Product($filter:ListFilter) {
+  //         products(filter: $filter){ ${mask}}
+  //       }
+  //     `;
+  //   } else if (item === 'order') {
+  //     defaultMask = `
+  //       id
+  //       versionId
+  //       customerName
+  //       orderId
+  //       orderDate
+  //       orderType
+  //       amount {
+  //         amount
+  //         currency
+  //       }
+  //       productId
+  //       status
+  //       product {
+  //         id
+  //         name
+  //         versionId
+  //         productId
+  //         image
+  //         productSchemaId
+  //         price {
+  //           amount
+  //           currency
+  //         }
+  //         size
+  //         inStock
+  //       }
+  //       location {
+  //         address
+  //         pincode
+  //         city
+  //         state
+  //         country
+  //       }
+  //       paymentStatus
+  //       deliveryDate
+  //       createdAt
+  //       updatedAt
+  //     `;
+  //     query = (mask: any = defaultMask) => `
+  //       query Order($filter:ListFilter) {
+  //         orders(filter: $filter){${mask}}
+  //       }
+  //     `;
+  //   } else {
+  //     defaultMask = `
+  //       id
+  //       expenseType
+  //       versionId
+  //       expenseId
+  //       amount {
+  //         amount
+  //         currency
+  //       }
+  //       cashInBank {
+  //         amount
+  //         currency
+  //       }
+  //       cashInHand {
+  //         amount
+  //         currency
+  //       }
+  //       note
+  //       operationType
+  //       createdAt
+  //       updatedAt
+  //     `;
+  //     query = (mask: any = defaultMask) => `
+  //       query Expense($filter:ListFilter) {
+  //         expenses(filter: $filter){${mask}}
+  //       }
+  //     `;
+  //   }
+  //   return query;
+  // };
+
+  const baseQuery = updateQueryStructure(item);
   const {
     loading,
     error,
@@ -184,7 +185,7 @@ export const useList = <T extends TItems>(item: ITEMS) => {
 
   const updateQuery = useCallback(
     async (
-      { deleted = 0, id = [], search = null, dateBy = 'ALL_TIME', limit = -1, dynamicQuery = undefined }: TQueryParams,
+      { deleted = 1, id = [], search = null, dateBy = 'ALL_TIME', limit = -1, dynamicQuery = undefined }: TQueryParams,
       poll: boolean = true
     ) => {
       stopPolling();

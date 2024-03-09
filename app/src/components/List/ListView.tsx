@@ -11,6 +11,7 @@ import { SortOrder, TableColumn } from './types';
 import { LayoutTableToolbar } from './components/LayoutTableToolbar';
 import { LayoutTableHead } from './components/LayoutTableHead';
 import { useMultiSelect } from '../../context/useMultiSelect';
+import { useTranslation } from 'react-i18next';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -36,8 +37,9 @@ interface IListView<T extends TItems> {
   actionCell?: Omit<TableColumn<T>, 'field'> & {
     field: string;
   };
-  updateApiFilter: (params: TQueryParams) => Promise<void>;
+  updateApiFilter?: (params: TQueryParams) => Promise<void>;
   rowOnClick?: (item: T) => void;
+  showToolbar?: boolean;
 }
 
 export const ListView = <T extends TItems>({
@@ -50,7 +52,8 @@ export const ListView = <T extends TItems>({
   title,
   actionCell,
   updateApiFilter,
-  rowOnClick
+  rowOnClick,
+  showToolbar = true
 }: IListView<T>) => {
   useEffect(() => {
     console.log('startPolling');
@@ -65,7 +68,7 @@ export const ListView = <T extends TItems>({
   // const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(20);
   const { selected, setSelected } = useMultiSelect();
-
+  const { t } = useTranslation();
   const handleRequestSort = (_: React.MouseEvent<unknown>, property: keyof T) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -145,7 +148,14 @@ export const ListView = <T extends TItems>({
 
       <Box sx={{ width: '100%' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
-          <LayoutTableToolbar numSelected={selected.length} title={title} loading={loading} updateApiFilter={updateApiFilter} />
+          <LayoutTableToolbar
+            showToolbar={showToolbar}
+            numSelected={selected.length}
+            title={t(`general.${title}`)}
+            loading={loading}
+            updateApiFilter={updateApiFilter}
+          />
+
           <TableContainer>
             <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
               <LayoutTableHead
@@ -158,6 +168,7 @@ export const ListView = <T extends TItems>({
                 rowCount={rows.length}
                 headCells={actionCell ? [...columns, actionCell as TableColumn<T>] : columns}
                 hasHeader={(actionCell?.buttons || []).length > 0}
+                showToolbar={showToolbar}
               />
               <TableBody>
                 {visibleRows.map((row, index) => {
@@ -171,16 +182,18 @@ export const ListView = <T extends TItems>({
                       selected={isItemSelected}
                       onClick={rowOnClick ? () => rowOnClick(row) : () => null}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          onClick={(event) => handleClick(event, row)}
-                          inputProps={{
-                            'aria-labelledby': labelId
-                          }}
-                        />
-                      </TableCell>
+                      {showToolbar && (
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            onClick={(event) => handleClick(event, row)}
+                            inputProps={{
+                              'aria-labelledby': labelId
+                            }}
+                          />
+                        </TableCell>
+                      )}
 
                       {columns.map((value, index) => (
                         <TableCell

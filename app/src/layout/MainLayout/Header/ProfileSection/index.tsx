@@ -28,25 +28,41 @@ import MainCard from '../../../../ui-component/cards/MainCard';
 import Transitions from '../../../../ui-component/extended/Transitions';
 
 // assets
-import { IconLogout, IconSettings, IconUser } from '@tabler/icons-react';
+import { IconEdit, IconLogout, IconSettings, IconUser } from '@tabler/icons-react';
 import { RootState } from '../../../../store';
 import { useAuthContext } from '../../../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { FaEdit } from 'react-icons/fa';
 
 // ==============================|| PROFILE MENU ||============================== //
 
 const ProfileSection = () => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const customization = useSelector((state: RootState) => state.customization);
   const navigate = useNavigate();
+  const currentDateTime = new Date();
+  const morningTime = new Date(currentDateTime.getDate(), currentDateTime.getMonth(), currentDateTime.getFullYear(), 4);
+  const afternoonTime = new Date(currentDateTime.getDate(), currentDateTime.getMonth(), currentDateTime.getFullYear(), 12);
+  const eveningTime = new Date(currentDateTime.getDate(), currentDateTime.getMonth(), currentDateTime.getFullYear(), 17);
+  const nightTime = new Date(currentDateTime.getDate(), currentDateTime.getMonth(), currentDateTime.getFullYear(), 20);
 
-  const { user } = useAuthContext();
+  let message = 'goodMorning';
+  // console.log(currentDateTime, currentDateTime.getFullYear());
+  // console.log(afternoonTime);
+  // console.log(nightTime);
+
+  if (currentDateTime.getTime() > afternoonTime.getTime() && currentDateTime.getTime() < eveningTime.getTime()) {
+    message = 'goodAfternoon';
+  } else if (currentDateTime.getTime() > afternoonTime.getTime() && currentDateTime.getTime() < nightTime.getTime()) {
+    message = 'goodEvening';
+  } else if (currentDateTime.getTime() > nightTime.getTime() && currentDateTime.getTime() < morningTime.getTime()) {
+    message = 'goodNight';
+  }
 
   const [open, setOpen] = useState(false);
-  const { setUser } = useAuthContext();
+  const { setUser, user } = useAuthContext();
 
-  /**
-   * anchorRef is used on different componets and specifying one type leads to other components throwing an error
-   * */
   const anchorRef = useRef(null);
   const handleLogout = async () => {
     localStorage.removeItem('authToken');
@@ -156,54 +172,61 @@ const ProfileSection = () => {
                   <Box sx={{ p: 2 }}>
                     <Stack>
                       <Stack direction="row" spacing={0.5} alignItems="center">
-                        <Typography variant="h4">Good Morning,</Typography>
                         <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                          {user?.username}
+                          {t(`general.${message}`)}
                         </Typography>
+                        <Typography variant="h4">{user?.username}</Typography>
                       </Stack>
-                      <Typography variant="subtitle2">Project Admin</Typography>
                     </Stack>
-
-                    <Divider />
                   </Box>
-                  <PerfectScrollbar
-                    style={{
-                      height: '100%',
-                      maxHeight: 'calc(100vh - 250px)',
-                      overflowX: 'hidden'
+                  <Divider />
+
+                  <List
+                    component="nav"
+                    sx={{
+                      width: '100%',
+                      maxWidth: 350,
+                      minWidth: 300,
+                      backgroundColor: theme.palette.background.paper,
+                      borderRadius: '10px',
+                      [theme.breakpoints.down('md')]: {
+                        minWidth: '100%'
+                      },
+                      '& .MuiListItemButton-root': {
+                        mt: 0.5
+                      }
                     }}
                   >
-                    <Box sx={{ p: 2 }}>
-                      <List
-                        component="nav"
-                        sx={{
-                          width: '100%',
-                          maxWidth: 350,
-                          minWidth: 300,
-                          backgroundColor: theme.palette.background.paper,
-                          borderRadius: '10px',
-                          [theme.breakpoints.down('md')]: {
-                            minWidth: '100%'
-                          },
-                          '& .MuiListItemButton-root': {
-                            mt: 0.5
+                    {' '}
+                    <ListItemButton
+                      sx={{
+                        borderRadius: `${customization.borderRadius}px`
+                      }}
+                      onClick={() =>
+                        navigate('/change-password', {
+                          state: {
+                            email: user?.email
                           }
-                        }}
-                      >
-                        <ListItemButton
-                          sx={{
-                            borderRadius: `${customization.borderRadius}px`
-                          }}
-                          onClick={handleLogout}
-                        >
-                          <ListItemIcon>
-                            <IconLogout stroke={1.5} size="1.3rem" />
-                          </ListItemIcon>
-                          <ListItemText primary={<Typography variant="body2">Logout</Typography>} />
-                        </ListItemButton>
-                      </List>
-                    </Box>
-                  </PerfectScrollbar>
+                        })
+                      }
+                    >
+                      <ListItemIcon>
+                        <IconEdit stroke={1.5} size="1.3rem" />
+                      </ListItemIcon>
+                      <ListItemText primary={<Typography variant="body2">{t('auth.changePassword.title')}</Typography>} />
+                    </ListItemButton>
+                    <ListItemButton
+                      sx={{
+                        borderRadius: `${customization.borderRadius}px`
+                      }}
+                      onClick={handleLogout}
+                    >
+                      <ListItemIcon>
+                        <IconLogout stroke={1.5} size="1.3rem" />
+                      </ListItemIcon>
+                      <ListItemText primary={<Typography variant="body2">{t('auth.logout')}</Typography>} />
+                    </ListItemButton>
+                  </List>
                 </MainCard>
               </ClickAwayListener>
             </Paper>

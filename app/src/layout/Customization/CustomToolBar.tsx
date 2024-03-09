@@ -1,30 +1,36 @@
 import { Box, Grid } from '@mui/material';
-import { Button } from '../../components/Button';
-import { useSelector } from 'react-redux';
 import { useDialogContext } from '../../context/useDialogContext';
-import { RootState } from '../../store';
 import { MdDelete } from 'react-icons/md';
 import { FaEdit } from 'react-icons/fa';
+import { ButtonGroup } from '../../components/List/ButtonGroup';
+import { useTranslation } from 'react-i18next';
 
 export const CustomToolBar = ({ deleteRequest, Component }: { Component: JSX.Element; deleteRequest: () => Promise<void> }) => {
-  const customization = useSelector((state: RootState) => state.customization);
   const { setComponent } = useDialogContext();
-  const borderRadiusPx = `${customization.borderRadius}px`;
+  const { t } = useTranslation();
   return (
     <Grid item xs={12}>
       <Box display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center">
-        <Button sx={{ borderRadius: borderRadiusPx }} variant="contained" onClick={() => setComponent(Component)} startIcon={<FaEdit />}>
-          Edit
-        </Button>
-        <Button
-          sx={{ borderRadius: borderRadiusPx }}
-          variant="contained"
-          color="error"
-          onClick={() => deleteRequest()}
-          startIcon={<MdDelete />}
-        >
-          Delete
-        </Button>
+        <ButtonGroup
+          buttons={[
+            {
+              title: t('general.edit'),
+              icon: <FaEdit />,
+              rest: {
+                onClick: () => setComponent(Component),
+                variant: 'contained'
+              }
+            },
+            {
+              title: t('general.delete'),
+              icon: <MdDelete />,
+              rest: {
+                onClick: () => deleteRequest(),
+                color: 'error'
+              }
+            }
+          ]}
+        />
       </Box>
     </Grid>
   );

@@ -3,7 +3,7 @@
  * @param {JsonObject} theme Theme customization object
  */
 
-export default function themePalette(theme) {
+export default function themePalette(theme: any) {
   return {
     mode: theme?.customization?.navType,
     common: {

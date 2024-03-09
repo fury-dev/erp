@@ -14,13 +14,12 @@ import PropTypes from 'prop-types';
 
 // assets
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { RootState } from '../../../../../store';
 
-// ==============================|| SIDEBAR MENU LIST ITEMS ||============================== //
-
-const NavItem = ({ item, level }) => {
-  const theme = useTheme();
+const NavItem = ({ item, level }: any) => {
+  const theme: any = useTheme();
   const dispatch = useDispatch();
-  const customization = useSelector((state) => state.customization);
+  const customization = useSelector((state: RootState) => state.customization);
   const matchesSM = useMediaQuery(theme.breakpoints.down('lg'));
 
   const Icon = item.icon;
@@ -36,19 +35,17 @@ const NavItem = ({ item, level }) => {
     />
   );
 
-  let itemTarget = '_self';
-  if (item.target) {
-    itemTarget = '_blank';
-  }
+  const itemTarget: string = '_self';
 
-  let listItemProps = {
+  let listItemProps: any = {
+    //@ts-expect-error
     component: forwardRef((props, ref) => <Link ref={ref} {...props} to={item.url} target={itemTarget} />)
   };
   if (item?.external) {
     listItemProps = { component: 'a', href: item.url, target: itemTarget };
   }
 
-  const itemHandler = (id) => {
+  const itemHandler = (id: string) => {
     dispatch({ type: MENU_OPEN, id });
     if (matchesSM) dispatch({ type: SET_MENU, opened: false });
   };

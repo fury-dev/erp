@@ -161,7 +161,7 @@ const OrderList = () => {
           ]
         }}
         startPolling={apiAction}
-        title={'Order'}
+        title={'orders'}
       />
     </div>
   );

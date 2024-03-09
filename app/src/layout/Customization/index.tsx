@@ -23,12 +23,11 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 
 // project imports
 import { gridSpacing } from '../../store/constant';
-import { SET_FONT_FAMILY } from '../../store/actions';
 import SubCard from '../../ui-component/cards/SubCard';
 import AnimateButton from '../../ui-component/extended/AnimateButton';
-import { saveBorderRadius, saveCurrency } from '../../store/reducers/customizationReducer';
+import { saveBorderRadius, saveCurrency, saveAccent } from '../../store/reducers/customizationReducer';
 import { RootState } from '../../store';
-import { TCurrency } from '../../types';
+import { TAccent, TCurrency } from '../../types';
 
 // concat 'px'
 function valueText(value: any) {
@@ -43,6 +42,8 @@ const Customization = () => {
   const customization = useSelector((state: RootState) => state.customization);
 
   const [currency, setCurrency] = useState(customization.currency);
+  const [accent, setAccent] = useState(customization.accent);
+
   // drawer on/off
   const [open, setOpen] = useState(false);
   const handleToggle = () => {
@@ -62,39 +63,6 @@ const Customization = () => {
       })
     );
   }, [dispatch, borderRadius]);
-
-  let initialFont;
-  switch (customization.fontFamily) {
-    case `'Inter', sans-serif`:
-      initialFont = 'Inter';
-      break;
-    case `'Poppins', sans-serif`:
-      initialFont = 'Poppins';
-      break;
-    case `'Roboto', sans-serif`:
-    default:
-      initialFont = 'Roboto';
-      break;
-  }
-
-  // state - font family
-  const [fontFamily, setFontFamily] = useState(initialFont);
-  useEffect(() => {
-    let newFont;
-    switch (fontFamily) {
-      case 'Inter':
-        newFont = `'Inter', sans-serif`;
-        break;
-      case 'Poppins':
-        newFont = `'Poppins', sans-serif`;
-        break;
-      case 'Roboto':
-      default:
-        newFont = `'Roboto', sans-serif`;
-        break;
-    }
-    dispatch({ type: SET_FONT_FAMILY, fontFamily: newFont });
-  }, [dispatch, fontFamily]);
 
   return (
     <>
@@ -139,19 +107,23 @@ const Customization = () => {
         <PerfectScrollbar component="div">
           <Grid container spacing={gridSpacing} sx={{ p: 3 }}>
             <Grid item xs={12}>
-              {/* font family */}
-              <SubCard title="Font Family">
+              <SubCard title="Accent">
                 <FormControl>
                   <RadioGroup
-                    aria-label="font-family"
-                    value={fontFamily}
-                    onChange={(e) => setFontFamily(e.target.value)}
+                    aria-label="accent"
+                    value={accent}
+                    onChange={(e) =>
+                      setAccent(() => {
+                        dispatch(saveAccent(e.target.value));
+                        return e.target.value as TAccent;
+                      })
+                    }
                     name="row-radio-buttons-group"
                   >
                     <FormControlLabel
-                      value="Roboto"
+                      value="DARK"
                       control={<Radio />}
-                      label="Roboto"
+                      label="Dark"
                       sx={{
                         '& .MuiSvgIcon-root': { fontSize: 28 },
                         '& .MuiFormControlLabel-label': {
@@ -160,20 +132,9 @@ const Customization = () => {
                       }}
                     />
                     <FormControlLabel
-                      value="Poppins"
+                      value="LIGHT"
                       control={<Radio />}
-                      label="Poppins"
-                      sx={{
-                        '& .MuiSvgIcon-root': { fontSize: 28 },
-                        '& .MuiFormControlLabel-label': {
-                          color: theme.palette.grey[900]
-                        }
-                      }}
-                    />
-                    <FormControlLabel
-                      value="Inter"
-                      control={<Radio />}
-                      label="Inter"
+                      label="Light "
                       sx={{
                         '& .MuiSvgIcon-root': { fontSize: 28 },
                         '& .MuiFormControlLabel-label': {

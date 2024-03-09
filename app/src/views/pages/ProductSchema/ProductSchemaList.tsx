@@ -92,7 +92,7 @@ const ProductSchemaList = () => {
         rows={productSchemas || []}
         loading={loading}
         stopPolling={stopPolling}
-        rowOnClick={(item) => navigate('/home/product/' + item.id)}
+        rowOnClick={(item) => navigate('/home/productSchema/' + item.id)}
         headerButtons={
           <HeaderButtons
             buttons={[
@@ -161,7 +161,7 @@ const ProductSchemaList = () => {
           ]
         }}
         startPolling={apiAction}
-        title="Product Schema"
+        title="productSchemas"
       />
     </div>
   );

@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import { FormLabel } from '@mui/material';
 import { CSSProperties } from 'react';
+import { isNumber } from 'lodash';
 
 export interface IItemText {
   header: string;
@@ -15,23 +16,32 @@ export const ItemText = ({ header, text = '-', horizontal = true, style }: IItem
         display: 'flex',
         flexDirection: horizontal ? 'row' : 'column',
         ...(horizontal ? { alignItems: 'center' } : {}),
-        width: '210px',
-        padding: '4px'
+        width: '230px',
+        justifyContent: 'space-between',
+        padding: '4px',
+        height: 'fit-content',
+        textOverflow: 'ellipsis',
+        overflow: 'clip',
+        whiteSpace: 'nowrap'
       }}
     >
       <FormLabel
         sx={{
-          width: '50%',
-          whiteSpace: 'nowrap',
-          textAlign: 'right'
+          width: '48%',
+          textAlign: 'left'
         }}
       >
         {header}
       </FormLabel>
       <h5
+        title={isNumber(text) ? text.toString() : text}
         style={{
-          width: '50%',
+          width: '48%',
           textOverflow: 'ellipsis',
+          overflow: 'clip',
+          whiteSpace: 'nowrap',
+          textAlign: 'left',
+
           ...style
         }}
       >

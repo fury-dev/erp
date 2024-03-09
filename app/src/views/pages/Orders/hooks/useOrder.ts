@@ -15,7 +15,7 @@ export const useOrder = () => {
   } = useApiService<Order>('order');
   const dispatch = useDispatch();
   const orders = useSelector((state: RootState) => state.order.items);
-  const [items, setItems] = useState(orders.value);
+  const [items, setItems] = useState(orders?.value);
   const { selected } = useMultiSelect();
 
   const submitData = useCallback(

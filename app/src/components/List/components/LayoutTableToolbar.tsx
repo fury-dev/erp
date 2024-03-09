@@ -3,19 +3,21 @@ import { useState } from 'react';
 import { Filter, IFilter } from './Filter';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { TQueryParams } from '../../../service/controllers';
 
-interface LayoutTableToolbarProps extends IFilter {
+interface LayoutTableToolbarProps extends Omit<IFilter, 'updateApiFilter'> {
   numSelected: number;
   title?: string;
+  showToolbar?: boolean;
+  updateApiFilter?: (params: TQueryParams) => Promise<void>;
 }
 
 export function LayoutTableToolbar(props: LayoutTableToolbarProps) {
-  const { numSelected, title, loading, updateApiFilter } = props;
+  const { numSelected, title, loading, updateApiFilter, showToolbar } = props;
   const [show, setShow] = useState<boolean>(false);
 
   return (
     <>
-      {' '}
       <Toolbar
         sx={{
           pl: { sm: 2 },
@@ -25,7 +27,7 @@ export function LayoutTableToolbar(props: LayoutTableToolbarProps) {
           })
         }}
       >
-        {numSelected > 0 ? (
+        {numSelected > 0 && showToolbar ? (
           <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
             {numSelected} selected
           </Typography>
@@ -41,14 +43,16 @@ export function LayoutTableToolbar(props: LayoutTableToolbarProps) {
             </IconButton>
           </Tooltip>
         ) : (
-          <Tooltip title="Filter list">
-            <IconButton onClick={() => setShow((prev) => !prev)}>
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
+          showToolbar && (
+            <Tooltip title="Filter list">
+              <IconButton onClick={() => setShow((prev) => !prev)}>
+                <FilterListIcon />
+              </IconButton>
+            </Tooltip>
+          )
         )}
       </Toolbar>
-      {show && <Filter updateApiFilter={updateApiFilter} loading={loading} />}
+      {show && updateApiFilter && <Filter updateApiFilter={updateApiFilter} loading={loading} />}
     </>
   );
 }

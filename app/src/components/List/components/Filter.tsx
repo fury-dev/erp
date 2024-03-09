@@ -1,5 +1,5 @@
 import { TextField, InputAdornment, Select, MenuItem, Button, Box } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { TQueryParams } from '../../../service/controllers';
 
@@ -12,6 +12,11 @@ export const Filter = ({ updateApiFilter, loading }: IFilter) => {
   type TDeleted = 'active' | 'obsolete';
   const [search, setSearch] = useState<string | null>(null);
   const [deleted, setDeleted] = useState<TDeleted>('active');
+
+  useEffect(() => {
+    updateApiFilter({ search, deleted: deleted === 'obsolete' ? 2 : 1 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateApiFilter]);
 
   return (
     <Box display="flex" justifyContent="flex-end" px="5px" width="100%%">

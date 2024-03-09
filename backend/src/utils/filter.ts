@@ -2,7 +2,6 @@ import { isObjectId, StringToObjectId } from "../schema/mongo/utils";
 import { TDateby, TFilter } from "../types/utils";
 import { ObjectId, BSON } from "mongodb";
 import moment from "moment";
-import { isEmpty } from "lodash";
 
 const filterTimeQuery = (dateBy: TDateby) => {
   let timeSpan;

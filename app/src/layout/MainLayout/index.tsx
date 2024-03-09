@@ -79,8 +79,9 @@ const MainLayout = () => {
     );
   };
 
+  console.log(theme);
   return (
-    <Box sx={{ display: 'flex', width: '100%' }}>
+    <Box sx={{ display: 'flex', width: '100%', backgroundColor: theme.palette.background.paper }}>
       <CssBaseline />
       {/* header */}
       <AppBar
@@ -89,7 +90,6 @@ const MainLayout = () => {
         color="inherit"
         elevation={0}
         sx={{
-          bgcolor: theme.palette.background.default,
           transition: leftDrawerOpened ? theme.transitions.create('width') : 'none'
         }}
       >
@@ -111,7 +111,7 @@ const MainLayout = () => {
         {/* main content */}
         <Main theme={theme} open={leftDrawerOpened}>
           {/* breadcrumb */}
-          <Breadcrumbs
+          {/* <Breadcrumbs
             separator={FaChevronRight}
             navigation={navigation}
             icon
@@ -122,7 +122,7 @@ const MainLayout = () => {
             icons={undefined}
             maxItems={undefined}
             titleBottom={undefined}
-          />
+          /> */}
           <Outlet />
         </Main>
       </Box>

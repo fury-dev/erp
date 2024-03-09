@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useFind } from '../../../service/controllers';
 import { getIdFromUrl } from '../../utilities/Validators';
 import { Box, Grid } from '@mui/material';
@@ -12,11 +12,18 @@ import { ViewSkeleton } from '../../../ui-component/cards/Skeleton/ViewSkeleton'
 import GenericChart from '../../../components/Chart';
 import { IoMdImage } from 'react-icons/io';
 import { ElevatedBox } from '../../../components/StyledComponents/ElevatedBox';
-import { ItemLink } from '../../../ui-component/Typography/ItemLink';
+import { LinkText } from '../../../ui-component/Typography/LinkText';
+import { useDialogContext } from '../../../context/useDialogContext';
+import { CustomToolBar } from '../../../layout/Customization/CustomToolBar';
+import { useProduct } from './hooks/useProduct';
+import { ProductSetup } from './ProductSetup';
 
 export const ProductView = () => {
   const location = useLocation();
   const customization = useSelector((state: RootState) => state.customization);
+  const { deleteRequest } = useProduct();
+  const { setComponent } = useDialogContext();
+  const navigate = useNavigate();
 
   const { item, updateQuery, loading } = useFind<Product>('product');
 
@@ -35,7 +42,22 @@ export const ProductView = () => {
     <ViewSkeleton />
   ) : (
     <Grid container gap={1}>
-      <Grid item xs={10}>
+      <CustomToolBar
+        Component={
+          <ProductSetup
+            product={item!}
+            onClose={() => {
+              setComponent(false);
+            }}
+            open={true}
+          />
+        }
+        deleteRequest={async () => {
+          item?.id && (await deleteRequest([item?.id]));
+          navigate(-1);
+        }}
+      />
+      <Grid item xs={9}>
         <ElevatedBox
           display="flex"
           flexDirection="row"
@@ -56,7 +78,7 @@ export const ProductView = () => {
           )}
         </ElevatedBox>
       </Grid>
-      <Grid item xs={1}>
+      <Grid item xs={12} md={2.3}>
         <Box
           sx={{
             display: 'flex',
@@ -66,7 +88,7 @@ export const ProductView = () => {
           <ItemText header="Product Name" text={item?.name} />
           <ItemText header="Size" text={item?.size} />
           <ItemText header="Distributor price" text={`${convertFromINR(item?.price.amount || 0, currency).toFixed(2)} ${symbol}`} />
-          <ItemLink header="ProductSchema" text={item?.productSchema?.name} itemType="productSchema" link={item?.productSchema?.id} />
+          <LinkText header="ProductSchema" text={item?.productSchema?.name} itemType="productSchema" link={item?.productSchema?.id} />
           <ItemText header="Version" text={item?.versionId.toString()} />
         </Box>
       </Grid>

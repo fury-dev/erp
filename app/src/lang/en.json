@@ -9,6 +9,9 @@
       "SHIPPED": "Shipped",
       "OUT_FOR_DELIVERY": "Out For Delivery",
       "DELIVERED": "Delivered"
+    },
+    "detail": {
+      "title": "Order Detail"
     }
   },
   "expense": {
@@ -25,6 +28,42 @@
   },
   "general": {
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "goodMorning": "Good Morning",
+    "goodEvening": "Good Evening",
+    "goodAfternoon": "Good Afternoon",
+    "goodNight": "Good Night",
+    "products": "Products",
+    "orders": "Orders",
+    "productSchemas": "Product Schemas",
+    "expense": "Expenses",
+    "edit": "Edit",
+    "delete": "Delete",
+    "submit": "Submit"
+  },
+  "auth": {
+    "register": { "title": "Register", "hint": "Sign up with Email address" },
+    "login": {
+      "title": "Login",
+      "greet": "Hi, Welcome Back"
+    },
+    "changePassword": {
+      "title": "Change Password"
+    },
+    "guide": "Enter your credentials to continue",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "fields": {
+      "password": "Password",
+      "email": "Email",
+      "username": "Username",
+      "newPasswordAgain": "Re-Enter New Password",
+      "newPassword": "Enter New Password"
+    },
+    "logout": "Log out",
+    "agreeWithTermsAndCondition": "Agree with Terms & Condition."
   }
 }

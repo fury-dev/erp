@@ -2,7 +2,6 @@ import { Link } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 
 // types
-import PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -29,7 +28,30 @@ const linkSX = {
 
 // ==============================|| BREADCRUMBS ||============================== //
 
-const Breadcrumbs = ({ card, divider, icon, icons, maxItems, navigation, rightAlign, separator, title, titleBottom, ...others }) => {
+const Breadcrumbs = ({
+  card,
+  divider,
+  icon,
+  icons,
+  maxItems,
+  navigation,
+  rightAlign,
+  separator,
+  title,
+  titleBottom,
+  ...others
+}: {
+  card: boolean;
+  divider: boolean;
+  icon: boolean;
+  icons: boolean;
+  maxItems: number;
+  navigation: any;
+  rightAlign: boolean;
+  separator: Element | any;
+  title: boolean;
+  titleBottom: boolean;
+}) => {
   const theme = useTheme();
 
   const iconStyle = {
@@ -40,13 +62,13 @@ const Breadcrumbs = ({ card, divider, icon, icons, maxItems, navigation, rightAl
     color: theme.palette.secondary.main
   };
 
-  const [main, setMain] = useState();
-  const [item, setItem] = useState();
+  const [main, setMain] = useState<any>();
+  const [item, setItem] = useState<any>();
 
   // set active item state
-  const getCollapse = (menu) => {
+  const getCollapse = (menu: any) => {
     if (menu.children) {
-      menu.children.filter((collapse) => {
+      menu.children.filter((collapse: any) => {
         if (collapse.type && collapse.type === 'collapse') {
           getCollapse(collapse);
         } else if (collapse.type && collapse.type === 'item') {
@@ -61,7 +83,7 @@ const Breadcrumbs = ({ card, divider, icon, icons, maxItems, navigation, rightAl
   };
 
   useEffect(() => {
-    navigation?.items?.map((menu) => {
+    navigation?.items?.map((menu: { type: string }) => {
       if (menu.type && menu.type === 'group') {
         getCollapse(menu);
       }
@@ -71,7 +93,7 @@ const Breadcrumbs = ({ card, divider, icon, icons, maxItems, navigation, rightAl
 
   // item separator
   const SeparatorIcon = separator;
-  const separatorIcon = separator ? <SeparatorIcon stroke={1.5} size="1rem" /> : <IconTallymark1 stroke={1.5} size="1rem" />;
+  const separatorIcon = separator() ? <SeparatorIcon stroke={1.5} size="1rem" /> : <IconTallymark1 stroke={1.5} size="1rem" />;
 
   let mainContent;
   let itemContent;
@@ -119,6 +141,7 @@ const Breadcrumbs = ({ card, divider, icon, icons, maxItems, navigation, rightAl
           sx={{
             marginBottom: card === false ? 0 : theme.spacing(gridSpacing),
             border: card === false ? 'none' : '1px solid',
+            //@ts-ignore
             borderColor: theme.palette.primary[200] + 75,
             background: card === false ? 'transparent' : theme.palette.background.default
           }}
@@ -171,19 +194,6 @@ const Breadcrumbs = ({ card, divider, icon, icons, maxItems, navigation, rightAl
   }
 
   return breadcrumbContent;
-};
-
-Breadcrumbs.propTypes = {
-  card: PropTypes.bool,
-  divider: PropTypes.bool,
-  icon: PropTypes.bool,
-  icons: PropTypes.bool,
-  maxItems: PropTypes.number,
-  navigation: PropTypes.object,
-  rightAlign: PropTypes.bool,
-  separator: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
-  title: PropTypes.bool,
-  titleBottom: PropTypes.bool
 };
 
 export default Breadcrumbs;

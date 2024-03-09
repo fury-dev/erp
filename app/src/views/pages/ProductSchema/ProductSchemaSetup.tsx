@@ -16,7 +16,7 @@ export const ProductSchemaSetup = ({ onClose, productSchema }: { onClose: () => 
   const theme = useTheme();
   const [size, setSize] = useState('');
   const { submitData } = useProductSchema();
-  const { setOpen, open } = useDialogContext();
+  const { open, setComponent } = useDialogContext();
   const handleSaveSize = (
     _event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
     setFieldValue: (arg0: string, arg1: any[]) => void,
@@ -27,9 +27,8 @@ export const ProductSchemaSetup = ({ onClose, productSchema }: { onClose: () => 
       setSize('');
     }
   };
-  console.log(productSchema);
   return (
-    <DialogBox title="ProductSchema" open={open} onClose={() => setOpen(false)} width="600px">
+    <DialogBox title="ProductSchema" open={open} onClose={() => setComponent(null)} width="600px">
       <Formik<ProductSchema>
         initialValues={{
           name: 'testName',

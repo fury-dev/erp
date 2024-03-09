@@ -3,15 +3,16 @@ import { FormLabel } from '@mui/material';
 import { ITEMS } from '../../types';
 import { Link } from 'react-router-dom';
 import { IItemText } from './ItemText';
+import { isNumber } from 'lodash';
 
-interface IItemLink extends IItemText {
+interface ILinkText extends IItemText {
   header: string;
   text?: string;
   link?: string | null;
   horizontal?: boolean;
   itemType: ITEMS;
 }
-export const ItemLink = ({ header, text = '-', itemType, horizontal = true, link, style }: IItemLink) => {
+export const LinkText = ({ header, text = '-', itemType, horizontal = true, link, style }: ILinkText) => {
   if (!link) {
     return null;
   }
@@ -21,23 +22,30 @@ export const ItemLink = ({ header, text = '-', itemType, horizontal = true, link
         display: 'flex',
         flexDirection: horizontal ? 'row' : 'column',
         ...(horizontal ? { alignItems: 'center' } : {}),
-        width: '190px'
+        width: '230px',
+        justifyContent: 'space-between',
+        textOverflow: 'ellipsis',
+        overflow: 'clip',
+        whiteSpace: 'nowrap'
       }}
     >
       <FormLabel
         sx={{
-          width: '50%',
-          whiteSpace: 'nowrap',
-          textAlign: 'right'
+          width: '48%',
+          textAlign: 'left'
         }}
       >
         {header}
       </FormLabel>
       <Link
+        //@ts-expect-error
+        title={isNumber(text) ? text.toString() : text}
         style={{
-          width: '50%',
+          width: '48%',
           textOverflow: 'ellipsis',
-          overflow: 'hidden',
+          overflow: 'clip',
+          whiteSpace: 'nowrap',
+          textAlign: 'left',
           ...style
         }}
         to={`/home/${itemType}/${link}`}

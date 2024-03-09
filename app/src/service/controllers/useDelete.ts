@@ -75,7 +75,7 @@ export const useDelete = (item: ITEMS) => {
         }
       }
     `;
-  } else {
+  } else if (item === 'expense') {
     query = gql`
       mutation Expense($id: [ID!]) {
         deleteExpense(id: $id) {
@@ -106,6 +106,29 @@ export const useDelete = (item: ITEMS) => {
         }
       }
     `;
+  } else {
+    query = gql`
+      mutation ProductSchema($id: [ID!]) {
+        deleteProductSchema(id: $id) {
+          id
+          name
+          versionId
+          productSchemaId
+          distributorPrice {
+            amount
+            currency
+          }
+          sellerPrice {
+            amount
+            currency
+          }
+          size
+          inStock
+          createdAt
+          updatedAt
+        }
+      }
+    `;
   }
   const [deleteData] = useMutation(query, {
     variables: {
@@ -114,7 +137,6 @@ export const useDelete = (item: ITEMS) => {
   });
 
   const deleteRequest = (data: string[]) => {
-    console.log('deleting', data);
     deleteData({
       variables: {
         id: data

@@ -14,7 +14,7 @@ import { useApiService } from '../../../service';
 import { useDialogContext } from '../../../context/useDialogContext';
 import { omit } from 'lodash';
 
-export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClose: () => void; product?: Product }) => {
+export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClose: () => void; product?: Product | null }) => {
   const theme = useTheme();
   const [showImage, setShowImage] = useState<boolean>(false);
   const {
@@ -22,7 +22,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
   } = useApiService<ProductSchema>('productSchema');
   const productSchemas = data?.productSchemas || [];
   const { submitData } = useProduct();
-  const { setOpen } = useDialogContext();
+  const { setComponent, setOpen } = useDialogContext();
   const fileRef = useRef<LegacyRef<HTMLInputElement>>(null);
 
   const handleImage = async (
@@ -66,7 +66,7 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
     sizes`);
   }, [updateMask]);
   return (
-    <DialogBox title="Product" open={open} onClose={() => setOpen(false)} width="600px">
+    <DialogBox title="Product" open={open} onClose={() => setComponent(null)} width="600px">
       <Formik<Product>
         initialValues={{
           ...(product

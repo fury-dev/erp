@@ -7,7 +7,6 @@ import { updateMongo } from "../../schema/mongo/utils/index";
 const addProduct = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
   try {
-    console.log(args.product);
     const lastProduct = await productModel.controller
       .find()
       .sort({ _id: -1 })
