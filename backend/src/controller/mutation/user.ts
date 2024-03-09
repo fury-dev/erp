@@ -3,7 +3,6 @@ import userModel from "../../schema/mongo/user";
 import response from "../../utils/generateMessage";
 import { OAuth2Client } from "google-auth-library";
 import { checkIfHasMatches, hashPassword } from "../../utils/hashPassword";
-import { StringToObjectId } from "../../schema/mongo/utils";
 import { omit } from "lodash";
 
 const cliendId = process.env.CLIENT_ID;

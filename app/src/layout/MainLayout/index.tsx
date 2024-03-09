@@ -7,12 +7,9 @@ import { AppBar, Box, CssBaseline, Toolbar, useMediaQuery } from '@mui/material'
 
 // project imports
 import { drawerWidth } from '../../store/constant';
-import navigation from '../../menu-items';
-import Breadcrumbs from '../../ui-component/extended/Breadcrumbs';
 import Customization from '../../layout/Customization';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import { FaChevronRight } from 'react-icons/fa';
 import { RootState } from '../../store';
 import { setMenu } from '../../store/reducers/customizationReducer';
 

@@ -29,20 +29,17 @@ import { strengthColor, strengthIndicator } from '../../../../utils/password-str
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { omit } from 'lodash';
 import { useChangePassword } from '../../../../hooks/useChangePassword';
 import { useTranslation } from 'react-i18next';
 import AuthCardWrapper from '../AuthCardWrapper';
 import AuthWrapper1 from '../AuthWrapper1';
 import AuthFooter from '../../../../ui-component/cards/AuthFooter';
-import { useAuthContext } from '../../../../context/AuthContext';
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
 const ChangePasswordForm = ({ ...others }) => {
   const theme = useTheme();
   const location = useLocation();
-  const { setUser } = useAuthContext();
   const scriptedRef = useScriptRef();
   const [showPassword, setShowPassword] = useState(false);
   const { t } = useTranslation();
@@ -114,7 +111,7 @@ const ChangePasswordForm = ({ ...others }) => {
           }
         }}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+        {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
             {/* @ts-ignore */}
 

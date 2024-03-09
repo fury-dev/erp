@@ -21,7 +21,6 @@ import {
 } from '@mui/material';
 
 // third-party
-import PerfectScrollbar from 'react-perfect-scrollbar';
 
 // project imports
 import MainCard from '../../../../ui-component/cards/MainCard';
@@ -32,7 +31,6 @@ import { IconEdit, IconLogout, IconSettings, IconUser } from '@tabler/icons-reac
 import { RootState } from '../../../../store';
 import { useAuthContext } from '../../../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { FaEdit } from 'react-icons/fa';
 
 // ==============================|| PROFILE MENU ||============================== //
 

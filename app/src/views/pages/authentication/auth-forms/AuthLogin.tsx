@@ -6,18 +6,14 @@ import { useTheme } from '@mui/material/styles';
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
   FormControl,
-  FormControlLabel,
   FormHelperText,
   Grid,
   IconButton,
   InputAdornment,
   InputLabel,
-  OutlinedInput,
-  Stack,
-  Typography
+  OutlinedInput
   // useMediaQuery
 } from '@mui/material';
 
@@ -47,7 +43,6 @@ const Login = ({ ...others }) => {
   const scriptedRef = useScriptRef();
   // const _matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
   const customization = useSelector((state: RootState) => state.customization);
-  const [checked, setChecked] = useState(true);
   const { updateQuery, apiErrors, data, loading } = useLogin();
   const { t } = useTranslation();
 
