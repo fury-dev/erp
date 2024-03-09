@@ -1,6 +1,7 @@
+import { isObjectId, StringToObjectId } from "../schema/mongo/utils";
+import { TDateby, TFilter } from "../types/utils";
+import { ObjectId, BSON } from "mongodb";
 import moment from "moment";
-
-export type TDateby = "MONTH" | "ALL_TIME" | "YEAR" | "DAY" | "WEEK";
 
 const filterTimeQuery = (dateBy: TDateby) => {
   let timeSpan;
@@ -31,4 +32,87 @@ const filterTimeQuery = (dateBy: TDateby) => {
   };
 };
 
+export const createMongoFilter = (args: TFilter, searchElement: string) => {
+  const match: any[] = [];
+  const filters: {
+    deleted: number;
+    id: string[];
+    dateBy: TDateby;
+    search: string;
+    limit: number;
+    dynamicQuery: any;
+  } = args;
+  if (filters?.deleted)
+    match.push({
+      deleted: {
+        $eq: filters.deleted === 2,
+      },
+    });
+  else if (!filters?.deleted) {
+    match.push({
+      deleted: {
+        $eq: false,
+      },
+    });
+  }
+
+  if (filters?.dynamicQuery) {
+    const item = JSON.parse(filters?.dynamicQuery);
+    match.push(
+      ...Object.keys(item).map((key) => {
+        return {
+          [key]: {
+            ...(Array.isArray(item[key])
+              ? {
+                  $in: item[key].map((value: any) =>
+                    isObjectId(value) ? StringToObjectId(value) : value
+                  ),
+                }
+              : {
+                  $eq: isObjectId(item[key])
+                    ? StringToObjectId(item[key])
+                    : item[key],
+                }),
+          },
+        };
+      })
+    );
+  } else if ((filters?.id || []).length > 0) {
+    match.push({
+      _id: {
+        $in: filters.id.map(
+          (
+            value:
+              | string
+              | number
+              | BSON.ObjectId
+              | BSON.ObjectIdLike
+              | Uint8Array
+              | undefined
+          ) => new ObjectId(value)
+        ),
+      },
+    });
+  }
+  if (filters?.dateBy) {
+    const { timeSpan } = filterTimeQuery(filters.dateBy);
+    if (timeSpan) {
+      match.push({
+        createdAt: { $gte: timeSpan[0], $lte: timeSpan[1] },
+      });
+    }
+  }
+  if ((filters?.search || "").length > 0) {
+    match.push({
+      versions: {
+        $elemMatch: {
+          [searchElement]: {
+            $regex: new RegExp(filters.search, "i"),
+          },
+        },
+      },
+    });
+  }
+  return match;
+};
 export default { filterTimeQuery };

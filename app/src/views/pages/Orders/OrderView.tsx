@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useFind } from '../../../service/controllers';
 import { getIdFromUrl } from '../../utilities/Validators';
 import { Box, Grid } from '@mui/material';
@@ -8,17 +8,29 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { convertFromINR, currencySymbol } from '../../../data/Product/currency';
 import { ViewSkeleton } from '../../../ui-component/cards/Skeleton/ViewSkeleton';
-import GenericChart from '../../../components/Chart';
 import { IoMdImage } from 'react-icons/io';
 import { ElevatedBox } from '../../../components/StyledComponents/ElevatedBox';
 import { Order } from '../../../types/items/order';
+import { LinkText } from '../../../ui-component/Typography/LinkText';
+import { useTranslation } from 'react-i18next';
+import { useDialogContext } from '../../../context/useDialogContext';
+import { OrderSetup } from './OrderSetup';
+import { useOrder } from './hooks/useOrder';
+import { CustomToolBar } from '../../../layout/Customization/CustomToolBar';
 
-export const OrderView = () => {
+const OrderView = () => {
   const location = useLocation();
   const customization = useSelector((state: RootState) => state.customization);
+  const { setComponent } = useDialogContext();
+  const borderRadiusPx = `${customization.borderRadius}px`;
+  const { deleteRequest } = useOrder();
+  const navigate = useNavigate();
 
+  const currency = useSelector((state: RootState) => state.customization.currency);
+
+  const symbol = currencySymbol[currency];
   const { item, updateQuery, loading } = useFind<Order>('order');
-
+  const { t } = useTranslation();
   const id = getIdFromUrl(location.pathname);
   useEffect(() => {
     updateQuery({
@@ -27,20 +39,28 @@ export const OrderView = () => {
     });
   }, [updateQuery, id]);
 
-  const currency = useSelector((state: RootState) => state.customization.currency);
-
-  const symbol = currencySymbol[currency];
   return loading ? (
     <ViewSkeleton />
   ) : (
     <Grid container gap={1}>
-      <Grid item xs={10}>
-        <ElevatedBox
-          display="flex"
-          flexDirection="row"
-          justifyContent="center"
-          sx={{ height: '100%', alignItems: 'center', borderRadius: `${customization.borderRadius}px` }}
-        >
+      <CustomToolBar
+        Component={
+          <OrderSetup
+            open={true}
+            order={item!}
+            onClose={() => {
+              setComponent(false);
+            }}
+          />
+        }
+        deleteRequest={async () => {
+          item?.id && (await deleteRequest([item?.id]));
+          navigate(-1);
+        }}
+      />
+
+      <Grid item xs={9}>
+        <ElevatedBox sx={{ borderRadius: borderRadiusPx }}>
           {item?.product?.image ? (
             <img
               src={item?.product?.image}
@@ -55,44 +75,45 @@ export const OrderView = () => {
           )}
         </ElevatedBox>
       </Grid>
-      <Grid item xs={1}>
+      <Grid item xs={12} md={2.3}>
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            overflow: 'clip',
+            textOverflow: 'ellipsis',
+            width: '100%'
           }}
         >
-          <ItemText header="Product Name" text={item?.product?.name} />
-          <ItemText header="Size" text={item?.product?.size} />
-          <ItemText header="price" text={`${convertFromINR(item?.product?.price.amount || 0, currency).toFixed(2)} ${symbol}`} />
-          <ItemText
-            header="Distributor price"
-            text={`${convertFromINR(item?.product?.productSchema?.distributorPrice.amount || 0, currency).toFixed(2)} ${symbol}`}
-          />
-          <ItemText
-            header="Seller price"
-            text={`${convertFromINR(item?.product?.productSchema?.sellerPrice.amount || 0, currency).toFixed(2)} ${symbol}`}
-          />
+          <ItemText header="Status" text={t(`order.status.${item?.status}`)} />
+          <ItemText header="Price" text={`${convertFromINR(item?.amount.amount || 0, currency).toFixed(2)} ${symbol}`} />
           <ItemText header="Version" text={item?.versionId.toString()} />
+          <LinkText header="Product" link={item?.product?.id} text={item?.product?.name} itemType="product" />
+          <ItemText header="Order Date" text={item?.orderDate} />
+          <ItemText header="Order Type" text={t(`order.type.${item?.orderType}`)} />
+          <ItemText header="Paid" text={item?.paymentStatus ? t('general.yes') : t('general.no')} />
         </Box>
       </Grid>
       <Grid item xs={12}>
-        <GenericChart<'product'>
-          item="product"
-          filter={{
-            item: 'order',
-            group: 'status',
-            id: [id],
-            queryPath: 'productId'
+        <ElevatedBox
+          display="flex"
+          flexDirection="column"
+          header="order.detail.title"
+          headerStyle={{
+            textAlign: 'left',
+            width: '100%'
           }}
-          items={[
-            {
-              label: 'Product',
-              value: 'product'
-            }
-          ]}
-        />
+        >
+          <ItemText header="Customer Name" text={item?.customerName} />
+          <ItemText header="Address" text={item?.location?.address} />
+          <ItemText header="City" text={item?.location?.city} />
+          <ItemText header="State" text={item?.location?.state} />
+
+          <ItemText header="Country" text={item?.location?.country} />
+          <ItemText header="Pincode" text={item?.location?.pincode} />
+        </ElevatedBox>
       </Grid>
     </Grid>
   );
 };
+export default OrderView;

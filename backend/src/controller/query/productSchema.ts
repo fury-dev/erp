@@ -1,45 +1,10 @@
 import productSchemaModel from "../../schema/mongo/productSchema";
 import generateQuery from "../../utils/generateQuery";
 import { unpackMessage } from "../../schema/mongo/utils/index";
-import { ObjectId, BSON } from "mongodb";
 
 const productSchemas = async (_: any, args: any, context: any) => {
   if (!context.user) return null;
-  const match: any[] = [
-    {
-      deleted: {
-        $eq: args.deleted,
-      },
-    },
-  ];
-  if ((args?.id || []).length > 0) {
-    match.push({
-      _id: {
-        $in: args.id.map(
-          (
-            value:
-              | string
-              | number
-              | BSON.ObjectId
-              | BSON.ObjectIdLike
-              | Uint8Array
-              | undefined
-          ) => new ObjectId(value)
-        ),
-      },
-    });
-  }
-  if ((args?.search || "").length > 0) {
-    match.push({
-      versions: {
-        $elemMatch: {
-          name: {
-            $regex: new RegExp(args.search, "i"),
-          },
-        },
-      },
-    });
-  }
+
   const response = await generateQuery.generateQuery(
     productSchemaModel.controller,
     args,
@@ -53,6 +18,7 @@ const productSchemas = async (_: any, args: any, context: any) => {
 
   return preprocess;
 };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const productSchemaSelection = (
   _: any,
   args: {
@@ -72,4 +38,4 @@ const productSchemaSelection = (
     return {};
   }
 };
-export default { productSchemas, productSchemaSelection };
+export default { productSchemas };

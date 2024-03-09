@@ -3,6 +3,7 @@ import userModel from "../../schema/mongo/user";
 import response from "../../utils/generateMessage";
 import { OAuth2Client } from "google-auth-library";
 import { checkIfHasMatches, hashPassword } from "../../utils/hashPassword";
+import { omit } from "lodash";
 
 const cliendId = process.env.CLIENT_ID;
 const registerUser = async (_: any, { user = null }: any) => {
@@ -120,4 +121,32 @@ const loginWithGoogle = async (_: any, args: any) => {
     return err;
   }
 };
-export default { loginUser, registerUser, loginWithGoogle };
+
+const changePassword = async (_: any, args: any, context: any) => {
+  console.log("Change Password request", args);
+  if (!context.user) return null;
+
+  try {
+    const findUser = await userModel.controller.findOne({
+      email: args.data.email,
+    });
+    if (!findUser) {
+      console.log("User not found");
+      return new Error("User not found");
+    }
+    const hash = await hashPassword(args.data.password);
+    await userModel.controller.updateOne(
+      { email: args.data.email },
+      {
+        $set: {
+          password: hash,
+        },
+      }
+    );
+    return omit(findUser.toJSON(), "password");
+  } catch (err) {
+    console.log(err);
+    return new Error("Internal Server error");
+  }
+};
+export default { loginUser, registerUser, loginWithGoogle, changePassword };

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Button, CardActions, CardContent, Divider, Grid, Menu, MenuItem, Typography } from '@mui/material';
+import { Button, CardActions, CardContent, Container, Divider, Grid, Menu, MenuItem, Typography } from '@mui/material';
 
 // project imports
 import MainCard from '../../../ui-component/cards/MainCard';
@@ -25,7 +25,12 @@ const RecentOrders = ({ isLoading }: { isLoading: boolean }) => {
   const [time, setTime] = useState<TQueryParams['dateBy']>('ALL_TIME');
 
   const [anchorEl, setAnchorEl] = useState(null);
-
+  const {
+    list: { data, updateMask, updateQuery }
+  } = useApiService<Order>('order');
+  const orders: Order[] = data?.orders || [];
+  const currency = useSelector((state: RootState) => state.customization.currency);
+  const currencySymbol = _currencySymbol[currency];
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
@@ -39,12 +44,6 @@ const RecentOrders = ({ isLoading }: { isLoading: boolean }) => {
     setAnchorEl(null);
   };
 
-  const {
-    list: { data, updateMask, updateQuery }
-  } = useApiService<Order>('order');
-  const orders: Order[] = data?.orders || [];
-  const currency = useSelector((state: RootState) => state.customization.currency);
-  const currencySymbol = _currencySymbol[currency];
   useEffect(() => {
     updateQuery(
       {
@@ -120,8 +119,8 @@ const RecentOrders = ({ isLoading }: { isLoading: boolean }) => {
                 </Grid>
               </Grid>
               <Grid item xs={12}>
-                {orders.map((order) => (
-                  <>
+                {orders.map((order, key) => (
+                  <Container key={key.toString()} onClick={() => navigate('/home/order/' + order.id)}>
                     <Grid container direction="column">
                       <Grid item>
                         <Grid container alignItems="center" justifyContent="space-between">
@@ -144,7 +143,7 @@ const RecentOrders = ({ isLoading }: { isLoading: boolean }) => {
                       </Grid>
                     </Grid>
                     <Divider sx={{ my: 1.5 }} />
-                  </>
+                  </Container>
                 ))}
               </Grid>
             </Grid>

@@ -12,19 +12,11 @@ import { FormInputMoney } from '../../../components/Form';
 import { Price } from '../../../types';
 import { useDialogContext } from '../../../context/useDialogContext';
 
-export const ProductSchemaSetup = ({
-  open,
-  onClose,
-  productSchema
-}: {
-  open: boolean;
-  onClose: () => void;
-  productSchema?: ProductSchema;
-}) => {
+export const ProductSchemaSetup = ({ onClose, productSchema }: { onClose: () => void; productSchema?: ProductSchema }) => {
   const theme = useTheme();
   const [size, setSize] = useState('');
   const { submitData } = useProductSchema();
-  const { setOpen } = useDialogContext();
+  const { open, setComponent } = useDialogContext();
   const handleSaveSize = (
     _event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
     setFieldValue: (arg0: string, arg1: any[]) => void,
@@ -35,9 +27,8 @@ export const ProductSchemaSetup = ({
       setSize('');
     }
   };
-  console.log(productSchema);
   return (
-    <DialogBox title="ProductSchema" open={open} onClose={() => setOpen(false)} width="600px">
+    <DialogBox title="ProductSchema" open={open} onClose={() => setComponent(null)} width="600px">
       <Formik<ProductSchema>
         initialValues={{
           name: 'testName',
@@ -58,7 +49,7 @@ export const ProductSchemaSetup = ({
         // validate={validation}
         onSubmit={async (values) => {
           try {
-            if (values) await submitData(values as ProductSchema);
+            await submitData(values as ProductSchema);
             onClose();
           } catch (err) {
             console.error(err);

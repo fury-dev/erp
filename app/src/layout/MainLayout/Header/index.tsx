@@ -7,7 +7,6 @@ import LogoSection from '../LogoSection';
 import ProfileSection from './ProfileSection';
 
 // types
-import PropTypes from 'prop-types';
 
 // assets
 import { IconMenu2 } from '../../../../node_modules/@tabler/icons-react';
@@ -39,11 +38,11 @@ const Header = ({ handleLeftDrawerToggle }: any) => {
               //@ts-ignore
               ...theme.typography.mediumAvatar,
               transition: 'all .2s ease-in-out',
-              background: theme.palette.secondary.light,
-              color: theme.palette.secondary.dark,
+              background: theme.palette.grey[500],
+              color: theme.palette.background.default,
               '&:hover': {
-                background: theme.palette.secondary.dark,
-                color: theme.palette.secondary.light
+                background: theme.palette.background.default,
+                color: theme.typography.body1
               }
             }}
             onClick={handleLeftDrawerToggle}
@@ -60,10 +59,6 @@ const Header = ({ handleLeftDrawerToggle }: any) => {
       <ProfileSection />
     </>
   );
-};
-
-Header.propTypes = {
-  handleLeftDrawerToggle: PropTypes.func
 };
 
 export default Header;

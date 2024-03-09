@@ -35,19 +35,21 @@ import { strengthColor, strengthIndicator } from '../../../../utils/password-str
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { userRegister } from '../../../../hooks/useRegister';
+import { useRegister } from '../../../../hooks/useRegister';
 import { omit } from 'lodash';
 import { RootState } from '../../../../store';
+import { useTranslation } from 'react-i18next';
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
-const FirebaseRegister = ({ ...others }) => {
+const Register = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
   // const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
   const customization = useSelector((state: RootState) => state.customization);
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
-  const { submitQuery, data, apiErrors } = userRegister();
+  const { submitQuery, data, apiErrors } = useRegister();
   const [checked, setChecked] = useState(true);
   const navigate = useNavigate();
   const { loginWithGoogle } = useGoogleLogin();
@@ -112,11 +114,6 @@ const FirebaseRegister = ({ ...others }) => {
             <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
           </Box>
         </Grid>
-        <Grid item xs={12} container alignItems="center" justifyContent="center">
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1">Sign up with Email address</Typography>
-          </Box>
-        </Grid>
       </Grid>
 
       <Formik
@@ -150,7 +147,7 @@ const FirebaseRegister = ({ ...others }) => {
           <form noValidate onSubmit={handleSubmit} {...others}>
             {/* @ts-ignore */}
             <FormControl fullWidth error={Boolean(touched.username && errors.username)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-email-register"> Username</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-email-register">{t('auth.fields.username')}</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-email-register"
                 type="username"
@@ -169,7 +166,7 @@ const FirebaseRegister = ({ ...others }) => {
             {/* @ts-ignore */}
 
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-email-register">Email Address </InputLabel>
+              <InputLabel htmlFor="outlined-adornment-email-register">{t('auth.fields.email')}</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-email-register"
                 type="email"
@@ -188,13 +185,13 @@ const FirebaseRegister = ({ ...others }) => {
             {/* @ts-ignore */}
 
             <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-password-register">Password</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-password-register">{t('auth.fields.password')}</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-password-register"
                 type={showPassword ? 'text' : 'password'}
                 value={values.password}
                 name="password"
-                label="Password"
+                label={t('auth.fields.password')}
                 onBlur={handleBlur}
                 onChange={(e) => {
                   handleChange(e);
@@ -246,11 +243,8 @@ const FirebaseRegister = ({ ...others }) => {
                     <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
                   }
                   label={
-                    <Typography variant="subtitle1">
-                      Agree with &nbsp;
-                      <Typography variant="subtitle1" component={Link} to="#">
-                        Terms & Condition.
-                      </Typography>
+                    <Typography variant="subtitle1" component={Link} to="#">
+                      {t('auth.agreeWithTermsAndCondition')}
                     </Typography>
                   }
                 />
@@ -263,7 +257,7 @@ const FirebaseRegister = ({ ...others }) => {
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">
-                  Sign up
+                  {t('auth.signUp')}
                 </Button>
               </AnimateButton>
             </Box>
@@ -274,4 +268,4 @@ const FirebaseRegister = ({ ...others }) => {
   );
 };
 
-export default FirebaseRegister;
+export default Register;

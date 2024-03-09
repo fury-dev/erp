@@ -107,8 +107,8 @@ export const useUpdate = (item: ITEMS) => {
     }
   });
 
-  const submitData = (data: any) => {
-    update({
+  const submitData = async (data: any) => {
+    await update({
       variables: {
         item: data
       }

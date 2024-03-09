@@ -19,7 +19,8 @@ export const FormSelect = <T,>({
   sx,
   apiAction,
   setFieldValue,
-  defaultSelect = false
+  defaultSelect = false,
+  required = false
 }: IFormSelect<T>) => {
   const theme = useTheme();
   useEffect(() => {
@@ -29,7 +30,6 @@ export const FormSelect = <T,>({
   }, [apiAction]);
 
   useEffect(() => {
-    console.log(name, typeof options[0] === 'string' ? options[0] : options[0]?.value);
     if (!value && options.length > 0 && setFieldValue && typeof name === 'string' && defaultSelect) {
       setFieldValue(name, typeof options[0] === 'string' ? options[0] : options[0].value);
     }
@@ -43,6 +43,7 @@ export const FormSelect = <T,>({
       <InputLabel htmlFor="outlined-adornment-name-login">{title}</InputLabel>
 
       <Select
+        required={required}
         id="outlined-adornment-currency-order"
         onBlur={handleChange}
         label={title}

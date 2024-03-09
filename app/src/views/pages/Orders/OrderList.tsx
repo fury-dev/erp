@@ -7,9 +7,10 @@ import moment from 'moment';
 import { FaEdit } from 'react-icons/fa';
 import { Order } from '../../../types/items/order';
 import { useCallback } from 'react';
-import { useDialogContext } from '../../../context/DialogContext';
+import { useDialogContext } from '../../../context/useDialogContext';
 import { convertFromINR, currencySymbol as _currencySymbol } from '../../../data/Product/currency';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../../store';
 const OrderList = () => {
   const {
@@ -18,7 +19,7 @@ const OrderList = () => {
     selected,
     deleteRequest
   } = useOrder();
-
+  const navigate = useNavigate();
   const { setComponent } = useDialogContext();
   const currency = useSelector((state: RootState) => state.customization.currency);
   const currencySymbol = _currencySymbol[currency];
@@ -41,23 +42,23 @@ const OrderList = () => {
           {
             field: 'orderDate',
             headerName: 'Order Date',
-            width: 170,
-            getValue: (params) => moment(parseInt(params.orderDate)).format('DD-MM-YYYY:HH:MM')
+            width: 250,
+            getValue: (item) => item.orderDate
           },
           {
             field: 'product',
             headerName: 'Product Name',
             width: 130,
             numeric: true,
-            getValue: (params) => params.product?.name || ''
+            getValue: (item) => item.product?.name || ''
           },
           {
             field: 'amount',
             headerName: 'Amount',
             width: 70,
-            getValue: (params) =>
+            getValue: (item) =>
               ` ${
-                params.amount.currency !== currency ? convertFromINR(params.amount.amount, currency).toFixed(2) : params.amount.amount
+                item.amount.currency !== currency ? convertFromINR(item.amount.amount, currency).toFixed(2) : item.amount.amount
               } ${currencySymbol} `
           },
           {
@@ -69,36 +70,37 @@ const OrderList = () => {
             field: 'status',
             headerName: 'Status',
             width: 150,
-            getValue: (params) => `${params.status}`
+            getValue: (item) => `${item.status}`
           },
 
           {
             field: 'paymentStatus',
             headerName: 'Payment Status',
             width: 150,
-            getValue: (params) => `${params.paymentStatus ? 'DONE' : 'PENDING'}`
+            getValue: (item) => `${item.paymentStatus ? 'DONE' : 'PENDING'}`
           },
           {
             field: 'deliveryDate',
             headerName: 'Delivery Date',
             width: 150,
-            getValue: (params) => (params.deliveryDate ? moment(parseInt(params.deliveryDate)).format('DD-MM-YYYY:HH:MM') : 'N/A')
+            getValue: (item) => (item.deliveryDate ? moment(parseInt(item.deliveryDate)).format('DD-MM-YYYY:HH:MM') : 'N/A')
           },
           {
             field: 'createdAt',
             headerName: 'Created',
             width: 150,
-            getValue: (params) => moment(parseInt(params.createdAt || '0')).format('DD-MM-YYYY:HH:MM')
+            getValue: (item) => moment(parseInt(item.createdAt || '0')).format('DD-MM-YYYY:HH:MM')
           },
           {
             field: 'updatedAt',
             headerName: 'Modified',
             width: 150,
-            getValue: (params) => moment(parseInt(params.updatedAt || '0')).format('DD-MM-YYYY:HH:MM')
+            getValue: (item) => moment(parseInt(item.updatedAt || '0')).format('DD-MM-YYYY:HH:MM')
           }
         ])}
         rows={orders || []}
         loading={loading}
+        rowOnClick={(item) => navigate('/home/order/' + item.id)}
         headerButtons={
           <HeaderButtons
             buttons={[
@@ -159,7 +161,7 @@ const OrderList = () => {
           ]
         }}
         startPolling={apiAction}
-        title={'Order'}
+        title={'orders'}
       />
     </div>
   );

@@ -1,9 +1,18 @@
 import { FormControl, FormHelperText, useTheme } from '@mui/material';
-import { DateTimePicker } from '@mui/x-date-pickers';
+import { DateTimePicker, DateTimeValidationError, PickerChangeHandlerContext } from '@mui/x-date-pickers';
 import { IFormField } from './interface';
 import dayjs from 'dayjs';
 
-export const FormDateTime = <T,>({ handleChange, touched, errors, title, value, name }: IFormField<T>) => {
+export const FormDateTime = <T,>({
+  handleChange,
+  touched,
+  errors,
+  title,
+  value,
+  name
+}: Omit<IFormField<T>, 'handleChange'> & {
+  handleChange: ((value: dayjs.Dayjs | null, context: PickerChangeHandlerContext<DateTimeValidationError>) => void) | undefined;
+}) => {
   const theme = useTheme();
 
   return (

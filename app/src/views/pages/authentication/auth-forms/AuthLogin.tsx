@@ -6,18 +6,14 @@ import { useTheme } from '@mui/material/styles';
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
   FormControl,
-  FormControlLabel,
   FormHelperText,
   Grid,
   IconButton,
   InputAdornment,
   InputLabel,
-  OutlinedInput,
-  Stack,
-  Typography
+  OutlinedInput
   // useMediaQuery
 } from '@mui/material';
 
@@ -38,16 +34,17 @@ import { omit } from 'lodash';
 import { GoogleLogin } from '@react-oauth/google';
 import { useGoogleLogin } from '../../../../hooks/useGoogleLogin';
 import { RootState } from '../../../../store';
+import { useTranslation } from 'react-i18next';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
-const FirebaseLogin = ({ ...others }) => {
+const Login = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
   // const _matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
   const customization = useSelector((state: RootState) => state.customization);
-  const [checked, setChecked] = useState(true);
   const { updateQuery, apiErrors, data, loading } = useLogin();
+  const { t } = useTranslation();
 
   const { loginWithGoogle } = useGoogleLogin();
 
@@ -107,11 +104,6 @@ const FirebaseLogin = ({ ...others }) => {
             <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
           </Box>
         </Grid>
-        <Grid item xs={12} container alignItems="center" justifyContent="center">
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1">Sign in with Email address</Typography>
-          </Box>
-        </Grid>
       </Grid>
 
       <Formik
@@ -126,7 +118,6 @@ const FirebaseLogin = ({ ...others }) => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            console.log('submit', scriptedRef.current);
             setStatus({ success: true });
             setSubmitting(false);
             await updateQuery(omit(values, 'submit'));
@@ -145,7 +136,7 @@ const FirebaseLogin = ({ ...others }) => {
             {/* @ts-ignore */}
 
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-email-login">{t('auth.fields.email')}</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-email-login"
                 type="email"
@@ -153,7 +144,7 @@ const FirebaseLogin = ({ ...others }) => {
                 name="email"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                label="Email Address / Username"
+                label={t('auth.fields.email')}
                 inputProps={{}}
               />
               {touched.email && errors.email && (
@@ -164,7 +155,7 @@ const FirebaseLogin = ({ ...others }) => {
             </FormControl>
             {/* @ts-ignore */}
             <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-password-login">Password</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-password-login">{t('auth.fields.password')}</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-password-login"
                 type={showPassword ? 'text' : 'password'}
@@ -185,7 +176,7 @@ const FirebaseLogin = ({ ...others }) => {
                     </IconButton>
                   </InputAdornment>
                 }
-                label="Password"
+                label={t('auth.fields.password')}
                 inputProps={{}}
               />
               {touched.password && errors.password && (
@@ -194,17 +185,7 @@ const FirebaseLogin = ({ ...others }) => {
                 </FormHelperText>
               )}
             </FormControl>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-              <FormControlLabel
-                control={
-                  <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
-                }
-                label="Remember me"
-              />
-              <Typography variant="subtitle1" color="secondary" sx={{ textDecoration: 'none', cursor: 'pointer' }}>
-                Forgot Password?
-              </Typography>
-            </Stack>
+
             <Box sx={{ mt: 3 }}>
               <FormHelperText error={apiErrors?.message}>{apiErrors?.message || data?.message}</FormHelperText>
             </Box>
@@ -220,7 +201,7 @@ const FirebaseLogin = ({ ...others }) => {
                   variant="contained"
                   color="secondary"
                 >
-                  Sign in
+                  {t('auth.signIn')}
                 </Button>
               </AnimateButton>
             </Box>
@@ -231,4 +212,4 @@ const FirebaseLogin = ({ ...others }) => {
   );
 };
 
-export default FirebaseLogin;
+export default Login;

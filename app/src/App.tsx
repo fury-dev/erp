@@ -20,11 +20,8 @@ import { MultiSelectContextProvider } from './context/MuliSelectContext';
 import { DialogContextProvider } from './context/DialogContext';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-
 function App() {
-  //@ts-ignore
-  const customization = useSelector((state) => state.customization);
-  console.log((import.meta as any).env);
+  const customization = useSelector((state: any) => state?.customization);
   return (
     <GoogleOAuthProvider clientId={(import.meta as any).env?.VITE_GOOGLE_OAUTH_API}>
       <ApolloProvider client={client}>

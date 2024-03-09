@@ -42,6 +42,7 @@ const preProcessCurrency = (data: object, mask: string[]) => {
         convertToINR(dataValue.amount, dataValue.currency),
         config.database.currency as TCurrency
       ),
+      currency: config.database.currency as TCurrency,
     };
   });
   return data;

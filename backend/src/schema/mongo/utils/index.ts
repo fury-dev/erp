@@ -1,5 +1,6 @@
 import lodash from "lodash";
 import generateTimestamp from "../../../utils/generateTimestamp";
+import mongoose from "mongoose";
 
 export const updateMongo = (
   item: any,
@@ -38,7 +39,7 @@ export const unpackMessage = (item: any[], mask?: string, index?: number) => {
       "_id"
     );
     return {
-      ...value,
+      ...lodash.omit(value, "message"),
       ...response,
       ...(mask
         ? {
@@ -46,6 +47,13 @@ export const unpackMessage = (item: any[], mask?: string, index?: number) => {
               ...value[mask][0]["versions"][
                 index ? index : value[mask][0]["versions"].length - 1
               ],
+              ...lodash.omit(
+                value[mask][0],
+                "_id",
+                "createdAt",
+                "updatedAt",
+                "versions"
+              ),
               id: value[mask][0]._id,
             },
           }
@@ -56,4 +64,9 @@ export const unpackMessage = (item: any[], mask?: string, index?: number) => {
     };
   });
 };
+export const isObjectId = (value: string) =>
+  mongoose.Types.ObjectId.isValid(value);
+export const StringToObjectId = (value: string) =>
+  new mongoose.Types.ObjectId(value);
+
 export default { updateMongo, unpackMessage };

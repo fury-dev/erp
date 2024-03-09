@@ -4,7 +4,7 @@ import { Box, Drawer, useMediaQuery } from '@mui/material';
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { BrowserView, MobileView } from 'react-device-detect';
+import { BrowserView } from 'react-device-detect';
 
 // types
 
@@ -13,23 +13,25 @@ import MenuList from './MenuList';
 import LogoSection from '../LogoSection';
 import { drawerWidth } from '../../../store/constant';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 interface ISidebar {
   drawerOpen: boolean;
   drawerToggle: any;
-  window: any;
+  window?: any;
 }
 
 const StyledPerfectScrollbar = styled(PerfectScrollbar)`
   ::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
-    background-color: #f5f5f5;
+    background-color: #000000;
   }
 `;
 const Sidebar = ({ drawerOpen = false, drawerToggle = () => 0, window }: ISidebar) => {
   const theme = useTheme();
   const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
-
+  const customization = useSelector((state: RootState) => state.customization);
   const drawer = (
     <>
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
@@ -41,26 +43,29 @@ const Sidebar = ({ drawerOpen = false, drawerToggle = () => 0, window }: ISideba
         <StyledPerfectScrollbar
           component="div"
           style={{
-            height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
+            height: 'fit-content',
             paddingLeft: '16px',
-            paddingRight: '16px'
+            paddingRight: '16px',
+            padding: '5px',
+            backgroundColor: theme.palette.background.default,
+            borderRadius: `${customization.borderRadius}px`,
+            margin: '5px'
           }}
         >
           <MenuList />
         </StyledPerfectScrollbar>
       </BrowserView>
-      <MobileView>
-        <Box sx={{ px: 2 }}>
-          <MenuList />
-        </Box>
-      </MobileView>
     </>
   );
 
   const container = window !== undefined ? () => window.document.body : undefined;
 
   return (
-    <Box component="nav" sx={{ flexShrink: { md: 0 }, width: matchUpMd ? drawerWidth : 'auto' }} aria-label="mailbox folders">
+    <Box
+      component="nav"
+      sx={{ flexShrink: { md: 0 }, width: matchUpMd ? drawerWidth : 'auto', margin: '10px' }}
+      aria-label="mailbox folders"
+    >
       <Drawer
         container={container}
         variant={matchUpMd ? 'persistent' : 'temporary'}
@@ -70,7 +75,6 @@ const Sidebar = ({ drawerOpen = false, drawerToggle = () => 0, window }: ISideba
         sx={{
           '& .MuiDrawer-paper': {
             width: drawerWidth,
-            background: theme.palette.background.default,
             color: theme.palette.text.primary,
             borderRight: 'none',
             [theme.breakpoints.up('md')]: {

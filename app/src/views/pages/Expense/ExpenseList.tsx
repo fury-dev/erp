@@ -123,36 +123,8 @@ const ExpenseList = () => {
             ]}
           />
         }
-        // actionCell={{
-        //   field: 'Actions',
-        //   headerName: 'Actions',
-        //   width: 80,
-        //   buttons: [
-        //     {
-        //       title: 'Update',
-        //       rest: {
-        //         onClick: useCallback(
-        //           (e: any) => {
-        //             setComponent(
-        //               <ExpenseSetup
-        //                 expense={expense.find((value) => value.id === e.currentTarget.id) as Expense}
-        //                 open={true}
-        //                 onClose={() => {
-        //                   setComponent(false);
-        //                 }}
-        //               />
-        //             );
-        //           },
-        //           [selected]
-        //         ),
-        //         color: 'primary'
-        //       },
-        //       icon: <FaEdit />
-        //     }
-        //   ]
-        // }}
         startPolling={apiAction}
-        title={'Expense'}
+        title={'expense'}
       />
     </div>
   );

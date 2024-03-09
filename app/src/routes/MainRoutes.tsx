@@ -5,6 +5,7 @@ import MainLayout from '../layout/MainLayout';
 import Loadable from '../ui-component/Loadable';
 import { ProductView } from '../views/pages/Products/ProductView';
 import { ProductSchemaView } from '../views/pages/ProductSchema/ProductSchemaView';
+import OrderView from '../views/pages/Orders/OrderView';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('../views/dashboard/Default')));
@@ -110,6 +111,10 @@ const MainRoutes = {
     {
       path: 'productSchema/:id',
       element: <ProductSchemaView />
+    },
+    {
+      path: 'order/:id',
+      element: <OrderView />
     }
   ]
 };

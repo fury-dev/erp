@@ -3,7 +3,8 @@ import expenseModel from "../../schema/mongo/expense";
 import productModel from "../../schema/mongo/product";
 import mongoose from "mongoose";
 import moment from "moment";
-import filter, { TDateby } from "../../utils/filter";
+import filter from "../../utils/filter";
+import { TDateby } from "../../types/utils";
 type TChart = {
   status: string;
   total: number;
@@ -32,8 +33,6 @@ const preprocessTimeSeries = (
     if (!Object.keys(dataByStatus).includes(value.status)) {
       dataByStatus[value.status] = [];
     }
-    // TODO: to be removed
-    value.total += parseInt((Math.random() * 100).toFixed(0));
     dataByStatus[value.status].push(value);
   });
 
@@ -176,7 +175,7 @@ const chartData = async (_: any, args: any, _context: any) => {
         },
       },
     ]);
-    console.log(data);
+    console.log(data, "chart");
     const preprocess = preprocessTimeSeries(
       data,
       args.filter.dateBy,

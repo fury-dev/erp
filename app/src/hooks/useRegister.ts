@@ -7,7 +7,7 @@ export type Register = {
   password: string;
   username: string;
 };
-export const userRegister = () => {
+export const useRegister = () => {
   const { setUser } = useAuthContext();
   const [data, setData] = useState<any>();
   const [apiErrors, setApiErrors] = useState<any>();
@@ -37,8 +37,6 @@ export const userRegister = () => {
   }, [error, res]);
 
   const submitQuery = async (value: Register) => {
-    console.log(res, data, error, value);
-
     if (data) {
       setData(null);
     }
@@ -47,7 +45,6 @@ export const userRegister = () => {
         user: value
       }
     });
-    console.log(res, data, error);
     if (res) {
       const response = JSON.parse(res?.registerUser);
       if (response?.success?.auth?.token) {

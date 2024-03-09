@@ -53,7 +53,6 @@ export const useChart = () => {
   }, [error]);
 
   useEffect(() => {
-    console.log(data);
     if (data?.chartData) setSeries(data.chartData);
   }, [data]);
 

@@ -35,7 +35,7 @@ const orders = async (_: any, args: any, context: any) => {
     return err;
   }
 };
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const orderSelection = (
   _: any,
   args: {
@@ -68,4 +68,4 @@ const orderSelection = (
   }
 };
 
-export default { orders, orderSelection };
+export default { orders };

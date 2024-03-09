@@ -1,0 +1,69 @@
+{
+  "order": {
+    "type": {
+      "CASH_ON_DELIVERY": "Cash On Delivery",
+      "PREPAID": " Prepaid"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "SHIPPED": "Shipped",
+      "OUT_FOR_DELIVERY": "Out For Delivery",
+      "DELIVERED": "Delivered"
+    },
+    "detail": {
+      "title": "Order Detail"
+    }
+  },
+  "expense": {
+    "type": {
+      "PERSONAL": "Personal",
+      "ORDER": "Order",
+      "DELIVERY_CHARGES": "Delivery charges",
+      "OTHERS": "Others"
+    },
+    "operation": {
+      "CREDIT": "Credit",
+      "DEBIT": "debit"
+    }
+  },
+  "general": {
+    "yes": "Yes",
+    "no": "No",
+    "goodMorning": "Good Morning",
+    "goodEvening": "Good Evening",
+    "goodAfternoon": "Good Afternoon",
+    "goodNight": "Good Night",
+    "products": "Products",
+    "orders": "Orders",
+    "productSchemas": "Product Schemas",
+    "expense": "Expenses",
+    "edit": "Edit",
+    "delete": "Delete",
+    "submit": "Submit"
+  },
+  "auth": {
+    "register": { "title": "Register", "hint": "Sign up with Email address" },
+    "login": {
+      "title": "Login",
+      "greet": "Hi, Welcome Back"
+    },
+    "changePassword": {
+      "title": "Change Password"
+    },
+    "guide": "Enter your credentials to continue",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "fields": {
+      "password": "Password",
+      "email": "Email",
+      "username": "Username",
+      "newPasswordAgain": "Re-Enter New Password",
+      "newPassword": "Enter New Password"
+    },
+    "logout": "Log out",
+    "agreeWithTermsAndCondition": "Agree with Terms & Condition."
+  }
+}

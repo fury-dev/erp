@@ -15,19 +15,16 @@ export const useOrder = () => {
   } = useApiService<Order>('order');
   const dispatch = useDispatch();
   const orders = useSelector((state: RootState) => state.order.items);
-  const [items, setItems] = useState(orders.value);
+  const [items, setItems] = useState(orders?.value);
   const { selected } = useMultiSelect();
 
   const submitData = useCallback(
-    (data: Order) => {
+    async (data: Order) => {
       if (data?.id) {
-        console.log('update', data);
         delete data.product;
-        update.submitData(lodash.omit(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'), 'orderId'));
+        await update.submitData(lodash.omit(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'), 'orderId'));
       } else {
-        console.log(data);
-
-        add.submitData(data);
+        await add.submitData(data);
       }
     },
     [update, add]

@@ -92,7 +92,7 @@ const ProductSchemaList = () => {
         rows={productSchemas || []}
         loading={loading}
         stopPolling={stopPolling}
-        rowOnClick={(item) => navigate('/home/product/' + item.id)}
+        rowOnClick={(item) => navigate('/home/productSchema/' + item.id)}
         headerButtons={
           <HeaderButtons
             buttons={[
@@ -102,9 +102,9 @@ const ProductSchemaList = () => {
                   onClick: useCallback(() => {
                     setComponent(
                       <ProductSchemaSetup
-                        open={true}
                         onClose={() => {
-                          // setComponent(false);
+                          setComponent(false);
+                          setOpen(true);
                         }}
                       />
                     );
@@ -142,9 +142,9 @@ const ProductSchemaList = () => {
                       setComponent(
                         <ProductSchemaSetup
                           productSchema={productSchema}
-                          open={true}
                           onClose={() => {
                             setComponent(false);
+                            setOpen(false);
                           }}
                         />
                       );
@@ -160,7 +160,7 @@ const ProductSchemaList = () => {
           ]
         }}
         startPolling={apiAction}
-        title="Product Schema"
+        title="productSchemas"
       />
     </div>
   );

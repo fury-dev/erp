@@ -12,10 +12,11 @@ interface LayoutTableProps<T extends TItems> {
   rowCount: number;
   headCells: TableColumn<T>[];
   hasHeader?: boolean;
+  showToolbar?: boolean;
 }
 
 export function LayoutTableHead<T extends TItems>(props: LayoutTableProps<T>) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells } = props;
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells, showToolbar } = props;
   const createSortHandler = (property: keyof T) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
   };
@@ -23,17 +24,19 @@ export function LayoutTableHead<T extends TItems>(props: LayoutTableProps<T>) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts'
-            }}
-          />
-        </TableCell>
+        {showToolbar && (
+          <TableCell padding="checkbox">
+            <Checkbox
+              color="primary"
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={rowCount > 0 && numSelected === rowCount}
+              onChange={onSelectAllClick}
+              inputProps={{
+                'aria-label': 'select all desserts'
+              }}
+            />
+          </TableCell>
+        )}
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.field as string}

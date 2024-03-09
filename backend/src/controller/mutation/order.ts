@@ -5,7 +5,7 @@ import processObject from "../../utils/processObject";
 import { updateMongo } from "../../schema/mongo/utils/index";
 
 const addOrder = async (_: any, args: any, context: any) => {
-  console.log(context, args);
+  console.log("adding order");
   if (!context.user) return null;
   const data = processObject.preProcessCurrency(args.order, ["amount"]);
   const lastOrder = await orderModel.controller
@@ -22,13 +22,24 @@ const addOrder = async (_: any, args: any, context: any) => {
     ...updateMongo(data),
   });
 
-  return await order.save().catch((err: any) => {
-    if (err?.code === 11000) {
-      return new Error(err);
-    } else {
-      return order;
-    }
-  });
+  return await order
+    .save()
+    .then((res) => {
+      const data = res.toJSON();
+      console.log("Order  Saved");
+
+      return {
+        ...lodash.omit(data.versions[0], "_id"),
+        updatedAt: data.updatedAt,
+        id: res.id,
+      };
+    })
+    .catch((err: any) => {
+      console.log(err);
+      if (err?.code === 11000) {
+        return new Error(err);
+      }
+    });
 };
 
 const updateOrder = async (_: any, args: any, context: any) => {

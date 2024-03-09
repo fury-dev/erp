@@ -9,6 +9,7 @@ import AuthWrapper1 from '../AuthWrapper1';
 import AuthCardWrapper from '../AuthCardWrapper';
 import AuthRegister from '../auth-forms/AuthRegister';
 import AuthFooter from '../../../../ui-component/cards/AuthFooter';
+import { useTranslation } from 'react-i18next';
 
 // assets
 
@@ -17,6 +18,7 @@ import AuthFooter from '../../../../ui-component/cards/AuthFooter';
 const Register = () => {
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
+  const { t } = useTranslation();
 
   return (
     <AuthWrapper1>
@@ -34,10 +36,10 @@ const Register = () => {
                       <Grid item>
                         <Stack alignItems="center" justifyContent="center" spacing={1}>
                           <Typography color={theme.palette.secondary.main} gutterBottom variant={matchDownSM ? 'h3' : 'h2'}>
-                            Sign up
+                            {t('auth.signUp')}
                           </Typography>
                           <Typography variant="caption" fontSize="16px" textAlign={matchDownSM ? 'center' : 'inherit'}>
-                            Enter your credentials to continue
+                            {t('auth.guide')}
                           </Typography>
                         </Stack>
                       </Grid>
@@ -52,7 +54,7 @@ const Register = () => {
                   <Grid item xs={12}>
                     <Grid item container direction="column" alignItems="center" xs={12}>
                       <Typography component={Link} to="/pages/login/login3" variant="subtitle1" sx={{ textDecoration: 'none' }}>
-                        Already have an account?
+                        {t('auth.hasAccount')}
                       </Typography>
                     </Grid>
                   </Grid>

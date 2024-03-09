@@ -11,3 +11,4 @@ export type Price = {
 
 export type TCurrency = 'INR' | 'USD' | 'STER';
 export type TItems = Order | Product | Expense | ProductSchema;
+export type TAccent = 'DARK' | 'LIGHT';

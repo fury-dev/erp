@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import common from "./common";
 const ObjectId = mongoose.Schema.ObjectId;
 
 const Schema = new mongoose.Schema({
@@ -9,7 +10,7 @@ const Schema = new mongoose.Schema({
   },
   productSchemaId: {
     type: ObjectId,
-    required: [true, "Product required"],
+    required: [true, "Product Schema required"],
   },
   versions: [
     {
@@ -21,6 +22,8 @@ const Schema = new mongoose.Schema({
       size: String,
       inStock: Boolean,
       image: String,
+      name: String,
+      price: common.Price,
       createdAt: { type: Date, default: Date.now },
       deleted: Boolean,
     },

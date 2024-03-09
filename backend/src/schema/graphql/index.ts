@@ -27,6 +27,7 @@ type  Product{
     productSchemaId:String
     productSchema:ProductSchema
     size:String
+    quantity:Int
     inStock: Boolean
     createdAt:String!
     updatedAt:String!
@@ -37,7 +38,6 @@ type  Product{
 
 type User{
     email:String
-    password:String
     username:String
 }
 type Expense{
@@ -90,6 +90,7 @@ input Filter{
     group:String
     id:[String] 
     queryPath:String
+    dynamicQuery:String # stringfyied JSON {and:[{},{}], or:[{},{}]}
 }   
 
 input ListFilter{
@@ -98,6 +99,8 @@ input ListFilter{
     search:String 
     dateBy:String
     limit:Int
+    dynamicQuery:String # stringfyied JSON {and:[{},{}], or:[{},{}]}
+
 }
 union VersionItem = Product | Expense | Order
 
@@ -129,12 +132,13 @@ type Mutation{
     addExpense(expense:ExpenseValue!):Expense
     updateExpense(expense:ExpenseValue!):Expense
     deleteExpense(id:[ID!]):[Expense]
-    registerUser(user:UserRegisterValue!):String
+    registerUser(user:useRegisterValue!):String
     loginUser(user:UserLoginValue!):String
     loginWithGoogle(credentials:String!):String
     addProductSchema(productSchema:ProductSchemaValue!):ProductSchema
     updateProductSchema(productSchema:ProductSchemaValue!):ProductSchema
     deleteProductSchema(id:[ID!]):[ProductSchema]
+    changePassword(data:PasswordValue):User
 
 }
 
@@ -165,11 +169,11 @@ input ProductValue {
     image:String
     price:PriceValue
     productSchemaId:String!
-
     size:String
     inStock: Boolean!
     name:String!
     versionId:Int
+    quantity:Int
 
 }
 input OrderValue{
@@ -199,10 +203,14 @@ input UserLoginValue{
     password:String!
 }
 
-input UserRegisterValue{
+input useRegisterValue{
     email:String!
     password:String!
     username:String
+}
+input PasswordValue{
+    email:String!
+    password:String!
 }
 
 input PriceValue{
