@@ -118,7 +118,6 @@ const Login = ({ ...others }) => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            console.log('submit', scriptedRef.current);
             setStatus({ success: true });
             setSubmitting(false);
             await updateQuery(omit(values, 'submit'));

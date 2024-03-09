@@ -21,8 +21,6 @@ export const useProductSchema = () => {
   const submitData = useCallback(
     async (data: ProductSchema) => {
       if (data?.id) {
-        console.log('update', data);
-
         await update.submitData(lodash.omit(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'), 'productSchemaId'));
       } else {
         await add.submitData(data);

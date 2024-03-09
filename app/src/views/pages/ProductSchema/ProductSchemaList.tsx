@@ -103,7 +103,6 @@ const ProductSchemaList = () => {
                     setComponent(
                       <ProductSchemaSetup
                         onClose={() => {
-                          console.log('CLOSING');
                           setComponent(false);
                           setOpen(true);
                         }}

@@ -21,10 +21,8 @@ export const useExpense = () => {
   const submitData = useCallback(
     async (data: Expense) => {
       if (data?.id) {
-        console.log('update', data);
         await update.submitData(lodash.omit(lodash.omit(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'), 'expenseId'), 'pnl'));
       } else {
-        console.log(data);
         await add.submitData(lodash.omit(data, 'pnl'));
       }
     },

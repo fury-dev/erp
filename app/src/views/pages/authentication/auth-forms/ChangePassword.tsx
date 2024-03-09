@@ -49,7 +49,6 @@ const ChangePasswordForm = ({ ...others }) => {
   const [strength, setStrength] = useState(0);
   const [level, setLevel] = useState<any>();
   useEffect(() => {
-    console.log(location.state);
     if (!location.state?.email) {
       navigate('/');
     }

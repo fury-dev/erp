@@ -21,12 +21,9 @@ export const useOrder = () => {
   const submitData = useCallback(
     async (data: Order) => {
       if (data?.id) {
-        console.log('update', data);
         delete data.product;
         await update.submitData(lodash.omit(lodash.omit(lodash.omit(data, 'createdAt'), 'updatedAt'), 'orderId'));
       } else {
-        console.log(data);
-
         await add.submitData(data);
       }
     },

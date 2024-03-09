@@ -36,7 +36,6 @@ export const ProductSetup = ({ open, onClose, product }: { open: boolean; onClos
       const fileReader = new FileReader();
       fileReader.onloadend = async () => {
         setFieldValue('image', convertToPNG(fileReader.result));
-        console.log(await convertToPNG(fileReader.result));
       };
       await fileReader.readAsDataURL(file);
     }

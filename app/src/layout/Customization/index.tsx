@@ -152,7 +152,6 @@ const Customization = () => {
                     value={currency}
                     onChange={(e) =>
                       setCurrency(() => {
-                        console.log(e.target.value);
                         dispatch(saveCurrency(e.target.value));
                         return e.target.value as TCurrency;
                       })

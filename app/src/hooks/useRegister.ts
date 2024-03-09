@@ -37,8 +37,6 @@ export const useRegister = () => {
   }, [error, res]);
 
   const submitQuery = async (value: Register) => {
-    console.log(res, data, error, value);
-
     if (data) {
       setData(null);
     }
@@ -47,7 +45,6 @@ export const useRegister = () => {
         user: value
       }
     });
-    console.log(res, data, error);
     if (res) {
       const response = JSON.parse(res?.registerUser);
       if (response?.success?.auth?.token) {
