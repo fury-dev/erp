@@ -1,6 +1,6 @@
 # CMS Web App Readme [![Workflow status](https://github.com/fury-dev/erp/actions/workflows/actions.yaml/badge.svg?branch=master)](https://github.com/fury-dev/erp/actions/workflows/actions.yaml)
 
-Welcome to the CMS (Content Management System) Web App! This application is designed to manage orders, product information, and expenses efficiently. It's built using cutting-edge technologies such as React Vite, Node.js, GraphQL, Styled Components, OAuth, and MongoDB.
+Welcome to the CMS (Content Management System) Web App! This application is designed to manage orders, product information, and expenses efficiently. It's built using cutting-edge technologies such as React Vite, Node.js, GraphQL, Styled Components, OAuth,JEST, and MongoDB.
 
 ## Table of Contents
 
@@ -21,6 +21,7 @@ Welcome to the CMS (Content Management System) Web App! This application is desi
 8. **Styled Components**: Use the power of styled-components for styling your components in a dynamic way.
 9. **OAuth**: Secure authentication with OAuth to ensure user identity.
 10. **MongoDB**: A NoSQL database for storing and retrieving data efficiently.
+11. **JEST**: Jest is a JavaScript testing framework designed to ensure correctness of any JavaScript codebase.
 
 ## Prerequisites
 
