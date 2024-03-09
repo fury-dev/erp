@@ -43,12 +43,19 @@ export const createMongoFilter = (args: TFilter, searchElement: string) => {
     limit: number;
     dynamicQuery: any;
   } = args;
-
-  match.push({
-    deleted: {
-      $eq: !isEmpty(filters?.deleted) && filters.deleted === 2,
-    },
-  });
+  if (filters?.deleted)
+    match.push({
+      deleted: {
+        $eq: filters.deleted === 2,
+      },
+    });
+  else if (!filters?.deleted) {
+    match.push({
+      deleted: {
+        $eq: false,
+      },
+    });
+  }
 
   if (filters?.dynamicQuery) {
     const item = JSON.parse(filters?.dynamicQuery);
