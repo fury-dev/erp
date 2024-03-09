@@ -2,6 +2,7 @@ import { isObjectId, StringToObjectId } from "../schema/mongo/utils";
 import { TDateby, TFilter } from "../types/utils";
 import { ObjectId, BSON } from "mongodb";
 import moment from "moment";
+import { isEmpty } from "lodash";
 
 const filterTimeQuery = (dateBy: TDateby) => {
   let timeSpan;
@@ -42,13 +43,12 @@ export const createMongoFilter = (args: TFilter, searchElement: string) => {
     limit: number;
     dynamicQuery: any;
   } = args;
-  if (filters && filters.deleted > 0) {
-    match.push({
-      deleted: {
-        $eq: filters.deleted === 2,
-      },
-    });
-  }
+
+  match.push({
+    deleted: {
+      $eq: !isEmpty(filters?.deleted) && filters.deleted === 2,
+    },
+  });
 
   if (filters?.dynamicQuery) {
     const item = JSON.parse(filters?.dynamicQuery);
