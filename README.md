@@ -38,4 +38,12 @@ git clone https://github.com/your-username/cms-web-app.git
 cd cms-web-app
 ```
 
+## Preview
+![image](https://github.com/fury-dev/erp/assets/79844581/2c1d959e-b32d-4745-a05f-f9826726a4fc)
+![image](https://github.com/fury-dev/erp/assets/79844581/7c1d364f-b0fc-44a9-a1fd-661e848a572c)
+![image](https://github.com/fury-dev/erp/assets/79844581/3b3deab2-9d68-482c-a525-3ff4d1ef13cd)
+![image](https://github.com/fury-dev/erp/assets/79844581/9f28fb00-b92a-4e05-aaa3-77f17fa0f58d)
+![image](https://github.com/fury-dev/erp/assets/79844581/0a3f08f0-6b0e-45ad-9c4d-244dfdea8f94)
+![image](https://github.com/fury-dev/erp/assets/79844581/1c698ea9-48d9-4784-84d9-2fa25ecc4e47)
+
 Check the readme file under app and backend for further steps.
